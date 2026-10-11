@@ -1,1 +1,252 @@
 
+<!DOCTYPE html><html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LBP-FightersFifteen</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }body {
+  margin: 0;
+  background: #101010;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  background: #e50914;
+  padding: 18px 12px;
+  text-align: center;
+  font-size: 23px;
+  font-weight: bold;
+}
+
+.tagline {
+  text-align: center;
+  color: #ff7777;
+  padding: 12px;
+}
+
+.container {
+  max-width: 600px;
+  margin: 15px auto;
+  padding: 12px;
+}
+
+.card {
+  background: #202020;
+  border: 1px solid #383838;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+h2 {
+  color: #ff333d;
+  margin-top: 0;
+}
+
+textarea {
+  width: 100%;
+  min-height: 90px;
+  background: #111;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 16px;
+  resize: vertical;
+}
+
+button {
+  background: #e50914;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 16px;
+  margin-top: 10px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+button:active {
+  opacity: 0.8;
+}
+
+.post {
+  background: #181818;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 12px;
+  overflow-wrap: anywhere;
+}
+
+.post p {
+  white-space: pre-wrap;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.actions button {
+  background: #333;
+}
+
+.actions button.liked {
+  background: #e50914;
+}
+
+.comment-input {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background: #101010;
+  color: white;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-size: 13px;
+}
+
+  </style>
+</head>
+<body>  <header>⚔️ LBP-FightersFifteen</header>  <div class="tagline">
+    তোমার কমিউনিটি, তোমার বন্ধুরা! 🔥
+  </div>  <main class="container"><section class="card">
+  <h2>📝 নতুন পোস্ট</h2>
+  <textarea id="postText" placeholder="তুমি কী ভাবছ?"></textarea>
+  <button onclick="addPost()">পোস্ট করো</button>
+</section>
+
+<section class="card">
+  <h2>🏠 হোম ফিড</h2>
+  <div id="feed">
+    <p id="emptyMessage">এখনো কোনো পোস্ট নেই। প্রথম পোস্টটি তুমি করো!</p>
+  </div>
+</section>
+
+  </main>  <footer>
+    © 2026 LBP-FightersFifteen
+    <br>Made for the community ❤️
+  </footer>  <script>
+    let posts = [];
+    let nextId = 1;
+
+    function addPost() {
+      const input = document.getElementById("postText");
+      const text = input.value.trim();
+
+      if (!text) {
+        alert("পোস্ট লেখার ঘরে কিছু লেখো!");
+        return;
+      }
+
+      posts.unshift({
+        id: nextId++,
+        text: text,
+        likes: 0,
+        liked: false,
+        comments: []
+      });
+
+      input.value = "";
+      renderPosts();
+    }
+
+    function likePost(id) {
+      const post = posts.find(item => item.id === id);
+      if (!post) return;
+
+      post.liked = !post.liked;
+      post.likes += post.liked ? 1 : -1;
+
+      renderPosts();
+    }
+
+    function addComment(id) {
+      const input = document.getElementById("comment-" + id);
+      const text = input.value.trim();
+
+      if (!text) {
+        alert("আগে একটি কমেন্ট লেখো!");
+        return;
+      }
+
+      const post = posts.find(item => item.id === id);
+      if (!post) return;
+
+      post.comments.push(text);
+      renderPosts();
+    }
+
+    function renderPosts() {
+      const feed = document.getElementById("feed");
+      feed.replaceChildren();
+
+      if (posts.length === 0) {
+        const message = document.createElement("p");
+        message.textContent = "এখনো কোনো পোস্ট নেই। প্রথম পোস্টটি তুমি করো!";
+        feed.appendChild(message);
+        return;
+      }
+
+      posts.forEach(post => {
+        const card = document.createElement("article");
+        card.className = "post";
+
+        const author = document.createElement("strong");
+        author.textContent = "⚔️ LBP Member";
+        card.appendChild(author);
+
+        const content = document.createElement("p");
+        content.textContent = post.text;
+        card.appendChild(content);
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const like = document.createElement("button");
+        like.className = post.liked ? "liked" : "";
+        like.textContent = (post.liked ? "❤️" : "🤍") + " লাইক " + post.likes;
+        like.onclick = () => likePost(post.id);
+        actions.appendChild(like);
+
+        const commentCount = document.createElement("span");
+        commentCount.style.padding = "18px 0";
+        commentCount.textContent = "💬 " + post.comments.length + " কমেন্ট";
+        actions.appendChild(commentCount);
+
+        card.appendChild(actions);
+
+        post.comments.forEach(comment => {
+          const line = document.createElement("p");
+          line.style.color = "#ddd";
+          line.textContent = "💬 " + comment;
+          card.appendChild(line);
+        });
+
+        const commentInput = document.createElement("input");
+        commentInput.className = "comment-input";
+        commentInput.id = "comment-" + post.id;
+        commentInput.placeholder = "একটি কমেন্ট লেখো...";
+        card.appendChild(commentInput);
+
+        const send = document.createElement("button");
+        send.textContent = "কমেন্ট করো";
+        send.onclick = () => addComment(post.id);
+        card.appendChild(send);
+
+        feed.appendChild(card);
+      });
+    }
+  </script></body>
+</html>
