@@ -180,11 +180,23 @@ if (error) {
   return;
 }
 
+
 if (!data || data.length === 0) {
-  alert("Update হয়নি। Admin permission অথবা RLS policy পরীক্ষা করতে হবে।");
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  const { data: adminCheck, error: adminError } = await supabaseClient
+    .from("profiles")
+    .select("is_admin, approved")
+    .eq("id", sessionData.session.user.id)
+    .single();
+
+  alert(
+    "Update হয়নি.\n" +
+    "Admin check error: " + (adminError?.message || "None") + "\n" +
+    "is_admin: " + adminCheck?.is_admin + "\n" +
+    "approved: " + adminCheck?.approved
+  );
   return;
 }
-
 alert("Member Approved: " + data[0].approved);
 loadPendingMembers();
 }
