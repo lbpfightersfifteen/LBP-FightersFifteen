@@ -72,11 +72,23 @@ async function loadAdminDashboard() {
 
   if (!user) return;
 
-  const { data: admin } = await supabaseClient
-    .from("profiles")
-    .select("is_admin")
-    .eq("id", user.id)
-    .single();
+  
+const { data: admin, error: adminError } = await supabaseClient
+  .from("profiles")
+  .select("is_admin, approved")
+  .eq("id", user.id)
+  .single();
+
+if (adminError) {
+  alert("Admin check error: " + adminError.message);
+  return;
+}
+
+if (!admin || !admin.is_admin || !admin.approved) {
+  alert("এই অ্যাকাউন্ট Admin হিসেবে অনুমোদিত নয়।");
+  return;
+}
+
 
   if (!admin || !admin.is_admin) return;
 
