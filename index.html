@@ -91,7 +91,7 @@ if (!admin || !admin.is_admin || !admin.approved) {
 
 
   if (!admin || !admin.is_admin) return;
-
+alert("Admin check passed!");
   document.getElementById("adminDashboard").style.display = "block";
 
   loadPendingMembers();
