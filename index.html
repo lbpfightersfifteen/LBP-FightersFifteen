@@ -27,6 +27,20 @@ button.secondary{background:#e4e6eb;color:#222}
 footer{text-align:center;padding:25px;color:#65676b;font-size:13px}
 </style>
 </head>
+  
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "YOUR_SUPABASE_URL";
+  const SUPABASE_PUBLISHABLE_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
+
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
+  console.log("Supabase connection setup loaded.");
+</script>
+
 <body>
 <header>
   <h2>⚔️ LBP Fighters Fifteen</h2>
