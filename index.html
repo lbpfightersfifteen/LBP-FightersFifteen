@@ -43,7 +43,26 @@ footer{text-align:center;padding:25px;color:#65676b;font-size:13px}
 <!-- ADMIN DASHBOARD -->
 <div id="adminDashboard" style="display:none; padding:20px;">
   <h2>🛡️ Admin Dashboard</h2>
-  <p>Pending Members</p>
+  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:20px 0;">
+
+  <div style="padding:15px; border:1px solid #ddd; border-radius:10px;">
+    👥 Total Members
+    <h2 id="totalMembers">0</h2>
+  </div>
+
+  <div style="padding:15px; border:1px solid #ddd; border-radius:10px;">
+    ⏳ Pending
+    <h2 id="pendingCount">0</h2>
+  </div>
+
+  <div style="padding:15px; border:1px solid #ddd; border-radius:10px;">
+    ✅ Approved
+    <h2 id="approvedCount">0</h2>
+  </div>
+
+</div>
+
+<h3>⏳ Pending Members</h3>
   <div id="pendingMembers">Loading...</div>
 </div>
 
