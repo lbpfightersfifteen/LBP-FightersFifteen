@@ -91,7 +91,12 @@ async function loadPendingMembers() {
       <strong>${member.full_name || "No Name"}</strong>
       <br><br>
       <button onclick="approveMember('${member.id}')">
-        ✅ Approve
+  ✅ Approve
+</button>
+
+<button onclick="rejectMember('${member.id}')">
+  ❌ Reject
+</button>
       </button>
     </div>
   `).join("");
