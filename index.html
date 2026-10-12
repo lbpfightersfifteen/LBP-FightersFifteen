@@ -121,7 +121,27 @@ async function loadPendingMembers() {
     </div>
   `).join("");
 }
+async function loadMemberStats() {
+  const { count: total } = await supabaseClient
+    .from("profiles")
+    .select("*", { count: "exact", head: true });
 
+  const { count: pending } = await supabaseClient
+    .from("profiles")
+    .select("*", { count: "exact", head: true })
+    .eq("approved", false)
+    .eq("is_admin", false);
+
+  const { count: approved } = await supabaseClient
+    .from("profiles")
+    .select("*", { count: "exact", head: true })
+    .eq("approved", true)
+    .eq("is_admin", false);
+
+  document.getElementById("totalMembers").textContent = total ?? 0;
+  document.getElementById("pendingCount").textContent = pending ?? 0;
+  document.getElementById("approvedCount").textContent = approved ?? 0;
+}
 async function approveMember(id) {
   const { error } = await supabaseClient
     .from("profiles")
