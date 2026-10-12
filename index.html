@@ -492,8 +492,8 @@ if (profileError || !profile) {
       showMessage("Your account is waiting for admin approval.");
       return;
     }
-
-    showMessage("Login successful!");
+    await loadAdminDashboard();
+   showMessage("Login successful!");
     document.getElementById("member-welcome").textContent =
       "Welcome, " + (profile.full_name || user.email) + "!";
 
