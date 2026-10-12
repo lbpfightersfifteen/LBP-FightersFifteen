@@ -118,6 +118,24 @@ async function approveMember(id) {
 }
 
 loadAdminDashboard();
+  async function rejectMember(id) {
+  const confirmReject = confirm("এই সদস্যকে Reject করতে চান?");
+
+  if (!confirmReject) return;
+
+  const { error } = await supabaseClient
+    .from("profiles")
+    .update({ approved: false })
+    .eq("id", id);
+
+  if (error) {
+    alert("Reject করা যায়নি: " + error.message);
+    return;
+  }
+
+  alert("Member Rejected ❌");
+  loadPendingMembers();
+}
 </script>
 <body>
 <header>
