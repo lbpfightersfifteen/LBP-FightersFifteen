@@ -449,6 +449,7 @@ const { error } = await supabaseClient.auth.signUp({
         .maybeSingle();
 
     
+
 if (profileError || !profile) {
   console.error("Profile loading error:", profileError);
   showMessage(
@@ -457,7 +458,6 @@ if (profileError || !profile) {
   );
   return;
 }
-
 
     if (!profile.approved) {
       await supabaseClient.auth.signOut();
