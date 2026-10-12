@@ -1,252 +1,161 @@
 
-<!DOCTYPE html><html lang="bn">
+<!DOCTYPE html>
+<html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LBP-FightersFifteen</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }body {
-  margin: 0;
-  background: #101010;
-  color: white;
-  font-family: Arial, sans-serif;
-}
-
-header {
-  background: #e50914;
-  padding: 18px 12px;
-  text-align: center;
-  font-size: 23px;
-  font-weight: bold;
-}
-
-.tagline {
-  text-align: center;
-  color: #ff7777;
-  padding: 12px;
-}
-
-.container {
-  max-width: 600px;
-  margin: 15px auto;
-  padding: 12px;
-}
-
-.card {
-  background: #202020;
-  border: 1px solid #383838;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
-}
-
-h2 {
-  color: #ff333d;
-  margin-top: 0;
-}
-
-textarea {
-  width: 100%;
-  min-height: 90px;
-  background: #111;
-  color: white;
-  border: 1px solid #555;
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 16px;
-  resize: vertical;
-}
-
-button {
-  background: #e50914;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 11px 16px;
-  margin-top: 10px;
-  font-size: 15px;
-  cursor: pointer;
-}
-
-button:active {
-  opacity: 0.8;
-}
-
-.post {
-  background: #181818;
-  border-radius: 8px;
-  padding: 12px;
-  margin-top: 12px;
-  overflow-wrap: anywhere;
-}
-
-.post p {
-  white-space: pre-wrap;
-}
-
-.actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.actions button {
-  background: #333;
-}
-
-.actions button.liked {
-  background: #e50914;
-}
-
-.comment-input {
-  width: 100%;
-  margin-top: 10px;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #555;
-  background: #101010;
-  color: white;
-}
-
-footer {
-  text-align: center;
-  padding: 20px;
-  color: #999;
-  font-size: 13px;
-}
-
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LBP Fighters Fifteen</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f0f2f5;color:#202124}
+header{background:#123d78;color:white;padding:16px;position:sticky;top:0;z-index:5}
+header h2{margin:0}
+header p{margin:5px 0 0;font-size:13px}
+nav{display:flex;gap:8px;overflow:auto;padding:12px;background:white}
+nav a{color:#174ea6;text-decoration:none;font-weight:bold;white-space:nowrap}
+main{max-width:700px;margin:18px auto;padding:0 12px}
+.card{background:white;border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px #0000000d}
+input,textarea{width:100%;padding:12px;border:1px solid #ccd0d5;border-radius:8px;margin:6px 0;font-size:15px}
+textarea{resize:vertical}
+button{border:0;border-radius:8px;padding:10px 14px;background:#1769d2;color:white;font-weight:bold;cursor:pointer;margin:4px 3px 4px 0}
+button.secondary{background:#e4e6eb;color:#222}
+.post-head{display:flex;align-items:center;gap:10px}
+.avatar{background:#174ea6;color:white;border-radius:50%;width:42px;height:42px;display:grid;place-items:center;font-weight:bold}
+.muted{color:#65676b;font-size:13px}
+.post-body{white-space:pre-wrap;line-height:1.5;margin:15px 0}
+#feed:empty:after{content:"এখনো কোনো পোস্ট নেই। প্রথম পোস্টটি তুমি করো!";color:#65676b}
+footer{text-align:center;padding:25px;color:#65676b;font-size:13px}
+</style>
 </head>
-<body>  <header>⚔️ LBP-FightersFifteen</header>  <div class="tagline">
-    তোমার কমিউনিটি, তোমার বন্ধুরা! 🔥
-  </div>  <main class="container"><section class="card">
-  <h2>📝 নতুন পোস্ট</h2>
-  <textarea id="postText" placeholder="তুমি কী ভাবছ?"></textarea>
-  <button onclick="addPost()">পোস্ট করো</button>
-</section>
+<body>
+<header>
+  <h2>⚔️ LBP Fighters Fifteen</h2>
+  <p>Connect • Share • Stay Together</p>
+</header>
 
-<section class="card">
-  <h2>🏠 হোম ফিড</h2>
-  <div id="feed">
-    <p id="emptyMessage">এখনো কোনো পোস্ট নেই। প্রথম পোস্টটি তুমি করো!</p>
-  </div>
-</section>
+<nav>
+  <a href="#home">🏠 Home</a>
+  <a href="#profile">👤 Profile</a>
+  <a href="#notifications">🔔 Notifications</a>
+</nav>
 
-  </main>  <footer>
-    © 2026 LBP-FightersFifteen
-    <br>Made for the community ❤️
-  </footer>  <script>
-    let posts = [];
-    let nextId = 1;
+<main id="home">
+  <section class="card" id="profile">
+    <h3>👤 তোমার প্রোফাইল</h3>
+    <input id="username" placeholder="তোমার নাম লিখো">
+    <button onclick="saveName()">নাম সেট করো</button>
+    <p id="welcome" class="muted">স্বাগতম LBP Fighters Fifteen-এ!</p>
+  </section>
 
-    function addPost() {
-      const input = document.getElementById("postText");
-      const text = input.value.trim();
+  <section class="card">
+    <h3>📝 নতুন পোস্ট তৈরি করো</h3>
+    <textarea id="postText" rows="3" placeholder="তোমার মনের কথা শেয়ার করো..."></textarea>
+    <button onclick="addPost()">Post প্রকাশ করো</button>
+  </section>
 
-      if (!text) {
-        alert("পোস্ট লেখার ঘরে কিছু লেখো!");
-        return;
-      }
+  <section id="notifications" class="card">
+    <h3>🔔 Notifications</h3>
+    <p id="notice" class="muted">এখনো কোনো নতুন নোটিফিকেশন নেই।</p>
+  </section>
 
-      posts.unshift({
-        id: nextId++,
-        text: text,
-        likes: 0,
-        liked: false,
-        comments: []
-      });
+  <h3>🌐 News Feed</h3>
+  <section id="feed"></section>
+</main>
 
-      input.value = "";
-      renderPosts();
-    }
+<footer>
+  © 2026 LBP Fighters Fifteen • Made for the community
+</footer>
 
-    function likePost(id) {
-      const post = posts.find(item => item.id === id);
-      if (!post) return;
+<script>
+let myName = "Fighters Fifteen";
+let posts = [];
 
-      post.liked = !post.liked;
-      post.likes += post.liked ? 1 : -1;
+function saveName(){
+  const name = document.getElementById("username").value.trim();
+  if(!name){alert("আগে তোমার নাম লেখো।");return;}
+  myName = name;
+  document.getElementById("welcome").textContent = "স্বাগতম, " + myName + "!";
+  document.getElementById("notice").textContent = "প্রোফাইলের নাম সেট করা হয়েছে।";
+}
 
-      renderPosts();
-    }
+function addPost(){
+  const field = document.getElementById("postText");
+  const text = field.value.trim();
+  if(!text){alert("পোস্টে কিছু লিখো।");return;}
+  posts.unshift({name:myName,text:text,likes:0,comments:[]});
+  field.value = "";
+  renderPosts();
+  document.getElementById("notice").textContent = "তোমার পোস্ট প্রকাশিত হয়েছে।";
+}
 
-    function addComment(id) {
-      const input = document.getElementById("comment-" + id);
-      const text = input.value.trim();
+function likePost(i){
+  posts[i].likes++;
+  renderPosts();
+}
 
-      if (!text) {
-        alert("আগে একটি কমেন্ট লেখো!");
-        return;
-      }
+function commentPost(i){
+  const input = document.getElementById("comment"+i);
+  const text = input.value.trim();
+  if(!text){alert("আগে কমেন্ট লেখো।");return;}
+  posts[i].comments.push(text);
+  renderPosts();
+  document.getElementById("notice").textContent = "কমেন্ট যোগ হয়েছে।";
+}
 
-      const post = posts.find(item => item.id === id);
-      if (!post) return;
+function renderPosts(){
+  const feed = document.getElementById("feed");
+  feed.innerHTML = "";
+  posts.forEach((post,i)=>{
+    const card = document.createElement("article");
+    card.className = "card";
 
-      post.comments.push(text);
-      renderPosts();
-    }
+    const head = document.createElement("div");
+    head.className = "post-head";
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.textContent = post.name.charAt(0).toUpperCase();
+    const details = document.createElement("div");
+    const name = document.createElement("strong");
+    name.textContent = post.name;
+    const time = document.createElement("div");
+    time.className = "muted";
+    time.textContent = "এইমাত্র • Public";
+    details.append(name,time);
+    head.append(avatar,details);
 
-    function renderPosts() {
-      const feed = document.getElementById("feed");
-      feed.replaceChildren();
+    const body = document.createElement("div");
+    body.className = "post-body";
+    body.textContent = post.text;
 
-      if (posts.length === 0) {
-        const message = document.createElement("p");
-        message.textContent = "এখনো কোনো পোস্ট নেই। প্রথম পোস্টটি তুমি করো!";
-        feed.appendChild(message);
-        return;
-      }
+    const stats = document.createElement("p");
+    stats.className = "muted";
+    stats.textContent = "👍 " + post.likes + " Likes • " + post.comments.length + " Comments";
 
-      posts.forEach(post => {
-        const card = document.createElement("article");
-        card.className = "post";
+    const like = document.createElement("button");
+    like.className = "secondary";
+    like.textContent = "👍 Like";
+    like.onclick = ()=>likePost(i);
 
-        const author = document.createElement("strong");
-        author.textContent = "⚔️ LBP Member";
-        card.appendChild(author);
+    const commentInput = document.createElement("input");
+    commentInput.id = "comment"+i;
+    commentInput.placeholder = "একটি কমেন্ট লেখো...";
 
-        const content = document.createElement("p");
-        content.textContent = post.text;
-        card.appendChild(content);
+    const commentButton = document.createElement("button");
+    commentButton.textContent = "Comment";
+    commentButton.onclick = ()=>commentPost(i);
 
-        const actions = document.createElement("div");
-        actions.className = "actions";
+    card.append(head,body,stats,like,commentInput,commentButton);
 
-        const like = document.createElement("button");
-        like.className = post.liked ? "liked" : "";
-        like.textContent = (post.liked ? "❤️" : "🤍") + " লাইক " + post.likes;
-        like.onclick = () => likePost(post.id);
-        actions.appendChild(like);
+    post.comments.forEach(c=>{
+      const line = document.createElement("p");
+      line.className = "muted";
+      line.textContent = "💬 " + c;
+      card.append(line);
+    });
 
-        const commentCount = document.createElement("span");
-        commentCount.style.padding = "18px 0";
-        commentCount.textContent = "💬 " + post.comments.length + " কমেন্ট";
-        actions.appendChild(commentCount);
-
-        card.appendChild(actions);
-
-        post.comments.forEach(comment => {
-          const line = document.createElement("p");
-          line.style.color = "#ddd";
-          line.textContent = "💬 " + comment;
-          card.appendChild(line);
-        });
-
-        const commentInput = document.createElement("input");
-        commentInput.className = "comment-input";
-        commentInput.id = "comment-" + post.id;
-        commentInput.placeholder = "একটি কমেন্ট লেখো...";
-        card.appendChild(commentInput);
-
-        const send = document.createElement("button");
-        send.textContent = "কমেন্ট করো";
-        send.onclick = () => addComment(post.id);
-        card.appendChild(send);
-
-        feed.appendChild(card);
-      });
-    }
-  </script></body>
+    feed.append(card);
+  });
+}
+</script>
+</body>
 </html>
