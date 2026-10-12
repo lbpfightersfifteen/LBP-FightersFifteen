@@ -360,8 +360,13 @@ function renderPosts(){
     const { error } = await supabaseClient.auth.signUp({
       email: email,
       password: password,
-      options: {
-        data: { full_name: fullName }
+      
+options: {
+  data: {
+    full_name: fullName,
+    phone: phone
+  }
+}
       }
     });
 
