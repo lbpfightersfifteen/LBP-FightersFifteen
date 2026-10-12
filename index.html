@@ -226,13 +226,45 @@ loadAdminDashboard();
 let myName = "Fighters Fifteen";
 let posts = [];
 
-function saveName(){
+
+async function saveName(){
   const name = document.getElementById("username").value.trim();
-  if(!name){alert("আগে তোমার নাম লেখো।");return;}
+  const phone = document.getElementById("phone").value.trim();
+
+  if(!name){
+    alert("আগে তোমার নাম লেখো।");
+    return;
+  }
+
+  const { data: { user }, error: userError } =
+    await supabaseClient.auth.getUser();
+
+  if(userError || !user){
+    alert("আগে Login করো।");
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("profiles")
+    .update({
+      full_name: name,
+      phone: phone
+    })
+    .eq("id", user.id);
+
+  if(error){
+    alert("প্রোফাইল সেভ হয়নি: " + error.message);
+    return;
+  }
+
   myName = name;
-  document.getElementById("welcome").textContent = "স্বাগতম, " + myName + "!";
-  document.getElementById("notice").textContent = "প্রোফাইলের নাম সেট করা হয়েছে।";
+  document.getElementById("welcome").textContent =
+    "স্বাগতম, " + myName + "!";
+  document.getElementById("notice").textContent =
+    "প্রোফাইল সেভ হয়েছে ✅";
+  alert("প্রোফাইল সেভ হয়েছে!");
 }
+
 
 function addPost(){
   const field = document.getElementById("postText");
