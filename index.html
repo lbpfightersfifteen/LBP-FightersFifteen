@@ -362,18 +362,16 @@ function renderPosts(){
     const email = document.getElementById("signup-email").value.trim();
     const password = document.getElementById("signup-password").value;
 
-    const { error } = await supabaseClient.auth.signUp({
-      email: email,
-      password: password,
-      
-options: {
-  data: {
-    full_name: fullName,
-    phone: phone
+    
+const { error } = await supabaseClient.auth.signUp({
+  email: email,
+  password: password,
+  options: {
+    data: {
+      full_name: fullName
+    }
   }
-}
-      }
-    });
+});
 
     if (error) {
       showMessage("Signup failed: " + error.message);
