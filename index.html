@@ -166,9 +166,32 @@ async function loadMemberStats() {
   document.getElementById("pendingCount").textContent = pending ?? 0;
   document.getElementById("approvedCount").textContent = approved ?? 0;
 }
+
 async function approveMember(id) {
-  alert("Approve function চালু হয়েছে। ID: " + id);
-  
+  const { data, error } = await supabaseClient.rpc(
+    "admin_set_member_approval",
+    {
+      target_id: id,
+      make_approved: true
+    }
+  );
+
+  if (error) {
+    alert("Approve Error: " + error.message);
+    return;
+  }
+
+  if (data !== true) {
+    alert("সদস্যের রেকর্ড পাওয়া যায়নি বা পরিবর্তন হয়নি।");
+    return;
+  }
+
+  alert("সদস্যকে সফলভাবে Approved করা হয়েছে! ✅");
+
+  await loadPendingMembers();
+  await loadMemberStats();
+}
+
 const { data, error } = await supabaseClient
   .from("profiles")
   .update({ approved: true })
