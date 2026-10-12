@@ -98,9 +98,9 @@ const { data, error } = await supabaseClient
     .order("created_at", { ascending: false });
 
   if (error) {
-    box.innerHTML = "Members load করা যাচ্ছে না.";
-    return;
-  }
+  box.textContent = "Members load error: " + error.message;
+  return;
+}
 
   if (!data.length) {
     box.innerHTML = "কোনো Pending Member নেই ✅";
