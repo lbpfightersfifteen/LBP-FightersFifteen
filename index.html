@@ -188,22 +188,6 @@ if (!data || data.length === 0) {
 alert("Member Approved: " + data[0].approved);
 loadPendingMembers();
 }
-
-
-  if (error) {
-    alert("Approve করা যায়নি: " + error.message);
-    return;
-  }
-
-  alert("Member Approved ✅");
-  loadPendingMembers();
-}
-
-
-alert("Member Approved: " + data[0].approved);
-await loadPendingMembers();
-}
-
 loadAdminDashboard();
   async function rejectMember(id) {
   const confirmReject = confirm("এই সদস্যকে Reject করতে চান?");
