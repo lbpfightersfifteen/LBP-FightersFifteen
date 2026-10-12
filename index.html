@@ -148,6 +148,7 @@ async function loadMemberStats() {
   document.getElementById("approvedCount").textContent = approved ?? 0;
 }
 async function approveMember(id) {
+  alert("Approve function চালু হয়েছে। ID: " + id);
   const { error } = await supabaseClient
     .from("profiles")
     .update({ approved: true })
