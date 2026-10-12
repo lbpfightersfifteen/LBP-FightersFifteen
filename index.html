@@ -149,10 +149,27 @@ async function loadMemberStats() {
 }
 async function approveMember(id) {
   alert("Approve function চালু হয়েছে। ID: " + id);
-  const { error } = await supabaseClient
-    .from("profiles")
-    .update({ approved: true })
-    .eq("id", id);
+  
+const { data, error } = await supabaseClient
+  .from("profiles")
+  .update({ approved: true })
+  .eq("id", id)
+  .select("id, approved");
+
+if (error) {
+  alert("Approve Error: " + error.message);
+  return;
+}
+
+if (!data || data.length === 0) {
+  alert("Update হয়নি। Admin permission অথবা RLS policy পরীক্ষা করতে হবে।");
+  return;
+}
+
+alert("Member Approved: " + data[0].approved);
+loadPendingMembers();
+}
+
 
   if (error) {
     alert("Approve করা যায়নি: " + error.message);
