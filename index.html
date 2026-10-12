@@ -483,4 +483,68 @@ const { error } = await supabaseClient.auth.signUp({
 </script>
 
 </body>
+  
+<script>
+async function loadMembersList() {
+  const box = document.getElementById("membersList");
+
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("id, full_name, phone, batch, class_name, bio, profile_photo")
+    .eq("approved", true)
+    .eq("is_admin", false)
+    .order("full_name");
+
+  if (error) {
+    box.textContent = "সদস্যদের তথ্য লোড হয়নি: " + error.message;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    box.textContent = "এখনো কোনো অনুমোদিত সদস্য নেই।";
+    return;
+  }
+
+  box.replaceChildren();
+
+  data.forEach(member => {
+    const card = document.createElement("div");
+    card.style.cssText =
+      "padding:12px;margin:10px 0;border:1px solid #ddd;border-radius:10px";
+
+    const name = document.createElement("h4");
+    name.textContent = member.full_name || "নাম দেওয়া হয়নি";
+    card.appendChild(name);
+
+    const phone = document.createElement("p");
+    phone.textContent = "📱 ফোন: " + (member.phone || "দেওয়া হয়নি");
+    card.appendChild(phone);
+
+    if (member.batch) {
+      const batch = document.createElement("p");
+      batch.textContent = "🎓 ব্যাচ: " + member.batch;
+      card.appendChild(batch);
+    }
+
+    if (member.class_name) {
+      const cls = document.createElement("p");
+      cls.textContent = "📚 ক্লাস: " + member.class_name;
+      card.appendChild(cls);
+    }
+
+    if (member.bio) {
+      const bio = document.createElement("p");
+      bio.textContent = "📝 " + member.bio;
+      card.appendChild(bio);
+    }
+
+    box.appendChild(card);
+  });
+}
+
+loadMembersList();
+</script>
+</body>
+</html>
+
 </html>
