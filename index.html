@@ -90,12 +90,13 @@ async function loadPendingMembers() {
   const box = document.getElementById("pendingMembers");
 
   
-const { data, error } = await supabaseClient
-    .rpc("admin_list_members")
 
-    .eq("approved", false)
-    .eq("is_admin", false)
-    .order("created_at", { ascending: false });
+const { data, error } = await supabaseClient
+  .rpc("admin_list_members");
+
+const pending = (data || []).filter(
+  member => !member.approved && !member.is_admin
+);
 
   if (error) {
   box.textContent = "Members load error: " + error.message;
