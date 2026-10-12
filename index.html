@@ -171,5 +171,135 @@ function renderPosts(){
   });
 }
 </script>
+  
+<section id="member-auth" style="max-width:420px;margin:30px auto;padding:20px;border:1px solid #ddd;border-radius:12px;font-family:Arial,sans-serif">
+  <h2>LBP Fighters Fifteen</h2>
+  <p>Member Signup / Login</p>
+
+  <h3>Create Account</h3>
+  <form id="signup-form">
+    <input id="signup-name" type="text" placeholder="Full name" required style="width:95%;padding:10px;margin:5px 0">
+    <input id="signup-email" type="email" placeholder="Email address" required style="width:95%;padding:10px;margin:5px 0">
+    <input id="signup-password" type="password" placeholder="Password (at least 6 characters)" minlength="6" required style="width:95%;padding:10px;margin:5px 0">
+    <button type="submit" style="padding:10px 16px;margin-top:8px">Sign Up</button>
+  </form>
+
+  <hr style="margin:22px 0">
+
+  <h3>Member Login</h3>
+  <form id="login-form">
+    <input id="login-email" type="email" placeholder="Email address" required style="width:95%;padding:10px;margin:5px 0">
+    <input id="login-password" type="password" placeholder="Password" required style="width:95%;padding:10px;margin:5px 0">
+    <button type="submit" style="padding:10px 16px;margin-top:8px">Login</button>
+  </form>
+
+  <p id="auth-message" role="status" style="overflow-wrap:anywhere"></p>
+
+  <div id="member-panel" hidden>
+    <h3 id="member-welcome"></h3>
+    <p id="member-role"></p>
+    <button id="logout-button" type="button">Logout</button>
+  </div>
+</section>
+
+<script>
+(function () {
+  const signupForm = document.getElementById("signup-form");
+  const loginForm = document.getElementById("login-form");
+  const message = document.getElementById("auth-message");
+  const panel = document.getElementById("member-panel");
+
+  function showMessage(text) {
+    message.textContent = text;
+  }
+
+  signupForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    showMessage("Creating account...");
+
+    const fullName = document.getElementById("signup-name").value.trim();
+    const email = document.getElementById("signup-email").value.trim();
+    const password = document.getElementById("signup-password").value;
+
+    const { error } = await supabaseClient.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        data: { full_name: fullName }
+      }
+    });
+
+    if (error) {
+      showMessage("Signup failed: " + error.message);
+      return;
+    }
+
+    showMessage(
+      "Signup request successful. If email confirmation is required, verify your email, then log in. Your account needs admin approval."
+    );
+    signupForm.reset();
+  });
+
+  loginForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    showMessage("Checking account...");
+    panel.hidden = true;
+
+    const email = document.getElementById("login-email").value.trim();
+    const password = document.getElementById("login-password").value;
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+    if (error) {
+      showMessage("Login failed: " + error.message);
+      return;
+    }
+
+    const user = data.user;
+
+    const { data: profile, error: profileError } =
+      await supabaseClient
+        .from("profiles")
+        .select("full_name, approved, is_admin")
+        .eq("id", user.id)
+        .maybeSingle();
+
+    if (profileError || !profile) {
+      await supabaseClient.auth.signOut();
+      showMessage(
+        "Could not load your member profile. Please contact the site admin."
+      );
+      return;
+    }
+
+    if (!profile.approved) {
+      await supabaseClient.auth.signOut();
+      showMessage("Your account is waiting for admin approval.");
+      return;
+    }
+
+    showMessage("Login successful!");
+    document.getElementById("member-welcome").textContent =
+      "Welcome, " + (profile.full_name || user.email) + "!";
+
+    document.getElementById("member-role").textContent =
+      profile.is_admin ? "Administrator account" : "Approved member";
+
+    panel.hidden = false;
+    loginForm.reset();
+  });
+
+  document.getElementById("logout-button").addEventListener("click", async function () {
+    const { error } = await supabaseClient.auth.signOut();
+
+    panel.hidden = true;
+    showMessage(error ? error.message : "You have logged out.");
+  });
+})();
+</script>
+
 </body>
 </html>
