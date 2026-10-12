@@ -110,6 +110,10 @@ const { data, error } = await supabaseClient
   box.innerHTML = data.map(member => `
     <div style="padding:12px; margin:10px 0; border:1px solid #ddd; border-radius:10px;">
       <strong>${member.full_name || "No Name"}</strong>
+      <br>
+Email: ${member.email || "Email নেই"}
+<br>
+Status: ${member.approved ? "Approved" : "Pending"}
       <br><br>
       <button onclick="approveMember('${member.id}')">
   ✅ Approve
