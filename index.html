@@ -448,13 +448,16 @@ const { error } = await supabaseClient.auth.signUp({
         .eq("id", user.id)
         .maybeSingle();
 
-    if (profileError || !profile) {
-      await supabaseClient.auth.signOut();
-      showMessage(
-        "Could not load your member profile. Please contact the site admin."
-      );
-      return;
-    }
+    
+if (profileError || !profile) {
+  console.error("Profile loading error:", profileError);
+  showMessage(
+    "Profile error: " +
+    (profileError ? profileError.message : "Profile not found")
+  );
+  return;
+}
+
 
     if (!profile.approved) {
       await supabaseClient.auth.signOut();
