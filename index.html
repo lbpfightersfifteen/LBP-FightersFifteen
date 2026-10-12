@@ -90,8 +90,14 @@ if (!admin || !admin.is_admin || !admin.approved) {
 }
 
 
-  if (!admin || !admin.is_admin) return;
+  
+if (!admin || !admin.is_admin || !admin.approved) {
+  alert("Admin check failed. Admin profile যাচাই হয়নি।");
+  return;
+}
+
 alert("Admin check passed!");
+
   document.getElementById("adminDashboard").style.display = "block";
 
   loadPendingMembers();
