@@ -89,9 +89,10 @@ async function loadAdminDashboard() {
 async function loadPendingMembers() {
   const box = document.getElementById("pendingMembers");
 
-  const { data, error } = await supabaseClient
-    .from("profiles")
-    .select("id, full_name, created_at")
+  
+const { data, error } = await supabaseClient
+    .rpc("admin_list_members")
+
     .eq("approved", false)
     .eq("is_admin", false)
     .order("created_at", { ascending: false });
