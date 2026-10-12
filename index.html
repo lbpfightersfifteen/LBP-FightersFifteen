@@ -103,29 +103,29 @@ const pending = (data || []).filter(
   return;
 }
 
-  if (!data.length) {
-    box.innerHTML = "কোনো Pending Member নেই ✅";
-    return;
-  }
+  
+if (!pending.length) {
+  box.innerHTML = "কোনো Pending Member নেই ✅";
+  return;
+}
 
-  box.innerHTML = data.map(member => `
-    <div style="padding:12px; margin:10px 0; border:1px solid #ddd; border-radius:10px;">
-      <strong>${member.full_name || "No Name"}</strong>
-      <br>
-Email: ${member.email || "Email নেই"}
-<br>
-Status: ${member.approved ? "Approved" : "Pending"}
-      <br><br>
-      <button onclick="approveMember('${member.id}')">
-  ✅ Approve
-</button>
+box.innerHTML = pending.map(member => `
+  <div style="padding:12px; margin:10px 0; border:1px solid #ddd; border-radius:10px;">
+    <strong>${member.full_name || "No Name"}</strong>
+    <br>
+    Email: ${member.email || "Email নেই"}
+    <br>
+    Status: Pending
+    <br><br>
+    <button onclick="approveMember('${member.id}')">
+      ✅ Approve
+    </button>
+    <button onclick="rejectMember('${member.id}')">
+      ❌ Reject
+    </button>
+  </div>
+`).join("");
 
-<button onclick="rejectMember('${member.id}')">
-  ❌ Reject
-</button>
-      </button>
-    </div>
-  `).join("");
 }
 async function loadMemberStats() {
   const { count: total } = await supabaseClient
