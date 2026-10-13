@@ -1098,7 +1098,50 @@ async function saveName(){
 /* =========================
    MEMBERS LIST
 ========================= */
+async function saveMyProfile(){
 
+  const message = document.getElementById("editProfileMessage");
+
+  const { data: { user }, error: userError } =
+    await supabaseClient.auth.getUser();
+
+  if(userError || !user){
+    message.textContent = "আগে লগইন করুন।";
+    return;
+  }
+
+  const profileData = {
+    full_name: document.getElementById("editFullName").value.trim(),
+    phone: document.getElementById("editPhone").value.trim(),
+    batch: document.getElementById("editBatch").value.trim(),
+    class_name: document.getElementById("editClass").value.trim(),
+    blood_group: document.getElementById("editBloodGroup").value,
+    bio: document.getElementById("editBio").value.trim()
+  };
+
+  if(!profileData.full_name){
+    message.textContent = "আপনার পুরো নাম লিখুন।";
+    return;
+  }
+
+  message.textContent = "সংরক্ষণ হচ্ছে...";
+
+  const { error } = await supabaseClient
+    .from("profiles")
+    .update(profileData)
+    .eq("id", user.id);
+
+  if(error){
+    message.textContent = "সমস্যা হয়েছে: " + error.message;
+    return;
+  }
+
+  message.textContent = "প্রোফাইল সফলভাবে সংরক্ষিত হয়েছে! ✅";
+
+  if(typeof loadMembersList === "function"){
+    await loadMembersList();
+  }
+}
 async function loadMembersList(){
 
   const box = document.getElementById("membersList");
