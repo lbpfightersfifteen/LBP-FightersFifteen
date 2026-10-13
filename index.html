@@ -1139,6 +1139,7 @@ async function saveMyProfile(){
   message.textContent = "প্রোফাইল সফলভাবে সংরক্ষিত হয়েছে! ✅";
 
   if(typeof loadMembersList === "function"){
+    loadMyProfile();
     await loadMembersList();
   }
 } 
