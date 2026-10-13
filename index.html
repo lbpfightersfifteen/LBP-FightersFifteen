@@ -1141,6 +1141,42 @@ async function saveMyProfile(){
   if(typeof loadMembersList === "function"){
     await loadMembersList();
   }
+} 
+  async function loadMyProfile(){
+
+  const { data: { user }, error: userError } =
+    await supabaseClient.auth.getUser();
+
+  if(userError || !user) return;
+
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("full_name, phone, batch, class_name, blood_group, bio")
+    .eq("id", user.id)
+    .single();
+
+  if(error){
+    console.error("Profile load error:", error.message);
+    return;
+  }
+
+  document.getElementById("editFullName").value =
+    data.full_name || "";
+
+  document.getElementById("editPhone").value =
+    data.phone || "";
+
+  document.getElementById("editBatch").value =
+    data.batch || "";
+
+  document.getElementById("editClass").value =
+    data.class_name || "";
+
+  document.getElementById("editBloodGroup").value =
+    data.blood_group || "";
+
+  document.getElementById("editBio").value =
+    data.bio || "";
 }
 async function loadMembersList(){
 
