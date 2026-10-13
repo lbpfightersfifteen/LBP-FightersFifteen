@@ -1,614 +1,1906 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>LBP Fighters Fifteen</title>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f0f2f5;color:#202124}
-header{background:#123d78;color:white;padding:16px;position:sticky;top:0;z-index:5}
-header h2{margin:0}
-header p{margin:5px 0 0;font-size:13px}
-nav{display:flex;gap:8px;overflow:auto;padding:12px;background:white}
-nav a{color:#174ea6;text-decoration:none;font-weight:bold;white-space:nowrap}
-main{max-width:700px;margin:18px auto;padding:0 12px}
-.card{background:white;border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px #0000000d}
-input,textarea{width:100%;padding:12px;border:1px solid #ccd0d5;border-radius:8px;margin:6px 0;font-size:15px}
-textarea{resize:vertical}
-button{border:0;border-radius:8px;padding:10px 14px;background:#1769d2;color:white;font-weight:bold;cursor:pointer;margin:4px 3px 4px 0}
-button.secondary{background:#e4e6eb;color:#222}
-.post-head{display:flex;align-items:center;gap:10px}
-.avatar{background:#174ea6;color:white;border-radius:50%;width:42px;height:42px;display:grid;place-items:center;font-weight:bold}
-.muted{color:#65676b;font-size:13px}
-.post-body{white-space:pre-wrap;line-height:1.5;margin:15px 0}
-#feed:empty:after{content:"এখনো কোনো পোস্ট নেই। প্রথম পোস্টটি তুমি করো!";color:#65676b}
-footer{text-align:center;padding:25px;color:#65676b;font-size:13px}
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f0f2f5;
+  color:#202124;
+}
+
+header{
+  background:#123d78;
+  color:white;
+  padding:16px;
+  position:sticky;
+  top:0;
+  z-index:5;
+}
+
+header h2{
+  margin:0;
+}
+
+header p{
+  margin:5px 0 0;
+  font-size:13px;
+}
+
+nav{
+  display:flex;
+  gap:8px;
+  overflow:auto;
+  padding:12px;
+  background:white;
+}
+
+nav a{
+  color:#174ea6;
+  text-decoration:none;
+  font-weight:bold;
+  white-space:nowrap;
+}
+
+main{
+  max-width:700px;
+  margin:18px auto;
+  padding:0 12px;
+}
+
+.card{
+  background:white;
+  border-radius:12px;
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:0 2px 8px #0000000d;
+}
+
+input,
+textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid #ccd0d5;
+  border-radius:8px;
+  margin:6px 0;
+  font-size:15px;
+}
+
+textarea{
+  resize:vertical;
+}
+
+button{
+  border:0;
+  border-radius:8px;
+  padding:10px 14px;
+  background:#1769d2;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  margin:4px 3px 4px 0;
+}
+
+button.secondary{
+  background:#e4e6eb;
+  color:#222;
+}
+
+button.danger{
+  background:#d93025;
+}
+
+.post-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.avatar{
+  background:#174ea6;
+  color:white;
+  border-radius:50%;
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  font-weight:bold;
+}
+
+.muted{
+  color:#65676b;
+  font-size:13px;
+}
+
+.post-body{
+  white-space:pre-wrap;
+  line-height:1.5;
+  margin:15px 0;
+}
+
+#feed:empty:after{
+  content:"এখনো কোনো পোস্ট নেই। প্রথম পোস্টটি তুমি করো!";
+  color:#65676b;
+}
+
+footer{
+  text-align:center;
+  padding:25px;
+  color:#65676b;
+  font-size:13px;
+}
+
+.admin-box{
+  padding:12px;
+  margin:10px 0;
+  border:1px solid #ddd;
+  border-radius:10px;
+  background:#fafafa;
+}
+
+.stats{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:20px 0;
+}
+
+.stat{
+  padding:15px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  background:white;
+  min-width:120px;
+}
+
+.stat h2{
+  margin:8px 0 0;
+}
+
+.member-card{
+  padding:12px;
+  margin:10px 0;
+  border:1px solid #ddd;
+  border-radius:10px;
+  background:#fff;
+}
 </style>
 </head>
-  
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const SUPABASE_URL = "https://dxravisfaihtjfchlpmp.supabase.co";
-  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_9HpG7KTdDtygTP7z90gyew_lM9H4tCB";
 
-  const supabaseClient = window.supabase.createClient(
+
+<!-- =========================
+     SUPABASE
+========================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL =
+  "https://dxravisfaihtjfchlpmp.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_9HpG7KTdDtygTP7z90gyew_lM9H4tCB";
+
+const supabaseClient =
+  window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
   );
 
-  console.log("Supabase connection setup loaded.");
+console.log("Supabase connection ready.");
+
 </script>
-<!-- ADMIN DASHBOARD -->
-<div id="adminDashboard" style="display:none; padding:20px;">
-  <h2>🛡️ Admin Dashboard</h2>
-  <div style="display:flex; gap:10px; flex-wrap:wrap; margin:20px 0;">
-
-  <div style="padding:15px; border:1px solid #ddd; border-radius:10px;">
-    👥 Total Members
-    <h2 id="totalMembers">0</h2>
-  </div>
-
-  <div style="padding:15px; border:1px solid #ddd; border-radius:10px;">
-    ⏳ Pending
-    <h2 id="pendingCount">0</h2>
-  </div>
-
-  <div style="padding:15px; border:1px solid #ddd; border-radius:10px;">
-    ✅ Approved
-    <h2 id="approvedCount">0</h2>
-  </div>
-
-</div>
-
-<h3>⏳ Pending Members</h3>
-  <div id="pendingMembers">Loading...</div>
-</div>
-
-<script>
-async function loadAdminDashboard() {
-  const { data: { user } } = await supabaseClient.auth.getUser();
-
-  if (!user) return;
-
-  
-const { data: admin, error: adminError } = await supabaseClient
-  .from("profiles")
-  .select("is_admin, approved")
-  .eq("id", user.id)
-  .single();
-
-if (adminError) {
-  alert("Admin check error: " + adminError.message);
-  return;
-}
-
-if (!admin || !admin.is_admin || !admin.approved) {
-  alert("এই অ্যাকাউন্ট Admin হিসেবে অনুমোদিত নয়।");
-  return;
-}
 
 
-  
-if (!admin || !admin.is_admin || !admin.approved) {
-  alert("Admin check failed. Admin profile যাচাই হয়নি।");
-  return;
-}
-
-alert("Admin check passed!");
-
-  document.getElementById("adminDashboard").style.display = "block";
-
-  loadPendingMembers();
-  loadMemberStats();
-}
-
-async function loadPendingMembers() {
-  const box = document.getElementById("pendingMembers");
-
-  
-
-const { data, error } = await supabaseClient
-  .rpc("admin_list_members");
-
-const pending = (data || []).filter(
-  member => !member.approved && !member.is_admin
-);
-
-  if (error) {
-  box.textContent = "Members load error: " + error.message;
-  return;
-}
-
-  
-if (!pending.length) {
-  box.innerHTML = "কোনো Pending Member নেই ✅";
-  return;
-}
-
-box.innerHTML = pending.map(member => `
-  <div style="padding:12px; margin:10px 0; border:1px solid #ddd; border-radius:10px;">
-    <strong>${member.full_name || "No Name"}</strong>
-    <br>
-    Email: ${member.email || "Email নেই"}
-    <br>
-    Status: Pending
-    <br><br>
-    <button onclick="approveMember('${member.id}')">
-      ✅ Approve
-    </button>
-    <button onclick="rejectMember('${member.id}')">
-      ❌ Reject
-    </button>
-  </div>
-`).join("");
-
-}
-async function loadMemberStats() {
-  const { count: total } = await supabaseClient
-    .from("profiles")
-    .select("*", { count: "exact", head: true });
-
-  const { count: pending } = await supabaseClient
-    .from("profiles")
-    .select("*", { count: "exact", head: true })
-    .eq("approved", false)
-    .eq("is_admin", false);
-
-  const { count: approved } = await supabaseClient
-    .from("profiles")
-    .select("*", { count: "exact", head: true })
-    .eq("approved", true)
-    .eq("is_admin", false);
-
-  document.getElementById("totalMembers").textContent = total ?? 0;
-  document.getElementById("pendingCount").textContent = pending ?? 0;
-  document.getElementById("approvedCount").textContent = approved ?? 0;
-}
-
-async function approveMember(id) {
-  const { data, error } = await supabaseClient.rpc(
-    "admin_set_member_approval",
-    {
-      target_id: id,
-      make_approved: true
-    }
-  );
-
-  if (error) {
-    alert("Approve Error: " + error.message);
-    return;
-  }
-
-  if (data !== true) {
-    alert("সদস্যের রেকর্ড পাওয়া যায়নি বা পরিবর্তন হয়নি।");
-    return;
-  }
-
-  alert("সদস্যকে সফলভাবে Approved করা হয়েছে! ✅");
-
-  await loadPendingMembers();
-  await loadMemberStats();
-}
-
-const { data, error } = await supabaseClient
-  .from("profiles")
-  .update({ approved: true })
-  .eq("id", id)
-  .select("id, approved");
-
-if (error) {
-  alert("Approve Error: " + error.message);
-  return;
-}
-
-
-if (!data || data.length === 0) {
-  const { data: sessionData } = await supabaseClient.auth.getSession();
-  const { data: adminCheck, error: adminError } = await supabaseClient
-    .from("profiles")
-    .select("is_admin, approved")
-    .eq("id", sessionData.session.user.id)
-    .single();
-
-  alert(
-    "Update হয়নি.\n" +
-    "Admin check error: " + (adminError?.message || "None") + "\n" +
-    "is_admin: " + adminCheck?.is_admin + "\n" +
-    "approved: " + adminCheck?.approved
-  );
-  return;
-}
-alert("Member Approved: " + data[0].approved);
-loadPendingMembers();
-}
-loadAdminDashboard();
-  async function rejectMember(id) {
-  const confirmReject = confirm("এই সদস্যকে Reject করতে চান?");
-
-  if (!confirmReject) return;
-
-  const { error } = await supabaseClient
-    .from("profiles")
-    .update({ approved: false })
-    .eq("id", id);
-
-  if (error) {
-    alert("Reject করা যায়নি: " + error.message);
-    return;
-  }
-
-  alert("Member Rejected ❌");
-  loadPendingMembers();
-}
-</script>
 <body>
+
+<!-- =========================
+     HEADER
+========================= -->
+
 <header>
+
   <h2>⚔️ LBP Fighters Fifteen</h2>
-  <p>Connect • Share • Stay Together</p>
+
+  <p>
+    Connect • Share • Stay Together
+  </p>
+
 </header>
 
+
 <nav>
+
   <a href="#home">🏠 Home</a>
+
   <a href="#profile">👤 Profile</a>
+
+  <a href="#members">👥 Members</a>
+
   <a href="#notifications">🔔 Notifications</a>
+
 </nav>
 
-<main id="home">
-  <section class="card" id="profile">
-    <section class="card">
-  <h3>👥 Fighters Members</h3>
-  <div id="membersList">সদস্যদের তথ্য লোড হচ্ছে...</div>
+
+<!-- =========================
+     ADMIN DASHBOARD
+========================= -->
+
+<section
+  id="adminDashboard"
+  style="display:none; max-width:700px; margin:20px auto; padding:0 12px;"
+>
+
+  <div class="card">
+
+    <h2>🛡️ Admin Dashboard</h2>
+
+    <div class="stats">
+
+      <div class="stat">
+        👥 Total Members
+        <h2 id="totalMembers">0</h2>
+      </div>
+
+      <div class="stat">
+        ⏳ Pending
+        <h2 id="pendingCount">0</h2>
+      </div>
+
+      <div class="stat">
+        ✅ Approved
+        <h2 id="approvedCount">0</h2>
+      </div>
+
+    </div>
+
+
+    <h3>⏳ Pending Members</h3>
+
+    <div id="pendingMembers">
+      Loading...
+    </div>
+
+  </div>
+
 </section>
-    <h3>👤 তোমার প্রোফাইল</h3>
-    <input id="username" placeholder="তোমার নাম লিখো">
-    <input id="phone" type="tel" placeholder="তোমার ফোন নম্বর">
-    <button onclick="saveName()">নাম সেট করো</button>
-    <p id="welcome" class="muted">স্বাগতম LBP Fighters Fifteen-এ!</p>
-  </section>
 
-  <section class="card">
-    <h3>📝 নতুন পোস্ট তৈরি করো</h3>
-    <textarea id="postText" rows="3" placeholder="তোমার মনের কথা শেয়ার করো..."></textarea>
-    <button onclick="addPost()">Post প্রকাশ করো</button>
-  </section>
 
-  <section id="notifications" class="card">
-    <h3>🔔 Notifications</h3>
-    <p id="notice" class="muted">এখনো কোনো নতুন নোটিফিকেশন নেই।</p>
-  </section>
+<!-- =========================
+     MAIN
+========================= -->
 
-  <h3>🌐 News Feed</h3>
-  <section id="feed"></section>
+<main id="home">
+
+
+<!-- PROFILE -->
+
+<section class="card" id="profile">
+
+  <h3>👤 তোমার প্রোফাইল</h3>
+
+  <input
+    id="username"
+    placeholder="তোমার নাম লিখো"
+  >
+
+  <input
+    id="phone"
+    type="tel"
+    placeholder="তোমার ফোন নম্বর"
+  >
+
+  <button onclick="saveName()">
+    নাম ও ফোন সেভ করো
+  </button>
+
+  <p
+    id="welcome"
+    class="muted"
+  >
+    স্বাগতম LBP Fighters Fifteen-এ!
+  </p>
+
+</section>
+
+
+<!-- MEMBERS -->
+
+<section
+  class="card"
+  id="members"
+>
+
+  <h3>👥 Fighters Members</h3>
+
+  <div id="membersList">
+    সদস্যদের তথ্য লোড হচ্ছে...
+  </div>
+
+</section>
+
+
+<!-- POST -->
+
+<section class="card">
+
+  <h3>📝 নতুন পোস্ট তৈরি করো</h3>
+
+  <textarea
+    id="postText"
+    rows="3"
+    placeholder="তোমার মনের কথা শেয়ার করো..."
+  ></textarea>
+
+  <button onclick="addPost()">
+    Post প্রকাশ করো
+  </button>
+
+</section>
+
+
+<!-- NOTIFICATION -->
+
+<section
+  id="notifications"
+  class="card"
+>
+
+  <h3>🔔 Notifications</h3>
+
+  <p
+    id="notice"
+    class="muted"
+  >
+    এখনো কোনো নতুন নোটিফিকেশন নেই।
+  </p>
+
+</section>
+
+
+<!-- FEED -->
+
+<h3>
+  🌐 News Feed
+</h3>
+
+<section id="feed"></section>
+
+
 </main>
 
+
+<!-- =========================
+     AUTH
+========================= -->
+
+<section
+  id="member-auth"
+  style="
+    max-width:420px;
+    margin:30px auto;
+    padding:20px;
+    border:1px solid #ddd;
+    border-radius:12px;
+    background:white;
+  "
+>
+
+  <h2>
+    LBP Fighters Fifteen
+  </h2>
+
+  <p>
+    Member Signup / Login
+  </p>
+
+
+  <!-- SIGNUP -->
+
+  <h3>
+    Create Account
+  </h3>
+
+  <form id="signup-form">
+
+    <input
+      id="signup-name"
+      type="text"
+      placeholder="Full name"
+      required
+    >
+
+    <input
+      id="signup-email"
+      type="email"
+      placeholder="Email address"
+      required
+    >
+
+    <input
+      id="signup-password"
+      type="password"
+      placeholder="Password (at least 6 characters)"
+      minlength="6"
+      required
+    >
+
+    <button type="submit">
+      Sign Up
+    </button>
+
+  </form>
+
+
+  <hr style="margin:22px 0;">
+
+
+  <!-- LOGIN -->
+
+  <h3>
+    Member Login
+  </h3>
+
+  <form id="login-form">
+
+    <input
+      id="login-email"
+      type="email"
+      placeholder="Email address"
+      required
+    >
+
+    <input
+      id="login-password"
+      type="password"
+      placeholder="Password"
+      required
+    >
+
+    <button type="submit">
+      Login
+    </button>
+
+  </form>
+
+
+  <p
+    id="auth-message"
+    role="status"
+    style="overflow-wrap:anywhere;"
+  ></p>
+
+
+  <div
+    id="member-panel"
+    hidden
+  >
+
+    <h3 id="member-welcome"></h3>
+
+    <p id="member-role"></p>
+
+    <button
+      id="logout-button"
+      type="button"
+      class="secondary"
+    >
+      Logout
+    </button>
+
+  </div>
+
+</section>
+
+
 <footer>
-  © 2026 LBP Fighters Fifteen • Abdur Rahman 
+
+  © 2026 LBP Fighters Fifteen • Abdur Rahman
+
 </footer>
 
+
+<!-- =========================
+     MAIN JAVASCRIPT
+========================= -->
+
 <script>
+
 let myName = "Fighters Fifteen";
+
 let posts = [];
 
 
-async function saveName(){
-  const name = document.getElementById("username").value.trim();
-  const phone = document.getElementById("phone").value.trim();
+/* =========================
+   ADMIN DASHBOARD
+========================= */
 
-  if(!name){
-    alert("আগে তোমার নাম লেখো।");
+async function loadAdminDashboard(){
+
+  const {
+    data: { user }
+  } = await supabaseClient.auth.getUser();
+
+  if(!user){
     return;
   }
 
-  const { data: { user }, error: userError } =
-    await supabaseClient.auth.getUser();
 
-  if(userError || !user){
-    alert("আগে Login করো।");
-    return;
-  }
+  const {
+    data: admin,
+    error: adminError
+  } = await supabaseClient
 
-  const { error } = await supabaseClient
     .from("profiles")
-    .update({
-      full_name: name,
-      phone: phone
-    })
-    .eq("id", user.id);
+
+    .select("is_admin, approved")
+
+    .eq("id", user.id)
+
+    .single();
+
+
+  if(adminError){
+
+    console.log(
+      "Admin check:",
+      adminError.message
+    );
+
+    return;
+  }
+
+
+  if(
+    !admin ||
+    !admin.is_admin ||
+    !admin.approved
+  ){
+
+    return;
+  }
+
+
+  document
+    .getElementById("adminDashboard")
+    .style.display = "block";
+
+
+  await loadPendingMembers();
+
+  await loadMemberStats();
+
+}
+
+
+/* =========================
+   PENDING MEMBERS
+========================= */
+
+async function loadPendingMembers(){
+
+  const box =
+    document.getElementById(
+      "pendingMembers"
+    );
+
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+
+    .rpc("admin_list_members");
+
 
   if(error){
-    alert("প্রোফাইল সেভ হয়নি: " + error.message);
+
+    box.textContent =
+      "Members load error: " +
+      error.message;
+
     return;
   }
 
-  myName = name;
-  document.getElementById("welcome").textContent =
-    "স্বাগতম, " + myName + "!";
-  document.getElementById("notice").textContent =
-    "প্রোফাইল সেভ হয়েছে ✅";
-  alert("প্রোফাইল সেভ হয়েছে!");
-}
 
-
-function addPost(){
-  const field = document.getElementById("postText");
-  const text = field.value.trim();
-  if(!text){alert("পোস্টে কিছু লিখো।");return;}
-  posts.unshift({name:myName,text:text,likes:0,comments:[]});
-  field.value = "";
-  renderPosts();
-  document.getElementById("notice").textContent = "তোমার পোস্ট প্রকাশিত হয়েছে।";
-}
-
-function likePost(i){
-  posts[i].likes++;
-  renderPosts();
-}
-
-function commentPost(i){
-  const input = document.getElementById("comment"+i);
-  const text = input.value.trim();
-  if(!text){alert("আগে কমেন্ট লেখো।");return;}
-  posts[i].comments.push(text);
-  renderPosts();
-  document.getElementById("notice").textContent = "কমেন্ট যোগ হয়েছে।";
-}
-
-function renderPosts(){
-  const feed = document.getElementById("feed");
-  feed.innerHTML = "";
-  posts.forEach((post,i)=>{
-    const card = document.createElement("article");
-    card.className = "card";
-
-    const head = document.createElement("div");
-    head.className = "post-head";
-    const avatar = document.createElement("div");
-    avatar.className = "avatar";
-    avatar.textContent = post.name.charAt(0).toUpperCase();
-    const details = document.createElement("div");
-    const name = document.createElement("strong");
-    name.textContent = post.name;
-    const time = document.createElement("div");
-    time.className = "muted";
-    time.textContent = "এইমাত্র • Public";
-    details.append(name,time);
-    head.append(avatar,details);
-
-    const body = document.createElement("div");
-    body.className = "post-body";
-    body.textContent = post.text;
-
-    const stats = document.createElement("p");
-    stats.className = "muted";
-    stats.textContent = "👍 " + post.likes + " Likes • " + post.comments.length + " Comments";
-
-    const like = document.createElement("button");
-    like.className = "secondary";
-    like.textContent = "👍 Like";
-    like.onclick = ()=>likePost(i);
-
-    const commentInput = document.createElement("input");
-    commentInput.id = "comment"+i;
-    commentInput.placeholder = "একটি কমেন্ট লেখো...";
-
-    const commentButton = document.createElement("button");
-    commentButton.textContent = "Comment";
-    commentButton.onclick = ()=>commentPost(i);
-
-    card.append(head,body,stats,like,commentInput,commentButton);
-
-    post.comments.forEach(c=>{
-      const line = document.createElement("p");
-      line.className = "muted";
-      line.textContent = "💬 " + c;
-      card.append(line);
-    });
-
-    feed.append(card);
-  });
-}
-</script>
-  
-<section id="member-auth" style="max-width:420px;margin:30px auto;padding:20px;border:1px solid #ddd;border-radius:12px;font-family:Arial,sans-serif">
-  <h2>LBP Fighters Fifteen</h2>
-  <p>Member Signup / Login</p>
-
-  <h3>Create Account</h3>
-  <form id="signup-form">
-    <input id="signup-name" type="text" placeholder="Full name" required style="width:95%;padding:10px;margin:5px 0">
-    <input id="signup-email" type="email" placeholder="Email address" required style="width:95%;padding:10px;margin:5px 0">
-    <input id="signup-password" type="password" placeholder="Password (at least 6 characters)" minlength="6" required style="width:95%;padding:10px;margin:5px 0">
-    <button type="submit" style="padding:10px 16px;margin-top:8px">Sign Up</button>
-  </form>
-
-  <hr style="margin:22px 0">
-
-  <h3>Member Login</h3>
-  <form id="login-form">
-    <input id="login-email" type="email" placeholder="Email address" required style="width:95%;padding:10px;margin:5px 0">
-    <input id="login-password" type="password" placeholder="Password" required style="width:95%;padding:10px;margin:5px 0">
-    <button type="submit" style="padding:10px 16px;margin-top:8px">Login</button>
-  </form>
-
-  <p id="auth-message" role="status" style="overflow-wrap:anywhere"></p>
-
-  <div id="member-panel" hidden>
-    <h3 id="member-welcome"></h3>
-    <p id="member-role"></p>
-    <button id="logout-button" type="button">Logout</button>
-  </div>
-</section>
-
-<script>
-(function () {
-  const signupForm = document.getElementById("signup-form");
-  const loginForm = document.getElementById("login-form");
-  const message = document.getElementById("auth-message");
-  const panel = document.getElementById("member-panel");
-
-  function showMessage(text) {
-    message.textContent = text;
-  }
-
-  signupForm.addEventListener("submit", async function (event) {
-    event.preventDefault();
-    showMessage("Creating account...");
-
-    const fullName = document.getElementById("signup-name").value.trim();
-    const email = document.getElementById("signup-email").value.trim();
-    const password = document.getElementById("signup-password").value;
-
-    
-const { error } = await supabaseClient.auth.signUp({
-  email: email,
-  password: password,
-  options: {
-    data: {
-      full_name: fullName
-    }
-  }
-});
-
-    if (error) {
-      showMessage("Signup failed: " + error.message);
-      return;
-    }
-
-    showMessage(
-      "Signup request successful. If email confirmation is required, verify your email, then log in. Your account needs admin approval."
+  const pending =
+    (data || []).filter(
+      member =>
+        !member.approved &&
+        !member.is_admin
     );
-    signupForm.reset();
+
+
+  if(!pending.length){
+
+    box.innerHTML =
+      "কোনো Pending Member নেই ✅";
+
+    return;
+  }
+
+
+  box.innerHTML = "";
+
+
+  pending.forEach(member => {
+
+    const card =
+      document.createElement("div");
+
+    card.className =
+      "admin-box";
+
+
+    const name =
+      document.createElement("strong");
+
+    name.textContent =
+      member.full_name ||
+      "No Name";
+
+
+    const email =
+      document.createElement("div");
+
+    email.textContent =
+      "Email: " +
+      (member.email || "Email নেই");
+
+
+    const status =
+      document.createElement("div");
+
+    status.textContent =
+      "Status: Pending";
+
+
+    const approveButton =
+      document.createElement("button");
+
+    approveButton.textContent =
+      "✅ Approve";
+
+
+    approveButton.onclick =
+      function(){
+
+        approveMember(
+          member.id
+        );
+
+      };
+
+
+    const rejectButton =
+      document.createElement("button");
+
+    rejectButton.textContent =
+      "❌ Reject";
+
+    rejectButton.className =
+      "danger";
+
+
+    rejectButton.onclick =
+      function(){
+
+        rejectMember(
+          member.id
+        );
+
+      };
+
+
+    card.appendChild(name);
+
+    card.appendChild(
+      document.createElement("br")
+    );
+
+    card.appendChild(email);
+
+    card.appendChild(status);
+
+    card.appendChild(
+      document.createElement("br")
+    );
+
+    card.appendChild(
+      approveButton
+    );
+
+    card.appendChild(
+      rejectButton
+    );
+
+
+    box.appendChild(card);
+
   });
 
-  loginForm.addEventListener("submit", async function (event) {
-    event.preventDefault();
-    showMessage("Checking account...");
-    panel.hidden = true;
-
-    const email = document.getElementById("login-email").value.trim();
-    const password = document.getElementById("login-password").value;
-
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
-      email: email,
-      password: password
-    });
-
-    if (error) {
-      showMessage("Login failed: " + error.message);
-      return;
-    }
-
-    const user = data.user;
-
-    const { data: profile, error: profileError } =
-      await supabaseClient
-        .from("profiles")
-        .select("full_name, approved, is_admin")
-        .eq("id", user.id)
-        .maybeSingle();
-
-    
-
-if (profileError || !profile) {
-  console.error("Profile loading error:", profileError);
-  showMessage(
-    "Profile error: " +
-    (profileError ? profileError.message : "Profile not found")
-  );
-  return;
 }
 
-    if (!profile.approved) {
-      await supabaseClient.auth.signOut();
-      showMessage("Your account is waiting for admin approval.");
-      return;
-    }
-    
-   showMessage("Login successful!");
-    document.getElementById("member-welcome").textContent =
-      "Welcome, " + (profile.full_name || user.email) + "!";
 
-    document.getElementById("member-role").textContent =
-      profile.is_admin ? "Administrator account" : "Approved member";
+/* =========================
+   APPROVE MEMBER
+========================= */
 
-    panel.hidden = false;
-    loginForm.reset();
-  });
+async function approveMember(id){
 
-  document.getElementById("logout-button").addEventListener("click", async function () {
-    const { error } = await supabaseClient.auth.signOut();
+  const {
+    data,
+    error
+  } = await supabaseClient
 
-    panel.hidden = true;
-    showMessage(error ? error.message : "You have logged out.");
-  });
-})();
-</script>
+    .rpc(
+      "admin_set_member_approval",
+      {
+        target_id: id,
+        make_approved: true
+      }
+    );
 
-</body>
-  
-<script>
-async function loadMembersList() {
-  const box = document.getElementById("membersList");
 
-  const { data, error } = await supabaseClient
+  if(error){
+
+    alert(
+      "Approve Error: " +
+      error.message
+    );
+
+    return;
+  }
+
+
+  if(data !== true){
+
+    alert(
+      "সদস্যের রেকর্ড পাওয়া যায়নি অথবা পরিবর্তন হয়নি।"
+    );
+
+    return;
+  }
+
+
+  alert(
+    "সদস্যকে সফলভাবে Approved করা হয়েছে! ✅"
+  );
+
+
+  await loadPendingMembers();
+
+  await loadMemberStats();
+
+  await loadMembersList();
+
+}
+
+
+/* =========================
+   REJECT MEMBER
+========================= */
+
+async function rejectMember(id){
+
+  const confirmReject =
+    confirm(
+      "এই সদস্যকে Reject করতে চান?"
+    );
+
+
+  if(!confirmReject){
+    return;
+  }
+
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+
+    .rpc(
+      "admin_set_member_approval",
+      {
+        target_id: id,
+        make_approved: false
+      }
+    );
+
+
+  if(error){
+
+    alert(
+      "Reject Error: " +
+      error.message
+    );
+
+    return;
+  }
+
+
+  if(data !== true){
+
+    alert(
+      "সদস্যের রেকর্ড পাওয়া যায়নি।"
+    );
+
+    return;
+  }
+
+
+  alert(
+    "Member Rejected ❌"
+  );
+
+
+  await loadPendingMembers();
+
+  await loadMemberStats();
+
+}
+
+
+/* =========================
+   MEMBER STATS
+========================= */
+
+async function loadMemberStats(){
+
+  const {
+    count: total
+  } = await supabaseClient
+
     .from("profiles")
-    .select("id, full_name, phone, batch, class_name, bio, profile_photo")
-    .eq("approved", true)
-    .eq("is_admin", false)
-    .order("full_name");
 
-  if (error) {
-    box.textContent = "সদস্যদের তথ্য লোড হয়নি: " + error.message;
+    .select(
+      "*",
+      {
+        count:"exact",
+        head:true
+      }
+    );
+
+
+  const {
+    count: pending
+  } = await supabaseClient
+
+    .from("profiles")
+
+    .select(
+      "*",
+      {
+        count:"exact",
+        head:true
+      }
+    )
+
+    .eq(
+      "approved",
+      false
+    )
+
+    .eq(
+      "is_admin",
+      false
+    );
+
+
+  const {
+    count: approved
+  } = await supabaseClient
+
+    .from("profiles")
+
+    .select(
+      "*",
+      {
+        count:"exact",
+        head:true
+      }
+    )
+
+    .eq(
+      "approved",
+      true
+    )
+
+    .eq(
+      "is_admin",
+      false
+    );
+
+
+  document
+    .getElementById(
+      "totalMembers"
+    )
+    .textContent =
+      total ?? 0;
+
+
+  document
+    .getElementById(
+      "pendingCount"
+    )
+    .textContent =
+      pending ?? 0;
+
+
+  document
+    .getElementById(
+      "approvedCount"
+    )
+    .textContent =
+      approved ?? 0;
+
+}
+
+
+/* =========================
+   SAVE PROFILE
+========================= */
+
+async function saveName(){
+
+  const name =
+    document
+      .getElementById(
+        "username"
+      )
+      .value
+      .trim();
+
+
+  const phone =
+    document
+      .getElementById(
+        "phone"
+      )
+      .value
+      .trim();
+
+
+  if(!name){
+
+    alert(
+      "আগে তোমার নাম লেখো।"
+    );
+
     return;
   }
 
-  if (!data || data.length === 0) {
-    box.textContent = "এখনো কোনো অনুমোদিত সদস্য নেই।";
+
+  const {
+    data: { user },
+    error: userError
+  } =
+    await supabaseClient
+      .auth
+      .getUser();
+
+
+  if(userError || !user){
+
+    alert(
+      "আগে Login করো।"
+    );
+
     return;
   }
+
+
+  const {
+    error
+  } = await supabaseClient
+
+    .from("profiles")
+
+    .update({
+      full_name:name,
+      phone:phone
+    })
+
+    .eq(
+      "id",
+      user.id
+    );
+
+
+  if(error){
+
+    alert(
+      "প্রোফাইল সেভ হয়নি: " +
+      error.message
+    );
+
+    return;
+  }
+
+
+  myName =
+    name;
+
+
+  document
+    .getElementById(
+      "welcome"
+    )
+    .textContent =
+      "স্বাগতম, " +
+      myName +
+      "!";
+
+
+  document
+    .getElementById(
+      "notice"
+    )
+    .textContent =
+      "প্রোফাইল সেভ হয়েছে ✅";
+
+
+  await loadMembersList();
+
+
+  alert(
+    "প্রোফাইল সেভ হয়েছে!"
+  );
+
+}
+
+
+/* =========================
+   MEMBERS LIST
+========================= */
+
+async function loadMembersList(){
+
+  const box =
+    document.getElementById(
+      "membersList"
+    );
+
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+
+    .from("profiles")
+
+    .select(
+      "id, full_name, phone, batch, class_name, bio, profile_photo"
+    )
+
+    .eq(
+      "approved",
+      true
+    )
+
+    .eq(
+      "is_admin",
+      false
+    )
+
+    .order(
+      "full_name"
+    );
+
+
+  if(error){
+
+    box.textContent =
+      "সদস্যদের তথ্য লোড হয়নি: " +
+      error.message;
+
+    return;
+  }
+
+
+  if(
+    !data ||
+    data.length === 0
+  ){
+
+    box.textContent =
+      "এখনো কোনো অনুমোদিত সদস্য নেই।";
+
+    return;
+  }
+
 
   box.replaceChildren();
 
-  data.forEach(member => {
-    const card = document.createElement("div");
-    card.style.cssText =
-      "padding:12px;margin:10px 0;border:1px solid #ddd;border-radius:10px";
 
-    const name = document.createElement("h4");
-    name.textContent = member.full_name || "নাম দেওয়া হয়নি";
-    card.appendChild(name);
+  data.forEach(
+    member => {
 
-    const phone = document.createElement("p");
-    phone.textContent = "📱 ফোন: " + (member.phone || "দেওয়া হয়নি");
-    card.appendChild(phone);
+      const card =
+        document.createElement(
+          "div"
+        );
 
-    if (member.batch) {
-      const batch = document.createElement("p");
-      batch.textContent = "🎓 ব্যাচ: " + member.batch;
-      card.appendChild(batch);
+      card.className =
+        "member-card";
+
+
+      const name =
+        document.createElement(
+          "h4"
+        );
+
+      name.textContent =
+        member.full_name ||
+        "নাম দেওয়া হয়নি";
+
+
+      card.appendChild(name);
+
+
+      const phone =
+        document.createElement(
+          "p"
+        );
+
+      phone.textContent =
+        "📱 ফোন: " +
+        (
+          member.phone ||
+          "দেওয়া হয়নি"
+        );
+
+
+      card.appendChild(phone);
+
+
+      if(member.batch){
+
+        const batch =
+          document.createElement(
+            "p"
+          );
+
+        batch.textContent =
+          "🎓 ব্যাচ: " +
+          member.batch;
+
+        card.appendChild(
+          batch
+        );
+
+      }
+
+
+      if(member.class_name){
+
+        const cls =
+          document.createElement(
+            "p"
+          );
+
+        cls.textContent =
+          "📚 ক্লাস: " +
+          member.class_name;
+
+        card.appendChild(
+          cls
+        );
+
+      }
+
+
+      if(member.bio){
+
+        const bio =
+          document.createElement(
+            "p"
+          );
+
+        bio.textContent =
+          "📝 " +
+          member.bio;
+
+        card.appendChild(
+          bio
+        );
+
+      }
+
+
+      box.appendChild(card);
+
     }
+  );
 
-    if (member.class_name) {
-      const cls = document.createElement("p");
-      cls.textContent = "📚 ক্লাস: " + member.class_name;
-      card.appendChild(cls);
-    }
-
-    if (member.bio) {
-      const bio = document.createElement("p");
-      bio.textContent = "📝 " + member.bio;
-      card.appendChild(bio);
-    }
-
-    box.appendChild(card);
-  });
 }
 
-loadMembersList();
-</script>
-</body>
-</html>
 
+/* =========================
+   POSTS
+========================= */
+
+function addPost(){
+
+  const field =
+    document.getElementById(
+      "postText"
+    );
+
+
+  const text =
+    field.value.trim();
+
+
+  if(!text){
+
+    alert(
+      "পোস্টে কিছু লিখো।"
+    );
+
+    return;
+  }
+
+
+  posts.unshift({
+
+    name:myName,
+
+    text:text,
+
+    likes:0,
+
+    comments:[]
+
+  });
+
+
+  field.value = "";
+
+
+  renderPosts();
+
+
+  document
+    .getElementById(
+      "notice"
+    )
+    .textContent =
+      "তোমার পোস্ট প্রকাশিত হয়েছে।";
+
+}
+
+
+function likePost(i){
+
+  posts[i].likes++;
+
+  renderPosts();
+
+}
+
+
+function commentPost(i){
+
+  const input =
+    document.getElementById(
+      "comment" + i
+    );
+
+
+  const text =
+    input.value.trim();
+
+
+  if(!text){
+
+    alert(
+      "আগে কমেন্ট লেখো।"
+    );
+
+    return;
+  }
+
+
+  posts[i]
+    .comments
+    .push(text);
+
+
+  renderPosts();
+
+
+  document
+    .getElementById(
+      "notice"
+    )
+    .textContent =
+      "কমেন্ট যোগ হয়েছে।";
+
+}
+
+
+function renderPosts(){
+
+  const feed =
+    document.getElementById(
+      "feed"
+    );
+
+
+  feed.innerHTML = "";
+
+
+  posts.forEach(
+    (post,i) => {
+
+      const card =
+        document.createElement(
+          "article"
+        );
+
+      card.className =
+        "card";
+
+
+      const head =
+        document.createElement(
+          "div"
+        );
+
+      head.className =
+        "post-head";
+
+
+      const avatar =
+        document.createElement(
+          "div"
+        );
+
+      avatar.className =
+        "avatar";
+
+
+      avatar.textContent =
+        post.name
+          .charAt(0)
+          .toUpperCase();
+
+
+      const details =
+        document.createElement(
+          "div"
+        );
+
+
+      const name =
+        document.createElement(
+          "strong"
+        );
+
+
+      name.textContent =
+        post.name;
+
+
+      const time =
+        document.createElement(
+          "div"
+        );
+
+
+      time.className =
+        "muted";
+
+
+      time.textContent =
+        "এইমাত্র • Members";
+
+
+      details.append(
+        name,
+        time
+      );
+
+
+      head.append(
+        avatar,
+        details
+      );
+
+
+      const body =
+        document.createElement(
+          "div"
+        );
+
+
+      body.className =
+        "post-body";
+
+
+      body.textContent =
+        post.text;
+
+
+      const stats =
+        document.createElement(
+          "p"
+        );
+
+
+      stats.className =
+        "muted";
+
+
+      stats.textContent =
+        "👍 " +
+        post.likes +
+        " Likes • " +
+        post.comments.length +
+        " Comments";
+
+
+      const like =
+        document.createElement(
+          "button"
+        );
+
+
+      like.className =
+        "secondary";
+
+
+      like.textContent =
+        "👍 Like";
+
+
+      like.onclick =
+        () =>
+          likePost(i);
+
+
+      const commentInput =
+        document.createElement(
+          "input"
+        );
+
+
+      commentInput.id =
+        "comment" + i;
+
+
+      commentInput.placeholder =
+        "একটি কমেন্ট লেখো...";
+
+
+      const commentButton =
+        document.createElement(
+          "button"
+        );
+
+
+      commentButton.textContent =
+        "Comment";
+
+
+      commentButton.onclick =
+        () =>
+          commentPost(i);
+
+
+      card.append(
+        head,
+        body,
+        stats,
+        like,
+        commentInput,
+        commentButton
+      );
+
+
+      post.comments.forEach(
+        comment => {
+
+          const line =
+            document.createElement(
+              "p"
+            );
+
+
+          line.className =
+            "muted";
+
+
+          line.textContent =
+            "💬 " +
+            comment;
+
+
+          card.appendChild(
+            line
+          );
+
+        }
+      );
+
+
+      feed.appendChild(card);
+
+    }
+  );
+
+}
+
+
+/* =========================
+   AUTH
+========================= */
+
+(function(){
+
+  const signupForm =
+    document.getElementById(
+      "signup-form"
+    );
+
+
+  const loginForm =
+    document.getElementById(
+      "login-form"
+    );
+
+
+  const message =
+    document.getElementById(
+      "auth-message"
+    );
+
+
+  const panel =
+    document.getElementById(
+      "member-panel"
+    );
+
+
+  function showMessage(text){
+
+    message.textContent =
+      text;
+
+  }
+
+
+  /* SIGNUP */
+
+  signupForm.addEventListener(
+    "submit",
+    async function(event){
+
+      event.preventDefault();
+
+
+      showMessage(
+        "Creating account..."
+      );
+
+
+      const fullName =
+        document
+          .getElementById(
+            "signup-name"
+          )
+          .value
+          .trim();
+
+
+      const email =
+        document
+          .getElementById(
+            "signup-email"
+          )
+          .value
+          .trim();
+
+
+      const password =
+        document
+          .getElementById(
+            "signup-password"
+          )
+          .value;
+
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .auth
+          .signUp({
+
+            email:email,
+
+            password:password,
+
+            options:{
+              data:{
+                full_name:
+                  fullName
+              }
+            }
+
+          });
+
+
+      if(error){
+
+        showMessage(
+          "Signup failed: " +
+          error.message
+        );
+
+        return;
+      }
+
+
+      showMessage(
+        "Signup successful. আপনার account এখন Admin approval-এর অপেক্ষায় আছে।"
+      );
+
+
+      signupForm.reset();
+
+    }
+  );
+
+
+  /* LOGIN */
+
+  loginForm.addEventListener(
+    "submit",
+    async function(event){
+
+      event.preventDefault();
+
+
+      showMessage(
+        "Checking account..."
+      );
+
+
+      panel.hidden =
+        true;
+
+
+      const email =
+        document
+          .getElementById(
+            "login-email"
+          )
+          .value
+          .trim();
+
+
+      const password =
+        document
+          .getElementById(
+            "login-password"
+          )
+          .value;
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .auth
+          .signInWithPassword({
+
+            email:email,
+
+            password:password
+
+          });
+
+
+      if(error){
+
+        showMessage(
+          "Login failed: " +
+          error.message
+        );
+
+        return;
+      }
+
+
+      const user =
+        data.user;
+
+
+      const {
+        data:profile,
+        error:profileError
+      } =
+        await supabaseClient
+
+          .from("profiles")
+
+          .select(
+            "full_name, approved, is_admin"
+          )
+
+          .eq(
+            "id",
+            user.id
+          )
+
+          .maybeSingle();
+
+
+      if(
+        profileError ||
+        !profile
+      ){
+
+        console.error(
+          "Profile error:",
+          profileError
+        );
+
+
+        showMessage(
+          "Profile error: " +
+          (
+            profileError
+              ? profileError.message
+              : "Profile not found"
+          )
+        );
+
+        return;
+      }
+
+
+      if(!profile.approved){
+
+        await supabaseClient
+          .auth
+          .signOut();
+
+
+        showMessage(
+          "Your account is waiting for admin approval."
+        );
+
+        return;
+      }
+
+
+      myName =
+        profile.full_name ||
+        user.email;
+
+
+      document
+        .getElementById(
+          "member-welcome"
+        )
+        .textContent =
+          "Welcome, " +
+          myName +
+          "!";
+
+
+      document
+        .getElementById(
+          "member-role"
+        )
+        .textContent =
+          profile.is_admin
+            ? "Administrator account"
+            : "Approved member";
+
+
+      panel.hidden =
+        false;
+
+
+      showMessage(
+        "Login successful! ✅"
+      );
+
+
+      loginForm.reset();
+
+
+      /* Load profile fields */
+
+      document
+        .getElementById(
+          "username"
+        )
+        .value =
+          profile.full_name || "";
+
+
+      await loadMembersList();
+
+
+      if(
+        profile.is_admin &&
+        profile.approved
+      ){
+
+        await loadAdminDashboard();
+
+      }
+
+    }
+  );
+
+
+  /* LOGOUT */
+
+  document
+    .getElementById(
+      "logout-button"
+    )
+    .addEventListener(
+      "click",
+      async function(){
+
+        const {
+          error
+        } =
+          await supabaseClient
+            .auth
+            .signOut();
+
+
+        panel.hidden =
+          true;
+
+
+        document
+          .getElementById(
+            "adminDashboard"
+          )
+          .style.display =
+            "none";
+
+
+        showMessage(
+          error
+            ? error.message
+            : "You have logged out."
+        );
+
+      }
+    );
+
+})();
+
+
+/* =========================
+   INITIAL LOAD
+========================= */
+
+loadMembersList();
+
+</script>
+
+</body>
 </html>
