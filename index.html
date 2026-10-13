@@ -322,7 +322,41 @@ console.log("Supabase connection ready.");
 >
 
   <h3>👥 Fighters Members</h3>
+<div class="card" id="editProfileCard">
+  <h3>✏️ Edit My Profile</h3>
 
+  <label>পুরো নাম</label>
+  <input id="editFullName" type="text" placeholder="আপনার পুরো নাম">
+
+  <label>ফোন নম্বর</label>
+  <input id="editPhone" type="tel" placeholder="আপনার ফোন নম্বর">
+
+  <label>ব্যাচ</label>
+  <input id="editBatch" type="text" placeholder="আপনার ব্যাচ">
+
+  <label>ক্লাস</label>
+  <input id="editClass" type="text" placeholder="আপনার ক্লাস">
+
+  <label>রক্তের গ্রুপ</label>
+  <select id="editBloodGroup">
+    <option value="">নির্বাচন করুন</option>
+    <option value="A+">A+</option>
+    <option value="A-">A-</option>
+    <option value="B+">B+</option>
+    <option value="B-">B-</option>
+    <option value="O+">O+</option>
+    <option value="O-">O-</option>
+    <option value="AB+">AB+</option>
+    <option value="AB-">AB-</option>
+  </select>
+
+  <label>নিজের সম্পর্কে</label>
+  <textarea id="editBio" placeholder="আপনার সম্পর্কে লিখুন"></textarea>
+
+  <button onclick="saveMyProfile()">প্রোফাইল সংরক্ষণ করুন</button>
+
+  <p id="editProfileMessage"></p>
+</div>
   <div id="membersList">
     সদস্যদের তথ্য লোড হচ্ছে...
   </div>
