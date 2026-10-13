@@ -314,7 +314,16 @@ async function saveMyProfile() {
       .update(profileData)
       .eq("id", currentUser.id);
 
-    if (error) throw error;
+    
+if (error) {
+  console.log("Login error details:", error);
+  throw new Error(
+    "Code: " + (error.code || "unknown") +
+    " | Status: " + (error.status || "unknown") +
+    " | Message: " + error.message
+  );
+}
+
 
     currentProfile = { ...currentProfile, ...profileData };
     $("username").value = profileData.full_name;
