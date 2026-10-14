@@ -507,7 +507,9 @@ async function loadMembersList() {
 
   const { data, error } = await supabaseClient
     .from("profiles")
-    .select("id, full_name, phone, batch, class_name, blood_group, bio")
+    
+.select("id, full_name, phone, batch, class_name, blood_group, bio, profile_photo")
+
     .eq("approved", true)
     .eq("is_admin", false)
     .order("full_name");
