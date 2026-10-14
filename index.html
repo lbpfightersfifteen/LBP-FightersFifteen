@@ -407,18 +407,33 @@ async function saveName() {
   await loadMembersList();
   alert("প্রোফাইল সেভ হয়েছে!");
 }
-function openMemberProfile(member) {
-  const details = [
-    "👤 " + (member.full_name || "নাম দেওয়া হয়নি"),
-    member.phone ? "📱 ফোন: " + member.phone : "",
-    member.batch ? "🎓 ব্যাচ: " + member.batch : "",
-    member.class_name ? "📚 ক্লাস: " + member.class_name : "",
-    member.blood_group ? "🩸 রক্তের গ্রুপ: " + member.blood_group : "",
-    member.bio ? "📝 " + member.bio : ""
-  ].filter(Boolean);
 
-  alert(details.join("\n"));
+function openMemberProfile(member) {
+  $("fullProfileAvatar").textContent =
+    (member.full_name || "F").charAt(0).toUpperCase();
+
+  $("fullProfileName").textContent =
+    member.full_name || "নাম দেওয়া হয়নি";
+
+  $("fullProfileBatch").textContent =
+    "🎓 ব্যাচ: " + (member.batch || "দেওয়া হয়নি");
+
+  $("fullProfileClass").textContent =
+    "📚 ক্লাস: " + (member.class_name || "দেওয়া হয়নি");
+
+  $("fullProfileBlood").textContent =
+    "🩸 রক্তের গ্রুপ: " + (member.blood_group || "দেওয়া হয়নি");
+
+  $("fullProfilePhone").textContent =
+    "📱 ফোন: " + (member.phone || "দেওয়া হয়নি");
+
+  $("fullProfileBio").textContent =
+    member.bio || "কোনো তথ্য দেওয়া হয়নি।";
+
+  $("membersList").hidden = true;
+  $("fullProfilePage").hidden = false;
 }
+
 /* MEMBERS DIRECTORY */
 async function loadMembersList() {
   const box = $("membersList");
