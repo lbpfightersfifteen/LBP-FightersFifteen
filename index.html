@@ -47,6 +47,14 @@ button.danger{background:#d93025}
 button:disabled{opacity:.6;cursor:wait}
 .muted{color:#65676b;font-size:13px}
 .member-card,.admin-box{
+  .member-card{
+  cursor:pointer;
+  transition:transform .15s,box-shadow .15s
+}
+.member-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px #00000018
+}
   padding:12px;margin:10px 0;border:1px solid #ddd;
   border-radius:10px;background:#fff;overflow-wrap:anywhere
 }
