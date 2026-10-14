@@ -417,7 +417,7 @@ async function loadMembersList() {
   data.forEach(member => {
     const card = document.createElement("div");
     card.className = "member-card";
-
+card.addEventListener("click", () => openMemberProfile(member));
     const name = document.createElement("h4");
     name.textContent = member.full_name || "নাম দেওয়া হয়নি";
     card.appendChild(name);
