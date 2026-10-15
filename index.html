@@ -504,18 +504,30 @@ async function openMemberProfile(member) {
 const avatar = $("fullProfileAvatar");
 avatar.replaceChildren();
 
+
 if (member.profile_photo) {
-  const img = document.createElement("img");
-  img.src = member.profile_photo;
-  img.alt = "সদস্যের প্রোফাইল ছবি";
-  img.style.width = "100%";
-  img.style.height = "100%";
-  img.style.objectFit = "cover";
-  avatar.appendChild(img);
+  const { data: photoData, error: photoError } =
+    await supabaseClient.storage
+      .from("profile-photos")
+      .createSignedUrl(member.profile_photo, 3600);
+
+  if (photoError) {
+    console.error("Profile photo error:", photoError);
+    avatar.textContent = "ছবি লোড হয়নি";
+  } else {
+    const img = document.createElement("img");
+    img.src = photoData.signedUrl;
+    img.alt = "সদস্যের প্রোফাইল ছবি";
+    img.style.width = "100%";
+    img.style.height = "100%";
+    img.style.objectFit = "cover";
+    avatar.appendChild(img);
+  }
 } else {
   avatar.textContent =
     (member.full_name || "F").charAt(0).toUpperCase();
 }
+
 
   $("fullProfileName").textContent =
     member.full_name || "নাম দেওয়া হয়নি";
