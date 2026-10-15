@@ -6,115 +6,285 @@
 <title>LBP Fighters Fifteen</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
+
 body{
-  margin:0;font-family:Arial,sans-serif;
-  background:#f0f2f5;color:#202124
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f0f2f5;
+  color:#202124;
 }
+
 header{
-  background:#123d78;color:white;padding:16px;
-  position:sticky;top:0;z-index:5
+  background:#123d78;
+  color:white;
+  padding:16px;
+  position:sticky;
+  top:0;
+  z-index:5;
 }
-header h2{margin:0}
-header p{margin:5px 0 0;font-size:13px}
+
+header h2{
+  margin:0;
+}
+
+header p{
+  margin:5px 0 0;
+  font-size:13px;
+}
+
 nav{
-  display:flex;gap:12px;overflow:auto;
-  padding:12px;background:white
+  display:flex;
+  gap:12px;
+  overflow:auto;
+  padding:12px;
+  background:white;
 }
+
 nav a{
-  color:#174ea6;text-decoration:none;
-  font-weight:bold;white-space:nowrap
+  color:#174ea6;
+  text-decoration:none;
+  font-weight:bold;
+  white-space:nowrap;
 }
-main{max-width:700px;margin:18px auto;padding:0 12px}
+
+main{
+  max-width:700px;
+  margin:18px auto;
+  padding:0 12px;
+}
+
 .card{
-  background:white;border-radius:12px;
-  padding:16px;margin-bottom:14px;
-  box-shadow:0 2px 8px #0000000d
+  background:white;
+  border-radius:12px;
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:0 2px 8px #0000000d;
 }
-input,textarea,select{
-  width:100%;padding:12px;border:1px solid #ccd0d5;
-  border-radius:8px;margin:6px 0;font-size:15px;
-  background:white
+
+input,
+textarea,
+select{
+  width:100%;
+  padding:12px;
+  border:1px solid #ccd0d5;
+  border-radius:8px;
+  margin:6px 0;
+  font-size:15px;
+  background:white;
 }
-textarea{resize:vertical}
+
+textarea{
+  resize:vertical;
+}
+
 button{
-  border:0;border-radius:8px;padding:10px 14px;
-  background:#1769d2;color:white;font-weight:bold;
-  cursor:pointer;margin:4px 3px 4px 0
-}
-button.secondary{background:#e4e6eb;color:#222}
-button.danger{background:#d93025}
-button:disabled{opacity:.6;cursor:wait}
-.muted{color:#65676b;font-size:13px}
-.member-card,.admin-box{
-  .member-card{
+  border:0;
+  border-radius:8px;
+  padding:10px 14px;
+  background:#1769d2;
+  color:white;
+  font-weight:bold;
   cursor:pointer;
-  transition:transform .15s,box-shadow .15s
-}
-  
-/* Full member profile design */
-#fullProfilePage {
-  margin-top: 18px;
-  padding: 22px;
-  border-radius: 18px;
-  background: linear-gradient(145deg, #ffffff, #eef4ff);
-  border: 1px solid #dbe5f5;
-  box-shadow: 0 8px 24px #1e3a5f12;
+  margin:4px 3px 4px 0;
 }
 
-#fullProfilePage h2 {
-  margin: 12px 0 6px;
-  color: #173b72;
-  font-size: 25px;
+button.secondary{
+  background:#e4e6eb;
+  color:#222;
 }
 
-#fullProfilePage h3 {
-  color: #173b72;
+button.danger{
+  background:#d93025;
 }
 
-#fullProfilePage p {
-  padding: 10px 12px;
-  margin: 8px 0;
-  border-radius: 10px;
-  background: #ffffff;
-  overflow-wrap: anywhere;
+button:disabled{
+  opacity:.6;
+  cursor:wait;
 }
 
-#fullProfileAvatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #174ea6, #4285f4);
-  color: white;
-  font-weight: bold;
-  border: 4px solid white;
-  box-shadow: 0 4px 12px #174ea633;
+.muted{
+  color:#65676b;
+  font-size:13px;
+}
+
+/* Member cards */
+.member-card,
+.admin-box{
+  padding:12px;
+  margin:10px 0;
+  border:1px solid #ddd;
+  border-radius:10px;
+  background:#fff;
+  overflow-wrap:anywhere;
+}
+
+.member-card{
+  cursor:pointer;
+  transition:transform .15s,box-shadow .15s;
 }
 
 .member-card:hover{
   transform:translateY(-2px);
-  box-shadow:0 4px 12px #00000018
+  box-shadow:0 4px 12px #00000018;
 }
-  padding:12px;margin:10px 0;border:1px solid #ddd;
-  border-radius:10px;background:#fff;overflow-wrap:anywhere
+
+/* Member card top */
+.member-card-head{
+  display:flex;
+  align-items:center;
+  gap:12px;
 }
-.stats{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+
+.member-avatar{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#174ea6,#4285f4);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  font-size:20px;
+  overflow:hidden;
+  flex-shrink:0;
+}
+
+.member-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* Full member profile */
+#fullProfilePage{
+  margin-top:18px;
+  padding:22px;
+  border-radius:18px;
+  background:linear-gradient(145deg,#ffffff,#eef4ff);
+  border:1px solid #dbe5f5;
+  box-shadow:0 8px 24px #1e3a5f12;
+}
+
+#fullProfilePage h2{
+  margin:12px 0 6px;
+  color:#173b72;
+  font-size:25px;
+  text-align:center;
+}
+
+#fullProfilePage h3{
+  color:#173b72;
+}
+
+#fullProfilePage p{
+  padding:10px 12px;
+  margin:8px 0;
+  border-radius:10px;
+  background:#ffffff;
+  overflow-wrap:anywhere;
+}
+
+#fullProfileAvatar{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:linear-gradient(135deg,#174ea6,#4285f4);
+  color:white;
+  font-weight:bold;
+  border:4px solid white;
+  box-shadow:0 4px 12px #174ea633;
+}
+
+#fullProfileAvatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+}
+
+/* Stats */
+.stats{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:20px 0;
+}
+
 .stat{
-  padding:15px;border:1px solid #ddd;border-radius:10px;
-  background:white;min-width:120px;flex:1
+  padding:15px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  background:white;
+  min-width:120px;
+  flex:1;
 }
-.stat h2{margin:8px 0 0}
-.post-head{display:flex;align-items:center;gap:10px}
+
+.stat h2{
+  margin:8px 0 0;
+}
+
+/* Posts */
+.post-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
 .avatar{
-  background:#174ea6;color:white;border-radius:50%;
-  width:42px;height:42px;display:grid;place-items:center;
-  font-weight:bold;flex-shrink:0
+  background:#174ea6;
+  color:white;
+  border-radius:50%;
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  font-weight:bold;
+  flex-shrink:0;
+  overflow:hidden;
 }
-.post-body{white-space:pre-wrap;line-height:1.5;margin:15px 0}
-footer{text-align:center;padding:25px;color:#65676b;font-size:13px}
-#adminDashboard,#memberArea{display:none}
-[hidden]{display:none!important}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.post-body{
+  white-space:pre-wrap;
+  line-height:1.5;
+  margin:15px 0;
+}
+
+footer{
+  text-align:center;
+  padding:25px;
+  color:#65676b;
+  font-size:13px;
+}
+
+#adminDashboard,
+#memberArea{
+  display:none;
+}
+
+[hidden]{
+  display:none!important;
+}
+
+.message-success{
+  color:#188038;
+  font-weight:bold;
+}
+
+.message-error{
+  color:#d93025;
+  font-weight:bold;
+}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -134,58 +304,156 @@ footer{text-align:center;padding:25px;color:#65676b;font-size:13px}
   <a href="#notifications">🔔 Notifications</a>
 </nav>
 
+<!-- ADMIN DASHBOARD -->
 <section id="adminDashboard"
   style="max-width:700px;margin:20px auto;padding:0 12px">
+
   <div class="card">
+
     <h2>🛡️ Admin Dashboard</h2>
+
     <div class="stats">
-      <div class="stat">👥 Total Members<h2 id="totalMembers">0</h2></div>
-      <div class="stat">⏳ Pending<h2 id="pendingCount">0</h2></div>
-      <div class="stat">✅ Approved<h2 id="approvedCount">0</h2></div>
+
+      <div class="stat">
+        👥 Total Members
+        <h2 id="totalMembers">0</h2>
+      </div>
+
+      <div class="stat">
+        ⏳ Pending
+        <h2 id="pendingCount">0</h2>
+      </div>
+
+      <div class="stat">
+        ✅ Approved
+        <h2 id="approvedCount">0</h2>
+      </div>
+
     </div>
+
     <h3>⏳ Pending Members</h3>
-    <div id="pendingMembers">লোড হচ্ছে...</div>
+
+    <div id="pendingMembers">
+      লোড হচ্ছে...
+    </div>
+
   </div>
+
 </section>
 
+<!-- MAIN -->
 <main id="home">
 
+  <!-- BASIC PROFILE -->
   <section class="card" id="profile">
+
     <h3>👤 তোমার প্রোফাইল</h3>
-    <input id="username" placeholder="তোমার নাম লিখো">
-    <input id="phone" type="tel" placeholder="তোমার ফোন নম্বর">
-    <button type="button" id="saveBasicProfile">নাম ও ফোন সেভ করো</button>
-    <p id="welcome" class="muted">লগইন করার পর তোমার প্রোফাইল দেখা যাবে।</p>
+
+    <input
+      id="username"
+      placeholder="তোমার নাম লিখো"
+    >
+
+    <input
+      id="phone"
+      type="tel"
+      placeholder="তোমার ফোন নম্বর"
+    >
+
+    <button
+      type="button"
+      id="saveBasicProfile"
+    >
+      নাম ও ফোন সেভ করো
+    </button>
+
+    <p id="welcome" class="muted">
+      লগইন করার পর তোমার প্রোফাইল দেখা যাবে।
+    </p>
+
   </section>
 
+
+  <!-- MEMBERS -->
   <section class="card" id="members">
+
     <h3>👥 Fighters Members</h3>
 
+
+    <!-- EDIT PROFILE -->
     <div id="editProfileCard" hidden>
+
       <h3>✏️ Edit My Profile</h3>
 
-      <label for="editFullName">পুরো নাম</label>
-      <input id="editFullName" type="text" placeholder="আপনার পুরো নাম">
+      <label for="editFullName">
+        পুরো নাম
+      </label>
 
-      <label for="editPhone">ফোন নম্বর</label>
-      <input id="editPhone" type="tel" placeholder="আপনার ফোন নম্বর">
+      <input
+        id="editFullName"
+        type="text"
+        placeholder="আপনার পুরো নাম"
+      >
 
-<label for="profilePhotoFile">প্রোফাইল ছবি বেছে নাও</label>
-<input
-  type="file"
-  id="profilePhotoFile"
-  accept="image/*"
->
 
-      <label for="editBatch">ব্যাচ</label>
-      <input id="editBatch" type="text" placeholder="আপনার ব্যাচ">
+      <label for="editPhone">
+        ফোন নম্বর
+      </label>
 
-      <label for="editClass">ক্লাস</label>
-      <input id="editClass" type="text" placeholder="আপনার ক্লাস">
+      <input
+        id="editPhone"
+        type="tel"
+        placeholder="আপনার ফোন নম্বর"
+      >
 
-      <label for="editBloodGroup">রক্তের গ্রুপ</label>
+
+      <label for="profilePhotoFile">
+        প্রোফাইল ছবি বেছে নাও
+      </label>
+
+      <input
+        type="file"
+        id="profilePhotoFile"
+        accept="image/*"
+      >
+
+      <p class="muted">
+        সর্বোচ্চ ২ MB • JPG/PNG/WebP ছবি ব্যবহার করুন
+      </p>
+
+
+      <label for="editBatch">
+        ব্যাচ
+      </label>
+
+      <input
+        id="editBatch"
+        type="text"
+        placeholder="আপনার ব্যাচ"
+      >
+
+
+      <label for="editClass">
+        ক্লাস
+      </label>
+
+      <input
+        id="editClass"
+        type="text"
+        placeholder="আপনার ক্লাস"
+      >
+
+
+      <label for="editBloodGroup">
+        রক্তের গ্রুপ
+      </label>
+
       <select id="editBloodGroup">
-        <option value="">নির্বাচন করুন</option>
+
+        <option value="">
+          নির্বাচন করুন
+        </option>
+
         <option value="A+">A+</option>
         <option value="A-">A-</option>
         <option value="B+">B+</option>
@@ -194,788 +462,2595 @@ footer{text-align:center;padding:25px;color:#65676b;font-size:13px}
         <option value="O-">O-</option>
         <option value="AB+">AB+</option>
         <option value="AB-">AB-</option>
+
       </select>
 
-      <label for="editBio">নিজের সম্পর্কে</label>
-      <textarea id="editBio" placeholder="আপনার সম্পর্কে লিখুন"></textarea>
 
-      <button type="button" id="saveProfileButton">প্রোফাইল সংরক্ষণ করুন</button>
-      <p id="editProfileMessage" role="status"></p>
+      <label for="editBio">
+        নিজের সম্পর্কে
+      </label>
+
+      <textarea
+        id="editBio"
+        placeholder="আপনার সম্পর্কে লিখুন"
+        rows="4"
+      ></textarea>
+
+
+      <button
+        type="button"
+        id="saveProfileButton"
+      >
+        প্রোফাইল সংরক্ষণ করুন
+      </button>
+
+      <p
+        id="editProfileMessage"
+        role="status"
+      ></p>
+
     </div>
 
-<div id="fullProfilePage" class="card" hidden>
-  <button type="button" id="closeFullProfile" class="secondary">
-    ← সদস্যদের তালিকায় ফিরে যাও
-  </button>
 
-<div id="fullProfileAvatar" class="avatar"
-  style="width:90px;height:90px;margin:auto;font-size:32px;overflow:hidden">
-  F
-</div>
+    <!-- FULL PROFILE -->
+    <div
+      id="fullProfilePage"
+      class="card"
+      hidden
+    >
 
-    <h2 id="fullProfileName">সদস্যের নাম</h2>
-    <p id="fullProfileBatch" class="muted">ব্যাচ</p>
-  </div>
+      <button
+        type="button"
+        id="closeFullProfile"
+        class="secondary"
+      >
+        ← সদস্যদের তালিকায় ফিরে যাও
+      </button>
 
-  <hr>
 
-  <p id="fullProfileClass">📚 ক্লাস: —</p>
-  <p id="fullProfileBlood">🩸 রক্তের গ্রুপ: —</p>
-  <p id="fullProfilePhone">📱 ফোন: —</p>
+      <div
+        id="fullProfileAvatar"
+        class="avatar"
+        style="
+          width:90px;
+          height:90px;
+          margin:15px auto;
+          font-size:32px;
+        "
+      >
+        F
+      </div>
 
-  <h3>নিজের সম্পর্কে</h3>
-  <p id="fullProfileBio">কোনো তথ্য দেওয়া হয়নি।</p>
-</div>
 
-    <div id="membersList">সদস্যদের দেখতে লগইন করুন।</div>
+      <h2 id="fullProfileName">
+        সদস্যের নাম
+      </h2>
+
+      <p
+        id="fullProfileBatch"
+        class="muted"
+        style="text-align:center"
+      >
+        🎓 ব্যাচ
+      </p>
+
+
+      <hr>
+
+
+      <p id="fullProfileClass">
+        📚 ক্লাস: —
+      </p>
+
+      <p id="fullProfileBlood">
+        🩸 রক্তের গ্রুপ: —
+      </p>
+
+      <p id="fullProfilePhone">
+        📱 ফোন: —
+      </p>
+
+
+      <h3>
+        নিজের সম্পর্কে
+      </h3>
+
+      <p id="fullProfileBio">
+        কোনো তথ্য দেওয়া হয়নি।
+      </p>
+
+    </div>
+
+
+    <!-- MEMBERS LIST -->
+    <div id="membersList">
+      সদস্যদের দেখতে লগইন করুন।
+    </div>
+
   </section>
 
-  <section class="card" id="postSection" hidden>
+
+  <!-- POST -->
+  <section
+    class="card"
+    id="postSection"
+    hidden
+  >
+
     <h3>📝 নতুন পোস্ট তৈরি করো</h3>
-    <textarea id="postText" rows="3" placeholder="তোমার মনের কথা শেয়ার করো..."></textarea>
-    <button type="button" id="publishPost">Post প্রকাশ করো</button>
+
+    <textarea
+      id="postText"
+      rows="3"
+      placeholder="তোমার মনের কথা শেয়ার করো..."
+    ></textarea>
+
+    <button
+      type="button"
+      id="publishPost"
+    >
+      Post প্রকাশ করো
+    </button>
+
   </section>
 
-  <section class="card" id="notifications">
+
+  <!-- NOTIFICATIONS -->
+  <section
+    class="card"
+    id="notifications"
+  >
+
     <h3>🔔 Notifications</h3>
-    <p id="notice" class="muted">লগইন করে শুরু করো।</p>
+
+    <p
+      id="notice"
+      class="muted"
+    >
+      লগইন করে শুরু করো।
+    </p>
+
   </section>
 
-  <h3>🌐 News Feed</h3>
+
+  <h3>
+    🌐 News Feed
+  </h3>
+
   <section id="feed"></section>
 
 </main>
 
-<section id="member-auth"
-  style="max-width:420px;margin:30px auto;padding:20px;
-  border:1px solid #ddd;border-radius:12px;background:white">
 
-  <h2>LBP Fighters Fifteen</h2>
-  <p>Member Signup / Login</p>
+<!-- AUTH -->
+<section
+  id="member-auth"
+  style="
+    max-width:420px;
+    margin:30px auto;
+    padding:20px;
+    border:1px solid #ddd;
+    border-radius:12px;
+    background:white
+  "
+>
 
-  <h3>Create Account</h3>
+  <h2>
+    LBP Fighters Fifteen
+  </h2>
+
+  <p>
+    Member Signup / Login
+  </p>
+
+
+  <!-- SIGNUP -->
+  <h3>
+    Create Account
+  </h3>
+
   <form id="signup-form">
-    <input id="signup-name" type="text" placeholder="Full name" required>
-    <input id="signup-email" type="email" placeholder="Email address" required>
-    <input id="signup-password" type="password"
-      placeholder="Password (at least 6 characters)" minlength="6" required>
-    <button type="submit" id="signupButton">Sign Up</button>
+
+    <input
+      id="signup-name"
+      type="text"
+      placeholder="Full name"
+      required
+    >
+
+    <input
+      id="signup-email"
+      type="email"
+      placeholder="Email address"
+      required
+    >
+
+    <input
+      id="signup-password"
+      type="password"
+      placeholder="Password (at least 6 characters)"
+      minlength="6"
+      required
+    >
+
+    <button
+      type="submit"
+      id="signupButton"
+    >
+      Sign Up
+    </button>
+
   </form>
+
 
   <hr style="margin:22px 0">
 
-  <h3>Member Login</h3>
+
+  <!-- LOGIN -->
+  <h3>
+    Member Login
+  </h3>
+
   <form id="login-form">
-    <input id="login-email" type="email" placeholder="Email address" required>
-    <input id="login-password" type="password" placeholder="Password" required>
-    <button type="submit" id="loginButton">Login</button>
+
+    <input
+      id="login-email"
+      type="email"
+      placeholder="Email address"
+      required
+    >
+
+    <input
+      id="login-password"
+      type="password"
+      placeholder="Password"
+      required
+    >
+
+    <button
+      type="submit"
+      id="loginButton"
+    >
+      Login
+    </button>
+
   </form>
 
-  <p id="auth-message" role="status" style="overflow-wrap:anywhere"></p>
 
+  <p
+    id="auth-message"
+    role="status"
+    style="overflow-wrap:anywhere"
+  ></p>
+
+
+  <!-- MEMBER PANEL -->
   <div id="member-panel" hidden>
+
     <h3 id="member-welcome"></h3>
+
     <p id="member-role"></p>
-    <button id="logout-button" type="button" class="secondary">Logout</button>
+
+    <button
+      id="logout-button"
+      type="button"
+      class="secondary"
+    >
+      Logout
+    </button>
+
   </div>
+
 </section>
 
-<footer>© 2026 LBP Fighters Fifteen • Abdur Rahman</footer>
+
+<footer>
+  © 2026 LBP Fighters Fifteen • Abdur Rahman
+</footer>
+
 
 <script>
 "use strict";
 
-/* SUPABASE */
-const SUPABASE_URL = "https://dxravisfaihtjfchlpmp.supabase.co";
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+  "https://dxravisfaihtjfchlpmp.supabase.co";
+
 const SUPABASE_PUBLISHABLE_KEY =
   "sb_publishable_9HpG7KTdDtygTP7z90gyew_lM9H4tCB";
 
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
+
+/* =========================================================
+   GLOBAL VARIABLES
+========================================================= */
 
 let currentUser = null;
 let currentProfile = null;
 let posts = [];
 
-const $ = id => document.getElementById(id);
 
-function setAuthMessage(text) {
-  $("auth-message").textContent = text;
+/* =========================================================
+   HELPER
+========================================================= */
+
+const $ = id =>
+  document.getElementById(id);
+
+
+function setAuthMessage(text, type = "") {
+
+  const box = $("auth-message");
+
+  box.textContent = text;
+
+  box.className =
+    type === "success"
+      ? "message-success"
+      : type === "error"
+        ? "message-error"
+        : "";
+
 }
+
 
 function setNotice(text) {
+
   $("notice").textContent = text;
+
 }
+
+
+/* =========================================================
+   SHOW MEMBER AREA
+========================================================= */
 
 function showMemberArea(profile) {
-  $("memberArea")?.style && ($("memberArea").style.display = "block");
-  $("member-auth").querySelector("#member-panel").hidden = false;
+
+  $("member-panel").hidden = false;
+
   $("member-welcome").textContent =
-    "Welcome, " + (profile.full_name || currentUser.email) + "!";
-  $("member-role").textContent = profile.is_admin
-    ? "Administrator account"
-    : "Approved member";
+    "Welcome, " +
+    (profile.full_name || currentUser.email) +
+    "!";
+
+  $("member-role").textContent =
+    profile.is_admin
+      ? "Administrator account"
+      : "Approved member";
+
 
   $("editProfileCard").hidden = false;
+
   $("postSection").hidden = false;
-  $("username").value = profile.full_name || "";
-  $("phone").value = profile.phone || "";
-  $("welcome").textContent = "স্বাগতম, " +
-    (profile.full_name || currentUser.email) + "!";
+
+
+  $("username").value =
+    profile.full_name || "";
+
+  $("phone").value =
+    profile.phone || "";
+
+
+  $("welcome").textContent =
+    "স্বাগতম, " +
+    (profile.full_name || currentUser.email) +
+    "!";
+
 }
+
+
+/* =========================================================
+   HIDE MEMBER AREA
+========================================================= */
 
 function hideMemberArea() {
+
   $("member-panel").hidden = true;
-  $("adminDashboard").style.display = "none";
-  $("editProfileCard").hidden = true;
-  $("postSection").hidden = true;
+
+  $("adminDashboard").style.display =
+    "none";
+
+  $("editProfileCard").hidden =
+    true;
+
+  $("postSection").hidden =
+    true;
+
+
+  $("fullProfilePage").hidden =
+    true;
+
+  $("membersList").hidden =
+    false;
+
+
   $("username").value = "";
+
   $("phone").value = "";
-  $("welcome").textContent = "লগইন করার পর তোমার প্রোফাইল দেখা যাবে।";
-  $("membersList").textContent = "সদস্যদের দেখতে লগইন করুন।";
+
+
+  $("welcome").textContent =
+    "লগইন করার পর তোমার প্রোফাইল দেখা যাবে।";
+
+
+  $("membersList").textContent =
+    "সদস্যদের দেখতে লগইন করুন।";
+
 }
 
-/* LOAD PROFILE */
+
+/* =========================================================
+   LOAD MY PROFILE
+========================================================= */
+
 async function loadMyProfile() {
+
   if (!currentUser) return;
 
-  const { data, error } = await supabaseClient
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+
     .from("profiles")
-    .select("full_name, phone, batch, class_name, blood_group, bio")
+
+    .select(
+      "full_name, phone, batch, class_name, blood_group, bio, profile_photo"
+    )
+
     .eq("id", currentUser.id)
+
     .maybeSingle();
 
+
   if (error) {
-    console.error("Profile load error:", error.message);
-    alert("প্রোফাইল লোডের সমস্যা: " + error.message);
+
+    console.error(
+      "Profile load error:",
+      error.message
+    );
+
     $("editProfileMessage").textContent =
-      "প্রোফাইল লোড হয়নি: " + error.message;
+      "প্রোফাইল লোড হয়নি: " +
+      error.message;
+
     return;
   }
+
 
   if (!data) return;
 
-  $("editFullName").value = data.full_name || "";
-  $("editPhone").value = data.phone || "";
-  $("editBatch").value = data.batch || "";
-  $("editClass").value = data.class_name || "";
-  $("editBloodGroup").value = data.blood_group || "";
-  $("editBio").value = data.bio || "";
+
+  $("editFullName").value =
+    data.full_name || "";
+
+  $("editPhone").value =
+    data.phone || "";
+
+  $("editBatch").value =
+    data.batch || "";
+
+  $("editClass").value =
+    data.class_name || "";
+
+  $("editBloodGroup").value =
+    data.blood_group || "";
+
+  $("editBio").value =
+    data.bio || "";
+
 }
 
-/* SAVE FULL PROFILE */
+
+/* =========================================================
+   SAVE FULL PROFILE
+========================================================= */
+
 async function saveMyProfile() {
+
   if (!currentUser) {
-    $("editProfileMessage").textContent = "আগে লগইন করুন।";
+
+    $("editProfileMessage").textContent =
+      "আগে লগইন করুন।";
+
     return;
   }
+
 
   const profileData = {
-    full_name: $("editFullName").value.trim(),
-    phone: $("editPhone").value.trim(),
-    batch: $("editBatch").value.trim(),
-    class_name: $("editClass").value.trim(),
-    blood_group: $("editBloodGroup").value,
-    bio: $("editBio").value.trim()
+
+    full_name:
+      $("editFullName").value.trim(),
+
+    phone:
+      $("editPhone").value.trim(),
+
+    batch:
+      $("editBatch").value.trim(),
+
+    class_name:
+      $("editClass").value.trim(),
+
+    blood_group:
+      $("editBloodGroup").value,
+
+    bio:
+      $("editBio").value.trim()
+
   };
 
+
   if (!profileData.full_name) {
-    $("editProfileMessage").textContent = "আপনার পুরো নাম লিখুন।";
+
+    $("editProfileMessage").textContent =
+      "আপনার পুরো নাম লিখুন।";
+
     return;
   }
 
-  $("saveProfileButton").disabled = true;
-  $("editProfileMessage").textContent = "সংরক্ষণ হচ্ছে...";
+
+  const button =
+    $("saveProfileButton");
+
+
+  button.disabled = true;
+
+
+  $("editProfileMessage").textContent =
+    "প্রোফাইল সংরক্ষণ হচ্ছে...";
+
 
   try {
-    
-const photoFile = $("profilePhotoFile").files[0];
-    console.log("Selected photo:", photoFile);
 
-if (photoFile) {
-  if (!photoFile.type.startsWith("image/")) {
-    throw new Error("শুধু ছবির ফাইল নির্বাচন করো।");
-  }
+    /* -----------------------------------------------------
+       PHOTO UPLOAD
+    ----------------------------------------------------- */
 
-  if (photoFile.size > 2 * 1024 * 1024) {
-    throw new Error("ছবির সাইজ ২ MB-এর কম হতে হবে।");
-  }
+    const photoInput =
+      $("profilePhotoFile");
 
-  const fileExt = photoFile.name.split(".").pop();
-  const filePath = currentUser.id + "/" + Date.now() + "." + fileExt;
-
-  const { data: uploadData, error: uploadError } =
-  await supabaseClient.storage
-    .from("profile-photos")
-    .upload(filePath, photoFile, {
-  upsert: true
-});
-if (uploadError) {
-  $("editProfileMessage").textContent =
-    "UPLOAD ERROR: " + uploadError.message;
-  throw uploadError;
-}
- 
-const { data: urlData, error: urlError } =
-  await supabaseClient.storage
-    .from("profile-photos")
-    .createSignedUrl(uploadData.path, 60 * 60);
+    const photoFile =
+      photoInput.files &&
+      photoInput.files[0];
 
 
-if (urlError) {
-  console.log("Signed URL error:", urlError);
-  throw urlError;
-}
-console.log("Photo path:", uploadData.path);
+    if (photoFile) {
 
-profileData.profile_photo = uploadData.path;
-console.log("Saving photo path:", profileData.profile_photo);
-}
-
-    const { error } = await supabaseClient
-      .from("profiles")
-      .update(profileData)
-      .eq("id", currentUser.id);
-
-    
-if (error) {
-  console.log("Login error details:", error);
-  throw new Error(
-    "Code: " + (error.code || "unknown") +
-    " | Status: " + (error.status || "unknown") +
-    " | Message: " + error.message
-  );
-}
+      console.log(
+        "Selected photo:",
+        photoFile.name
+      );
 
 
-    currentProfile = { ...currentProfile, ...profileData };
-    $("username").value = profileData.full_name;
-    $("phone").value = profileData.phone;
-    $("welcome").textContent = "স্বাগতম, " + profileData.full_name + "!";
-    $("member-welcome").textContent = "Welcome, " + profileData.full_name + "!";
+      /* File type */
 
-    $("editProfileMessage").textContent = "প্রোফাইল সফলভাবে সংরক্ষিত হয়েছে! ✅";
-    await loadMembersList();
-  } catch (error) {
+      if (
+        !photoFile.type.startsWith("image/")
+      ) {
+
+        throw new Error(
+          "শুধু ছবির ফাইল নির্বাচন করুন।"
+        );
+
+      }
+
+
+      /* File size */
+
+      if (
+        photoFile.size >
+        2 * 1024 * 1024
+      ) {
+
+        throw new Error(
+          "ছবির সাইজ ২ MB-এর কম হতে হবে।"
+        );
+
+      }
+
+
+      /* Extension */
+
+      let fileExt =
+        photoFile.name
+          .split(".")
+          .pop()
+          .toLowerCase();
+
+
+      if (
+        !["jpg","jpeg","png","webp"]
+          .includes(fileExt)
+      ) {
+
+        throw new Error(
+          "JPG, PNG অথবা WebP ছবি ব্যবহার করুন।"
+        );
+
+      }
+
+
+      /* Unique path */
+
+      const filePath =
+        currentUser.id +
+        "/" +
+        Date.now() +
+        "." +
+        fileExt;
+
+
+      console.log(
+        "Uploading:",
+        filePath
+      );
+
+
+      const {
+        data: uploadData,
+        error: uploadError
+      } =
+        await supabaseClient.storage
+
+          .from("profile-photos")
+
+          .upload(
+            filePath,
+            photoFile,
+            {
+              upsert:true,
+              contentType:photoFile.type
+            }
+          );
+
+
+      if (uploadError) {
+
+        console.error(
+          "Upload error:",
+          uploadError
+        );
+
+        throw new Error(
+          "ছবি আপলোড হয়নি: " +
+          uploadError.message
+        );
+
+      }
+
+
+      if (
+        !uploadData ||
+        !uploadData.path
+      ) {
+
+        throw new Error(
+          "ছবি আপলোড হয়েছে কিন্তু path পাওয়া যায়নি।"
+        );
+
+      }
+
+
+      console.log(
+        "Photo uploaded:",
+        uploadData.path
+      );
+
+
+      /*
+        IMPORTANT:
+        এখানে signed URL তৈরি করছি না।
+        Database-এ শুধু storage path save হবে।
+      */
+
+      profileData.profile_photo =
+        uploadData.path;
+
+
+      console.log(
+        "Saving photo path:",
+        profileData.profile_photo
+      );
+
+    }
+
+
+    /* -----------------------------------------------------
+       UPDATE PROFILE
+    ----------------------------------------------------- */
+
+    const {
+      data: updatedProfile,
+      error: updateError
+    } =
+      await supabaseClient
+
+        .from("profiles")
+
+        .update(profileData)
+
+        .eq("id", currentUser.id)
+
+        .select(
+          "id, full_name, phone, batch, class_name, blood_group, bio, profile_photo, approved, is_admin"
+        )
+
+        .maybeSingle();
+
+
+    if (updateError) {
+
+      console.error(
+        "Profile update error:",
+        updateError
+      );
+
+      throw new Error(
+        "প্রোফাইল সেভ হয়নি: " +
+        updateError.message
+      );
+
+    }
+
+
+    if (!updatedProfile) {
+
+      throw new Error(
+        "প্রোফাইল আপডেট করা যায়নি। RLS policy পরীক্ষা করুন।"
+      );
+
+    }
+
+
+    /* -----------------------------------------------------
+       UPDATE LOCAL PROFILE
+    ----------------------------------------------------- */
+
+    currentProfile = {
+      ...currentProfile,
+      ...updatedProfile
+    };
+
+
+    $("username").value =
+      updatedProfile.full_name || "";
+
+    $("phone").value =
+      updatedProfile.phone || "";
+
+
+    $("welcome").textContent =
+      "স্বাগতম, " +
+      (updatedProfile.full_name || "") +
+      "!";
+
+
+    $("member-welcome").textContent =
+      "Welcome, " +
+      (updatedProfile.full_name || "") +
+      "!";
+
+
     $("editProfileMessage").textContent =
-      "সমস্যা হয়েছে: " + error.message;
+      updatedProfile.profile_photo
+        ? "প্রোফাইল ও ছবি সফলভাবে সংরক্ষণ হয়েছে! ✅"
+        : "প্রোফাইল সফলভাবে সংরক্ষণ হয়েছে! ✅";
+
+
+    $("editProfileMessage")
+      .className =
+      "message-success";
+
+
+    /* Clear file input */
+
+    photoInput.value = "";
+
+
+    /* Reload member list */
+
+    await loadMembersList();
+
+
+  } catch (error) {
+
+    console.error(
+      "Save profile error:",
+      error
+    );
+
+
+    $("editProfileMessage").textContent =
+      "সমস্যা হয়েছে: " +
+      error.message;
+
+
+    $("editProfileMessage")
+      .className =
+      "message-error";
+
+
   } finally {
-    $("saveProfileButton").disabled = false;
+
+    button.disabled = false;
+
   }
+
 }
 
-/* SAVE BASIC PROFILE */
+
+/* =========================================================
+   SAVE BASIC PROFILE
+========================================================= */
+
 async function saveName() {
+
   if (!currentUser) {
+
     alert("আগে Login করুন।");
+
     return;
   }
 
-  const name = $("username").value.trim();
-  const phone = $("phone").value.trim();
+
+  const name =
+    $("username").value.trim();
+
+  const phone =
+    $("phone").value.trim();
+
 
   if (!name) {
+
     alert("আগে তোমার নাম লেখো।");
+
     return;
   }
 
-  const { error } = await supabaseClient
-    .from("profiles")
-    .update({ full_name: name, phone })
-    .eq("id", currentUser.id);
+
+  const {
+    error
+  } =
+    await supabaseClient
+
+      .from("profiles")
+
+      .update({
+        full_name:name,
+        phone:phone
+      })
+
+      .eq("id", currentUser.id);
+
 
   if (error) {
-    alert("প্রোফাইল সেভ হয়নি: " + error.message);
+
+    alert(
+      "প্রোফাইল সেভ হয়নি: " +
+      error.message
+    );
+
     return;
   }
 
-  currentProfile.full_name = name;
-  currentProfile.phone = phone;
-  $("editFullName").value = name;
-  $("editPhone").value = phone;
-  $("welcome").textContent = "স্বাগতম, " + name + "!";
-  setNotice("প্রোফাইল সেভ হয়েছে ✅");
-  await loadMembersList();
-  alert("প্রোফাইল সেভ হয়েছে!");
-}
 
-async function openMemberProfile(member) {
-  
-const avatar = $("fullProfileAvatar");
-avatar.replaceChildren();
+  currentProfile.full_name =
+    name;
+
+  currentProfile.phone =
+    phone;
 
 
-if (member.profile_photo) {
-  const { data: photoData, error: photoError } =
-    await supabaseClient.storage
-      .from("profile-photos")
-      .createSignedUrl(member.profile_photo, 3600);
+  $("editFullName").value =
+    name;
 
-  if (photoError) {
-    console.error("Profile photo error:", photoError);
-    avatar.textContent = "ছবি লোড হয়নি";
-  } else {
-    const img = document.createElement("img");
-    img.src = photoData.signedUrl;
-    img.alt = "সদস্যের প্রোফাইল ছবি";
-    img.style.width = "100%";
-    img.style.height = "100%";
-    img.style.objectFit = "cover";
-    avatar.appendChild(img);
-  }
-} else {
-  avatar.textContent =
-    (member.full_name || "F").charAt(0).toUpperCase();
-}
+  $("editPhone").value =
+    phone;
 
 
-  $("fullProfileName").textContent =
-    member.full_name || "নাম দেওয়া হয়নি";
+  $("welcome").textContent =
+    "স্বাগতম, " +
+    name +
+    "!";
 
-  $("fullProfileBatch").textContent =
-    "🎓 ব্যাচ: " + (member.batch || "দেওয়া হয়নি");
 
-  $("fullProfileClass").textContent =
-    "📚 ক্লাস: " + (member.class_name || "দেওয়া হয়নি");
-
-  $("fullProfileBlood").textContent =
-    "🩸 রক্তের গ্রুপ: " + (member.blood_group || "দেওয়া হয়নি");
-
-  $("fullProfilePhone").textContent =
-    "📱 ফোন: " + (member.phone || "দেওয়া হয়নি");
-
-  $("fullProfileBio").textContent =
-    member.bio || "কোনো তথ্য দেওয়া হয়নি।";
-
-  $("membersList").hidden = true;
-  $("fullProfilePage").hidden = false;
-}
-
-$("closeFullProfile").addEventListener("click", () => {
-  $("fullProfilePage").hidden = true;
-  $("membersList").hidden = false;
-});
-
-/* MEMBERS DIRECTORY */
-async function loadMembersList() {
-  const box = $("membersList");
-
-  if (!currentUser || !currentProfile?.approved) {
-    box.textContent = "সদস্যদের দেখতে অনুমোদিত লগইন প্রয়োজন।";
-    return;
-  }
-
-  box.textContent = "সদস্যদের তথ্য লোড হচ্ছে...";
-
-  const { data, error } = await supabaseClient
-    .from("profiles")
-    
-.select("id, full_name, phone, batch, class_name, blood_group, bio, profile_photo")
-
-    .eq("approved", true)
-    .eq("is_admin", false)
-    .order("full_name");
-
-  if (error) {
-    box.textContent = "সদস্যদের তথ্য লোড হয়নি: " + error.message;
-    return;
-  }
-
-  box.replaceChildren();
-
-  if (!data || data.length === 0) {
-    box.textContent = "এখনো কোনো অনুমোদিত সদস্য নেই।";
-    return;
-  }
-
-  data.forEach(member => {
-    const card = document.createElement("div");
-    card.className = "member-card";
-card.addEventListener("click", () => openMemberProfile(member));
-    const name = document.createElement("h4");
-    name.textContent = member.full_name || "নাম দেওয়া হয়নি";
-    card.appendChild(name);
-
-    if (member.phone) {
-      const p = document.createElement("p");
-      p.textContent = "📱 ফোন: " + member.phone;
-      card.appendChild(p);
-    }
-
-    if (member.batch) {
-      const p = document.createElement("p");
-      p.textContent = "🎓 ব্যাচ: " + member.batch;
-      card.appendChild(p);
-    }
-
-    if (member.class_name) {
-      const p = document.createElement("p");
-      p.textContent = "📚 ক্লাস: " + member.class_name;
-      card.appendChild(p);
-    }
-
-    if (member.blood_group) {
-      const p = document.createElement("p");
-      p.textContent = "🩸 রক্তের গ্রুপ: " + member.blood_group;
-      card.appendChild(p);
-    }
-
-    if (member.bio) {
-      const p = document.createElement("p");
-      p.textContent = "📝 " + member.bio;
-      card.appendChild(p);
-    }
-
-    box.appendChild(card);
-  });
-}
-
-/* ADMIN DASHBOARD */
-async function loadAdminDashboard() {
-  if (!currentProfile?.is_admin || !currentProfile?.approved) return;
-
-  $("adminDashboard").style.display = "block";
-  await loadPendingMembers();
-  await loadMemberStats();
-}
-
-async function loadPendingMembers() {
-  const box = $("pendingMembers");
-  box.textContent = "সদস্যদের তথ্য লোড হচ্ছে...";
-
-  const { data, error } = await supabaseClient.rpc("admin_list_members");
-
-  if (error) {
-    box.textContent = "Members load error: " + error.message;
-    return;
-  }
-
-  const allMembers = (data || []).filter(member => !member.is_admin);
-  const pending = allMembers.filter(member => !member.approved);
-
-  box.replaceChildren();
-
-  if (!pending.length) {
-    box.textContent = "কোনো Pending Member নেই ✅";
-    return;
-  }
-
-  pending.forEach(member => {
-    const card = document.createElement("div");
-    card.className = "admin-box";
-
-    const name = document.createElement("strong");
-    name.textContent = member.full_name || "No Name";
-
-    const email = document.createElement("p");
-    email.textContent = "Email: " + (member.email || "Email নেই");
-
-    const status = document.createElement("p");
-    status.textContent = "Status: Pending";
-
-    const approve = document.createElement("button");
-    approve.textContent = "✅ Approve";
-    approve.addEventListener("click", () => changeApproval(member.id, true));
-
-    const reject = document.createElement("button");
-    reject.textContent = "❌ Reject";
-    reject.className = "danger";
-    reject.addEventListener("click", () => changeApproval(member.id, false));
-
-    card.append(name, email, status, approve, reject);
-    box.appendChild(card);
-  });
-}
-
-async function changeApproval(id, approved) {
-  if (!currentProfile?.is_admin || !currentProfile?.approved) {
-    alert("শুধু অনুমোদিত Admin এই কাজ করতে পারবেন।");
-    return;
-  }
-
-  if (!approved && !confirm("এই সদস্যকে Reject করতে চান?")) return;
-
-  const { data, error } = await supabaseClient.rpc(
-    "admin_set_member_approval",
-    { target_id: id, make_approved: approved }
+  setNotice(
+    "প্রোফাইল সেভ হয়েছে ✅"
   );
 
+
+  await loadMembersList();
+
+
+  alert(
+    "প্রোফাইল সেভ হয়েছে!"
+  );
+
+}
+
+
+/* =========================================================
+   GET PROFILE PHOTO URL
+========================================================= */
+
+async function getProfilePhotoUrl(
+  photoPath
+) {
+
+  if (!photoPath) {
+    return null;
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient.storage
+
+      .from("profile-photos")
+
+      .createSignedUrl(
+        photoPath,
+        60 * 60
+      );
+
+
   if (error) {
-    alert("সমস্যা হয়েছে: " + error.message);
+
+    console.error(
+      "Signed URL error:",
+      error
+    );
+
+    return null;
+  }
+
+
+  return data?.signedUrl || null;
+
+}
+
+
+/* =========================================================
+   OPEN MEMBER PROFILE
+========================================================= */
+
+async function openMemberProfile(
+  member
+) {
+
+  const avatar =
+    $("fullProfileAvatar");
+
+
+  avatar.replaceChildren();
+
+
+  /* -----------------------------------------------------
+     PROFILE PHOTO
+  ----------------------------------------------------- */
+
+  if (member.profile_photo) {
+
+    const photoUrl =
+      await getProfilePhotoUrl(
+        member.profile_photo
+      );
+
+
+    if (photoUrl) {
+
+      const img =
+        document.createElement("img");
+
+
+      img.src =
+        photoUrl;
+
+      img.alt =
+        "সদস্যের প্রোফাইল ছবি";
+
+
+      avatar.appendChild(img);
+
+    } else {
+
+      avatar.textContent =
+        (
+          member.full_name ||
+          "F"
+        )
+        .charAt(0)
+        .toUpperCase();
+
+    }
+
+  } else {
+
+    avatar.textContent =
+      (
+        member.full_name ||
+        "F"
+      )
+      .charAt(0)
+      .toUpperCase();
+
+  }
+
+
+  /* -----------------------------------------------------
+     PROFILE INFORMATION
+  ----------------------------------------------------- */
+
+  $("fullProfileName").textContent =
+    member.full_name ||
+    "নাম দেওয়া হয়নি";
+
+
+  $("fullProfileBatch").textContent =
+    "🎓 ব্যাচ: " +
+    (
+      member.batch ||
+      "দেওয়া হয়নি"
+    );
+
+
+  $("fullProfileClass").textContent =
+    "📚 ক্লাস: " +
+    (
+      member.class_name ||
+      "দেওয়া হয়নি"
+    );
+
+
+  $("fullProfileBlood").textContent =
+    "🩸 রক্তের গ্রুপ: " +
+    (
+      member.blood_group ||
+      "দেওয়া হয়নি"
+    );
+
+
+  $("fullProfilePhone").textContent =
+    "📱 ফোন: " +
+    (
+      member.phone ||
+      "দেওয়া হয়নি"
+    );
+
+
+  $("fullProfileBio").textContent =
+    member.bio ||
+    "কোনো তথ্য দেওয়া হয়নি।";
+
+
+  $("membersList").hidden =
+    true;
+
+  $("fullProfilePage").hidden =
+    false;
+
+
+  $("fullProfilePage")
+    .scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+
+}
+
+
+/* =========================================================
+   CLOSE MEMBER PROFILE
+========================================================= */
+
+$("closeFullProfile")
+  .addEventListener(
+    "click",
+    () => {
+
+      $("fullProfilePage").hidden =
+        true;
+
+      $("membersList").hidden =
+        false;
+
+      $("members")
+        .scrollIntoView({
+          behavior:"smooth",
+          block:"start"
+        });
+
+    }
+  );
+
+
+/* =========================================================
+   MEMBERS DIRECTORY
+========================================================= */
+
+async function loadMembersList() {
+
+  const box =
+    $("membersList");
+
+
+  if (
+    !currentUser ||
+    !currentProfile?.approved
+  ) {
+
+    box.textContent =
+      "সদস্যদের দেখতে অনুমোদিত লগইন প্রয়োজন।";
+
     return;
   }
+
+
+  box.textContent =
+    "সদস্যদের তথ্য লোড হচ্ছে...";
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+
+      .from("profiles")
+
+      .select(
+        "id, full_name, phone, batch, class_name, blood_group, bio, profile_photo"
+      )
+
+      .eq("approved", true)
+
+      .eq("is_admin", false)
+
+      .order(
+        "full_name",
+        {
+          ascending:true
+        }
+      );
+
+
+  if (error) {
+
+    box.textContent =
+      "সদস্যদের তথ্য লোড হয়নি: " +
+      error.message;
+
+    return;
+  }
+
+
+  box.replaceChildren();
+
+
+  if (
+    !data ||
+    data.length === 0
+  ) {
+
+    box.textContent =
+      "এখনো কোনো অনুমোদিত সদস্য নেই।";
+
+    return;
+  }
+
+
+  /* -----------------------------------------------------
+     CREATE MEMBER CARDS
+  ----------------------------------------------------- */
+
+  data.forEach(member => {
+
+    const card =
+      document.createElement("div");
+
+
+    card.className =
+      "member-card";
+
+
+    card.addEventListener(
+      "click",
+      () => openMemberProfile(member)
+    );
+
+
+    /* Header */
+
+    const head =
+      document.createElement("div");
+
+
+    head.className =
+      "member-card-head";
+
+
+    /* Avatar */
+
+    const avatar =
+      document.createElement("div");
+
+
+    avatar.className =
+      "member-avatar";
+
+
+    if (member.profile_photo) {
+
+      getProfilePhotoUrl(
+        member.profile_photo
+      ).then(url => {
+
+        if (!url) return;
+
+
+        const img =
+          document.createElement("img");
+
+
+        img.src =
+          url;
+
+        img.alt =
+          "Profile";
+
+
+        avatar.replaceChildren(img);
+
+      });
+
+    } else {
+
+      avatar.textContent =
+        (
+          member.full_name ||
+          "F"
+        )
+        .charAt(0)
+        .toUpperCase();
+
+    }
+
+
+    /* Name */
+
+    const nameBox =
+      document.createElement("div");
+
+
+    const name =
+      document.createElement("h4");
+
+
+    name.style.margin =
+      "0 0 4px";
+
+
+    name.textContent =
+      member.full_name ||
+      "নাম দেওয়া হয়নি";
+
+
+    nameBox.appendChild(name);
+
+
+    const batch =
+      document.createElement("p");
+
+
+    batch.className =
+      "muted";
+
+
+    batch.style.margin =
+      "0";
+
+
+    batch.textContent =
+      member.batch
+        ? "🎓 " + member.batch
+        : "ব্যাচ দেওয়া হয়নি";
+
+
+    nameBox.appendChild(batch);
+
+
+    head.append(
+      avatar,
+      nameBox
+    );
+
+
+    card.appendChild(head);
+
+
+    /* Information */
+
+    if (member.class_name) {
+
+      const p =
+        document.createElement("p");
+
+      p.textContent =
+        "📚 ক্লাস: " +
+        member.class_name;
+
+      card.appendChild(p);
+
+    }
+
+
+    if (member.blood_group) {
+
+      const p =
+        document.createElement("p");
+
+      p.textContent =
+        "🩸 রক্তের গ্রুপ: " +
+        member.blood_group;
+
+      card.appendChild(p);
+
+    }
+
+
+    box.appendChild(card);
+
+  });
+
+}
+
+
+/* =========================================================
+   ADMIN DASHBOARD
+========================================================= */
+
+async function loadAdminDashboard() {
+
+  if (
+    !currentProfile?.is_admin ||
+    !currentProfile?.approved
+  ) {
+
+    return;
+  }
+
+
+  $("adminDashboard")
+    .style.display =
+    "block";
+
+
+  await loadPendingMembers();
+
+  await loadMemberStats();
+
+}
+
+
+/* =========================================================
+   LOAD PENDING MEMBERS
+========================================================= */
+
+async function loadPendingMembers() {
+
+  const box =
+    $("pendingMembers");
+
+
+  box.textContent =
+    "সদস্যদের তথ্য লোড হচ্ছে...";
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient.rpc(
+      "admin_list_members"
+    );
+
+
+  if (error) {
+
+    box.textContent =
+      "Members load error: " +
+      error.message;
+
+    return;
+  }
+
+
+  const allMembers =
+    (data || [])
+      .filter(
+        member => !member.is_admin
+      );
+
+
+  const pending =
+    allMembers
+      .filter(
+        member => !member.approved
+      );
+
+
+  box.replaceChildren();
+
+
+  if (!pending.length) {
+
+    box.textContent =
+      "কোনো Pending Member নেই ✅";
+
+    return;
+  }
+
+
+  pending.forEach(member => {
+
+    const card =
+      document.createElement("div");
+
+
+    card.className =
+      "admin-box";
+
+
+    const name =
+      document.createElement("strong");
+
+
+    name.textContent =
+      member.full_name ||
+      "No Name";
+
+
+    const email =
+      document.createElement("p");
+
+
+    email.textContent =
+      "Email: " +
+      (
+        member.email ||
+        "Email নেই"
+      );
+
+
+    const status =
+      document.createElement("p");
+
+
+    status.textContent =
+      "Status: Pending";
+
+
+    const approve =
+      document.createElement("button");
+
+
+    approve.textContent =
+      "✅ Approve";
+
+
+    approve.addEventListener(
+      "click",
+      () =>
+        changeApproval(
+          member.id,
+          true
+        )
+    );
+
+
+    const reject =
+      document.createElement("button");
+
+
+    reject.textContent =
+      "❌ Reject";
+
+
+    reject.className =
+      "danger";
+
+
+    reject.addEventListener(
+      "click",
+      () =>
+        changeApproval(
+          member.id,
+          false
+        )
+    );
+
+
+    card.append(
+      name,
+      email,
+      status,
+      approve,
+      reject
+    );
+
+
+    box.appendChild(card);
+
+  });
+
+}
+
+
+/* =========================================================
+   CHANGE APPROVAL
+========================================================= */
+
+async function changeApproval(
+  id,
+  approved
+) {
+
+  if (
+    !currentProfile?.is_admin ||
+    !currentProfile?.approved
+  ) {
+
+    alert(
+      "শুধু অনুমোদিত Admin এই কাজ করতে পারবেন।"
+    );
+
+    return;
+  }
+
+
+  if (
+    !approved &&
+    !confirm(
+      "এই সদস্যকে Reject করতে চান?"
+    )
+  ) {
+
+    return;
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient.rpc(
+      "admin_set_member_approval",
+      {
+        target_id:id,
+        make_approved:approved
+      }
+    );
+
+
+  if (error) {
+
+    alert(
+      "সমস্যা হয়েছে: " +
+      error.message
+    );
+
+    return;
+  }
+
 
   if (data !== true) {
-    alert("সদস্যের রেকর্ড পাওয়া যায়নি অথবা পরিবর্তন হয়নি।");
+
+    alert(
+      "সদস্যের রেকর্ড পাওয়া যায়নি অথবা পরিবর্তন হয়নি।"
+    );
+
     return;
   }
 
-  alert(approved ? "সদস্য Approved হয়েছে! ✅" : "সদস্যের Approval বাতিল হয়েছে।");
+
+  alert(
+    approved
+      ? "সদস্য Approved হয়েছে! ✅"
+      : "সদস্যের Approval বাতিল হয়েছে।"
+  );
+
+
   await loadPendingMembers();
+
   await loadMemberStats();
+
   await loadMembersList();
+
 }
+
+
+/* =========================================================
+   MEMBER STATS
+========================================================= */
 
 async function loadMemberStats() {
-  const { data, error } = await supabaseClient.rpc("admin_list_members");
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient.rpc(
+      "admin_list_members"
+    );
+
 
   if (error) {
-    console.error("Stats load error:", error.message);
+
+    console.error(
+      "Stats load error:",
+      error.message
+    );
+
     return;
   }
 
-  const members = (data || []).filter(member => !member.is_admin);
 
-  $("totalMembers").textContent = members.length;
-  $("pendingCount").textContent = members.filter(m => !m.approved).length;
-  $("approvedCount").textContent = members.filter(m => m.approved).length;
+  const members =
+    (data || [])
+      .filter(
+        member => !member.is_admin
+      );
+
+
+  $("totalMembers").textContent =
+    members.length;
+
+
+  $("pendingCount").textContent =
+    members.filter(
+      m => !m.approved
+    ).length;
+
+
+  $("approvedCount").textContent =
+    members.filter(
+      m => m.approved
+    ).length;
+
 }
 
-/* POSTS — TEMPORARY, STORED IN PAGE MEMORY ONLY */
+
+/* =========================================================
+   POSTS
+========================================================= */
+
 function addPost() {
-  if (!currentUser || !currentProfile?.approved) {
-    alert("পোস্ট করতে অনুমোদিত লগইন প্রয়োজন।");
+
+  if (
+    !currentUser ||
+    !currentProfile?.approved
+  ) {
+
+    alert(
+      "পোস্ট করতে অনুমোদিত লগইন প্রয়োজন।"
+    );
+
     return;
   }
 
-  const field = $("postText");
-  const text = field.value.trim();
+
+  const field =
+    $("postText");
+
+
+  const text =
+    field.value.trim();
+
 
   if (!text) {
-    alert("পোস্টে কিছু লিখো।");
+
+    alert(
+      "পোস্টে কিছু লিখো।"
+    );
+
     return;
   }
+
 
   posts.unshift({
-    name: currentProfile.full_name || currentUser.email,
+
+    name:
+      currentProfile.full_name ||
+      currentUser.email,
+
     text,
-    likes: 0,
-    comments: []
+
+    likes:0,
+
+    comments:[]
+
   });
+
 
   field.value = "";
+
+
   renderPosts();
-  setNotice("তোমার পোস্ট প্রকাশিত হয়েছে।");
+
+
+  setNotice(
+    "তোমার পোস্ট প্রকাশিত হয়েছে।"
+  );
+
 }
+
+
+/* LIKE */
 
 function likePost(index) {
+
+  if (!posts[index]) return;
+
+
   posts[index].likes++;
+
+
   renderPosts();
+
 }
+
+
+/* COMMENT */
 
 function commentPost(index) {
-  const input = $("comment" + index);
-  const text = input.value.trim();
+
+  if (!posts[index]) return;
+
+
+  const input =
+    $("comment" + index);
+
+
+  const text =
+    input.value.trim();
+
 
   if (!text) {
-    alert("আগে কমেন্ট লেখো।");
+
+    alert(
+      "আগে কমেন্ট লেখো।"
+    );
+
     return;
   }
 
-  posts[index].comments.push(text);
+
+  posts[index]
+    .comments
+    .push(text);
+
+
   renderPosts();
-  setNotice("কমেন্ট যোগ হয়েছে।");
+
+
+  setNotice(
+    "কমেন্ট যোগ হয়েছে।"
+  );
+
 }
+
+
+/* RENDER POSTS */
 
 function renderPosts() {
-  const feed = $("feed");
+
+  const feed =
+    $("feed");
+
+
   feed.replaceChildren();
 
+
   if (!posts.length) {
-    const empty = document.createElement("p");
-    empty.className = "muted";
-    empty.textContent = "এখনো কোনো পোস্ট নেই। প্রথম পোস্টটি তুমি করো!";
+
+    const empty =
+      document.createElement("p");
+
+
+    empty.className =
+      "muted";
+
+
+    empty.textContent =
+      "এখনো কোনো পোস্ট নেই। প্রথম পোস্টটি তুমি করো!";
+
+
     feed.appendChild(empty);
+
+
     return;
   }
 
-  posts.forEach((post, i) => {
-    const card = document.createElement("article");
-    card.className = "card";
 
-    const head = document.createElement("div");
-    head.className = "post-head";
+  posts.forEach(
+    (post, i) => {
 
-    const avatar = document.createElement("div");
-    avatar.className = "avatar";
-    avatar.textContent = (post.name || "F").charAt(0).toUpperCase();
+      const card =
+        document.createElement("article");
 
-    const details = document.createElement("div");
-    const name = document.createElement("strong");
-    name.textContent = post.name;
 
-    const time = document.createElement("div");
-    time.className = "muted";
-    time.textContent = "Members";
+      card.className =
+        "card";
 
-    details.append(name, time);
-    head.append(avatar, details);
 
-    const body = document.createElement("div");
-    body.className = "post-body";
-    body.textContent = post.text;
+      /* Header */
 
-    const stats = document.createElement("p");
-    stats.className = "muted";
-    stats.textContent = "👍 " + post.likes + " Likes • " +
-      post.comments.length + " Comments";
+      const head =
+        document.createElement("div");
 
-    const like = document.createElement("button");
-    like.className = "secondary";
-    like.textContent = "👍 Like";
-    like.addEventListener("click", () => likePost(i));
 
-    const commentInput = document.createElement("input");
-    commentInput.id = "comment" + i;
-    commentInput.placeholder = "একটি কমেন্ট লেখো...";
+      head.className =
+        "post-head";
 
-    const commentButton = document.createElement("button");
-    commentButton.textContent = "Comment";
-    commentButton.addEventListener("click", () => commentPost(i));
 
-    card.append(head, body, stats, like, commentInput, commentButton);
+      const avatar =
+        document.createElement("div");
 
-    post.comments.forEach(comment => {
-      const line = document.createElement("p");
-      line.className = "muted";
-      line.textContent = "💬 " + comment;
-      card.appendChild(line);
-    });
 
-    feed.appendChild(card);
-  });
+      avatar.className =
+        "avatar";
+
+
+      avatar.textContent =
+        (
+          post.name ||
+          "F"
+        )
+        .charAt(0)
+        .toUpperCase();
+
+
+      const details =
+        document.createElement("div");
+
+
+      const name =
+        document.createElement("strong");
+
+
+      name.textContent =
+        post.name;
+
+
+      const time =
+        document.createElement("div");
+
+
+      time.className =
+        "muted";
+
+
+      time.textContent =
+        "Members";
+
+
+      details.append(
+        name,
+        time
+      );
+
+
+      head.append(
+        avatar,
+        details
+      );
+
+
+      /* Body */
+
+      const body =
+        document.createElement("div");
+
+
+      body.className =
+        "post-body";
+
+
+      body.textContent =
+        post.text;
+
+
+      /* Stats */
+
+      const stats =
+        document.createElement("p");
+
+
+      stats.className =
+        "muted";
+
+
+      stats.textContent =
+        "👍 " +
+        post.likes +
+        " Likes • " +
+        post.comments.length +
+        " Comments";
+
+
+      /* Like */
+
+      const like =
+        document.createElement("button");
+
+
+      like.className =
+        "secondary";
+
+
+      like.textContent =
+        "👍 Like";
+
+
+      like.addEventListener(
+        "click",
+        () => likePost(i)
+      );
+
+
+      /* Comment input */
+
+      const commentInput =
+        document.createElement("input");
+
+
+      commentInput.id =
+        "comment" + i;
+
+
+      commentInput.placeholder =
+        "একটি কমেন্ট লেখো...";
+
+
+      /* Comment button */
+
+      const commentButton =
+        document.createElement("button");
+
+
+      commentButton.textContent =
+        "Comment";
+
+
+      commentButton.addEventListener(
+        "click",
+        () => commentPost(i)
+      );
+
+
+      card.append(
+        head,
+        body,
+        stats,
+        like,
+        commentInput,
+        commentButton
+      );
+
+
+      /* Comments */
+
+      post.comments.forEach(
+        comment => {
+
+          const line =
+            document.createElement("p");
+
+
+          line.className =
+            "muted";
+
+
+          line.textContent =
+            "💬 " +
+            comment;
+
+
+          card.appendChild(line);
+
+        }
+      );
+
+
+      feed.appendChild(card);
+
+    }
+  );
+
 }
 
-/* SIGNUP */
-$("signup-form").addEventListener("submit", async event => {
-  event.preventDefault();
 
-  const button = $("signupButton");
-  button.disabled = true;
-  setAuthMessage("Creating account...");
+/* =========================================================
+   SIGNUP
+========================================================= */
+
+$("signup-form")
+  .addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+
+      const button =
+        $("signupButton");
+
+
+      button.disabled =
+        true;
+
+
+      setAuthMessage(
+        "Creating account..."
+      );
+
+
+      try {
+
+        const fullName =
+          $("signup-name")
+            .value
+            .trim();
+
+
+        const email =
+          $("signup-email")
+            .value
+            .trim();
+
+
+        const password =
+          $("signup-password")
+            .value;
+
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth.signUp({
+
+            email,
+
+            password,
+
+            options:{
+              data:{
+                full_name:
+                  fullName
+              }
+            }
+
+          });
+
+
+        if (error) {
+          throw error;
+        }
+
+
+        if (
+          data.user &&
+          !data.session
+        ) {
+
+          setAuthMessage(
+            "Signup সফল হয়েছে। Email verification প্রয়োজন হলে সেটি সম্পন্ন করুন; এরপর Admin approval-এর অপেক্ষা করুন।",
+            "success"
+          );
+
+        } else {
+
+          setAuthMessage(
+            "Signup সফল হয়েছে। Admin approval-এর পর লগইন করতে পারবেন।",
+            "success"
+          );
+
+        }
+
+
+        $("signup-form").reset();
+
+
+      } catch (error) {
+
+        setAuthMessage(
+          "Signup failed: " +
+          error.message,
+          "error"
+        );
+
+
+      } finally {
+
+        button.disabled =
+          false;
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+$("login-form")
+  .addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+
+      const button =
+        $("loginButton");
+
+
+      button.disabled =
+        true;
+
+
+      setAuthMessage(
+        "Checking account..."
+      );
+
+
+      $("member-panel").hidden =
+        true;
+
+
+      try {
+
+        const email =
+          $("login-email")
+            .value
+            .trim();
+
+
+        const password =
+          $("login-password")
+            .value;
+
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth
+            .signInWithPassword({
+
+              email,
+
+              password
+
+            });
+
+
+        if (error) {
+          throw error;
+        }
+
+
+        currentUser =
+          data.user;
+
+
+        const {
+          data:profile,
+          error:profileError
+        } =
+          await supabaseClient
+
+            .from("profiles")
+
+            .select(
+              "id, full_name, phone, approved, is_admin"
+            )
+
+            .eq(
+              "id",
+              currentUser.id
+            )
+
+            .maybeSingle();
+
+
+        if (profileError) {
+          throw profileError;
+        }
+
+
+        if (!profile) {
+
+          await supabaseClient
+            .auth
+            .signOut();
+
+
+          currentUser =
+            null;
+
+
+          setAuthMessage(
+            "Profile পাওয়া যায়নি। Admin-এর সাহায্য নিন।",
+            "error"
+          );
+
+
+          return;
+        }
+
+
+        if (!profile.approved) {
+
+          await supabaseClient
+            .auth
+            .signOut();
+
+
+          currentUser =
+            null;
+
+
+          setAuthMessage(
+            "আপনার Account এখনো Admin approval-এর অপেক্ষায় আছে।",
+            "error"
+          );
+
+
+          return;
+        }
+
+
+        currentProfile =
+          profile;
+
+
+        showMemberArea(
+          profile
+        );
+
+
+        $("login-form").reset();
+
+
+        setAuthMessage(
+          "Login successful! ✅",
+          "success"
+        );
+
+
+        setNotice(
+          "আপনি সফলভাবে লগইন করেছেন।"
+        );
+
+
+        await loadMyProfile();
+
+        await loadMembersList();
+
+
+        if (profile.is_admin) {
+
+          await loadAdminDashboard();
+
+        }
+
+
+      } catch (error) {
+
+        console.error(
+          "Login error:",
+          error
+        );
+
+
+        setAuthMessage(
+          "Login failed: " +
+          error.message,
+          "error"
+        );
+
+
+      } finally {
+
+        button.disabled =
+          false;
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   SAVE BUTTONS
+========================================================= */
+
+$("saveProfileButton")
+  .addEventListener(
+    "click",
+    saveMyProfile
+  );
+
+
+$("saveBasicProfile")
+  .addEventListener(
+    "click",
+    saveName
+  );
+
+
+$("publishPost")
+  .addEventListener(
+    "click",
+    addPost
+  );
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+$("logout-button")
+  .addEventListener(
+    "click",
+    async () => {
+
+      try {
+
+        const {
+          error
+        } =
+          await supabaseClient.auth
+            .signOut();
+
+
+        if (error) {
+          throw error;
+        }
+
+
+        currentUser =
+          null;
+
+        currentProfile =
+          null;
+
+
+        hideMemberArea();
+
+
+        setAuthMessage(
+          "আপনি লগআউট করেছেন।"
+        );
+
+
+        setNotice(
+          "লগইন করে শুরু করো।"
+        );
+
+
+      } catch (error) {
+
+        setAuthMessage(
+          "Logout failed: " +
+          error.message,
+          "error"
+        );
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   RESTORE SESSION
+   Page refresh করলেও login থাকবে
+========================================================= */
+
+async function restoreSession() {
 
   try {
-    const fullName = $("signup-name").value.trim();
-    const email = $("signup-email").value.trim();
-    const password = $("signup-password").value;
 
-    const { data, error } = await supabaseClient.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: fullName } }
-    });
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth
+        .getSession();
 
-    if (error) throw error;
 
-    if (data.user && !data.session) {
-      setAuthMessage(
-        "Signup সফল হয়েছে। ইমেইল ভেরিফিকেশন প্রয়োজন হলে সেটি সম্পন্ন করুন; এরপর Admin approval-এর অপেক্ষা করুন।"
-      );
-    } else {
-      setAuthMessage(
-        "Signup সফল হয়েছে। Admin approval-এর পর লগইন করতে পারবেন।"
-      );
+    if (error) {
+      throw error;
     }
 
-    $("signup-form").reset();
-  } catch (error) {
-    setAuthMessage("Signup failed: " + error.message);
-  } finally {
-    button.disabled = false;
-  }
-});
 
-/* LOGIN */
-$("login-form").addEventListener("submit", async event => {
-  event.preventDefault();
+    const session =
+      data.session;
 
-  const button = $("loginButton");
-  button.disabled = true;
-  setAuthMessage("Checking account...");
-  $("member-panel").hidden = true;
 
-  try {
-    const email = $("login-email").value.trim();
-    const password = $("login-password").value;
+    if (!session) {
 
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
-      email,
-      password
-    });
+      hideMemberArea();
 
-    if (error) throw error;
-
-    currentUser = data.user;
-
-    const { data: profile, error: profileError } = await supabaseClient
-      .from("profiles")
-      .select("id, full_name, phone, approved, is_admin")
-      .eq("id", currentUser.id)
-      .maybeSingle();
-
-    if (profileError) throw profileError;
-
-    if (!profile) {
-      await supabaseClient.auth.signOut();
-      currentUser = null;
-      setAuthMessage("Profile পাওয়া যায়নি। Admin-এর সাহায্য নিন।");
       return;
+
     }
 
-    if (!profile.approved) {
-      await supabaseClient.auth.signOut();
-      currentUser = null;
-      setAuthMessage("আপনার Account এখনো Admin approval-এর অপেক্ষায় আছে।");
+
+    currentUser =
+      session.user;
+
+
+    const {
+      data:profile,
+      error:profileError
+    } =
+      await supabaseClient
+
+        .from("profiles")
+
+        .select(
+          "id, full_name, phone, approved, is_admin"
+        )
+
+        .eq(
+          "id",
+          currentUser.id
+        )
+
+        .maybeSingle();
+
+
+    if (profileError) {
+
+      console.error(
+        "Session profile error:",
+        profileError
+      );
+
+      await supabaseClient.auth
+        .signOut();
+
+
+      currentUser =
+        null;
+
+
       return;
+
     }
 
-    currentProfile = profile;
-    showMemberArea(profile);
-    $("login-form").reset();
-    setAuthMessage("Login successful! ✅");
-    setNotice("আপনি সফলভাবে লগইন করেছেন।");
+
+    if (
+      !profile ||
+      !profile.approved
+    ) {
+
+      await supabaseClient.auth
+        .signOut();
+
+
+      currentUser =
+        null;
+
+
+      return;
+
+    }
+
+
+    currentProfile =
+      profile;
+
+
+    showMemberArea(
+      profile
+    );
+
 
     await loadMyProfile();
+
     await loadMembersList();
 
+
     if (profile.is_admin) {
+
       await loadAdminDashboard();
+
     }
+
+
+    setAuthMessage(
+      "Session restored. ✅",
+      "success"
+    );
+
+
   } catch (error) {
-    console.error("Login error:", error);
-    setAuthMessage("Login failed: " + error.message);
-  } finally {
-    button.disabled = false;
+
+    console.error(
+      "Restore session error:",
+      error
+    );
+
   }
-});
 
-/* SAVE BUTTONS */
-$("saveProfileButton").addEventListener("click", saveMyProfile);
-$("saveBasicProfile").addEventListener("click", saveName);
-$("publishPost").addEventListener("click", addPost);
+}
 
-/* LOGOUT */
-$("logout-button").addEventListener("click", async () => {
-  try {
-    const { error } = await supabaseClient.auth.signOut();
-    if (error) throw error;
 
-    currentUser = null;
-    currentProfile = null;
-    hideMemberArea();
-    setAuthMessage("আপনি লগআউট করেছেন।");
-    setNotice("লগইন করে শুরু করো।");
-  } catch (error) {
-    setAuthMessage("Logout failed: " + error.message);
-  }
-});
+/* =========================================================
+   AUTH STATE LISTENER
+========================================================= */
 
-/* INITIAL PAGE */
+supabaseClient.auth
+  .onAuthStateChange(
+    async (
+      event,
+      session
+    ) => {
+
+      if (
+        event === "SIGNED_OUT"
+      ) {
+
+        currentUser =
+          null;
+
+        currentProfile =
+          null;
+
+        hideMemberArea();
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   INITIAL PAGE
+========================================================= */
+
 hideMemberArea();
+
 renderPosts();
-console.log("LBP Fighters Fifteen JavaScript loaded.");
+
+restoreSession();
+
+
+console.log(
+  "LBP Fighters Fifteen JavaScript loaded."
+);
+
 </script>
 
 </body>
