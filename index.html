@@ -349,6 +349,7 @@ async function loadMyProfile() {
 
   if (error) {
     console.error("Profile load error:", error.message);
+    alert("ছবির সমস্যা: " + photoError.message);
     $("editProfileMessage").textContent =
       "প্রোফাইল লোড হয়নি: " + error.message;
     return;
