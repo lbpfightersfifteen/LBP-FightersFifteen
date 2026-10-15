@@ -404,17 +404,17 @@ if (photoFile) {
   const fileExt = photoFile.name.split(".").pop();
   const filePath = currentUser.id + "/" + Date.now() + "." + fileExt;
 
-  const { error: uploadError } = await supabaseClient.storage
+  const { data: uploadData, error: uploadError } =
+  await supabaseClient.storage
     .from("profile-photos")
     .upload(filePath, photoFile);
 
-  if (uploadError) throw uploadError;
-
+if (uploadError) throw uploadError;
  
 const { data: urlData, error: urlError } =
   await supabaseClient.storage
     .from("profile-photos")
-    .createSignedUrl(filePath, 60 * 60);
+    .createSignedUrl(uploadData.path, 60 * 60);
 
 
 if (urlError) {
