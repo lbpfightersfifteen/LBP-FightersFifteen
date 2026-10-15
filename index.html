@@ -416,7 +416,12 @@ const { data: urlData, error: urlError } =
     .from("profile-photos")
     .createSignedUrl(filePath, 60 * 60);
 
-if (urlError) throw urlError;
+
+if (urlError) {
+  console.log("Signed URL error:", urlError);
+  throw urlError;
+}
+
 
 profileData.profile_photo = urlData.signedUrl;
 
