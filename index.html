@@ -392,6 +392,7 @@ async function saveMyProfile() {
   try {
     
 const photoFile = $("profilePhotoFile").files[0];
+    console.log("Selected photo:", photoFile);
 
 if (photoFile) {
   if (!photoFile.type.startsWith("image/")) {
