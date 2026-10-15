@@ -410,7 +410,11 @@ if (photoFile) {
     .upload(filePath, photoFile, {
   upsert: true
 });
-if (uploadError) throw uploadError;
+if (uploadError) {
+  $("editProfileMessage").textContent =
+    "UPLOAD ERROR: " + uploadError.message;
+  throw uploadError;
+}
  
 const { data: urlData, error: urlError } =
   await supabaseClient.storage
