@@ -430,7 +430,7 @@ if (urlError) {
 console.log("Photo path:", uploadData.path);
 
 profileData.profile_photo = uploadData.path;
-
+console.log("Saving photo path:", profileData.profile_photo);
 }
 
     const { error } = await supabaseClient
