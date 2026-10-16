@@ -13,7 +13,6 @@
       margin: 0;
       padding: 0;
     }
-
     :root {
       --primary: #2563eb;
       --primary-dark: #1d4ed8;
@@ -2260,15 +2259,28 @@ async function initializeApp(user) {
     currentProfile = profile;
 
 
-    if (!profile.approved && !profile.is_admin) {
+    if (!profile.is_admin &&
+        (profile.approval_status === "rejected" ||
+         (!profile.approved && profile.approval_status !== "pending" && !profile.approval_status))) {
 
       toast(
-        "আপনার account এখনো approved হয়নি।",
+        profile.approval_status === "rejected"
+          ? "আপনার account Admin Reject করেছেন। প্রয়োজনে Admin-এর সাথে যোগাযোগ করুন।"
+          : "আপনার account এখনো approved হয়নি।",
         "error"
       );
 
       await db.auth.signOut();
+      currentUser = null;
+      currentProfile = null;
+      return;
+    }
 
+    if (!profile.approved && !profile.is_admin) {
+      toast("আপনার account এখনো Admin approval-এর অপেক্ষায় আছে।", "error");
+      await db.auth.signOut();
+      currentUser = null;
+      currentProfile = null;
       return;
     }
 
@@ -4476,202 +4488,146 @@ async function loadAdminDashboard() {
 
 async function loadAdminMembers() {
 
-  const container =
-    $("adminMembersList");
+  const container = $("adminMembersList");
 
-  setLoading(
-    container,
-    "Loading members..."
-  );
-
+  setLoading(container, "Loading members...");
 
   try {
+    // This RPC returns pending, approved and rejected accounts.
+    const { data, error } = await db.rpc("admin_list_members_v2");
 
-    /*
-      Use existing admin RPC.
-      This preserves your existing approval system.
-    */
+    if (error) throw error;
 
-    const {
-      data,
-      error
-    } = await db.rpc(
-      "admin_list_members"
-    );
-
-
-    if (error) {
-      throw error;
-    }
-
-
-    const members =
-      data || [];
-
+    const members = data || [];
 
     if (!members.length) {
-
       container.innerHTML = `
-        <div class="muted">
-          কোনো member নেই।
-        </div>
+        <div class="muted">কোনো member নেই।</div>
       `;
-
       return;
     }
 
+    container.innerHTML = members.map(member => {
+      const status = member.approval_status ||
+        (member.approved ? "approved" : "pending");
 
-    container.innerHTML =
-      members.map(
-        member => `
+      const statusLabel = status === "approved"
+        ? "✅ Approved"
+        : status === "rejected"
+          ? "❌ Rejected"
+          : "⏳ Pending";
 
-          <div class="admin-member">
+      const approveButton = status !== "approved"
+        ? `<button class="btn btn-success"
+             onclick="setMemberStatus('${member.id}', 'approved')">
+             Approve
+           </button>`
+        : `<button class="btn btn-warning"
+             onclick="setMemberStatus('${member.id}', 'pending')">
+             Unapprove
+           </button>`;
 
-            <div class="admin-member-info">
+      const rejectButton = status !== "rejected"
+        ? `<button class="btn btn-danger"
+             onclick="setMemberStatus('${member.id}', 'rejected')">
+             Reject
+           </button>`
+        : `<button class="btn btn-secondary"
+             onclick="setMemberStatus('${member.id}', 'pending')">
+             Restore to Pending
+           </button>`;
 
-              <div>
-
-                <div class="admin-member-name">
-                  ${escapeHTML(
-                    member.full_name ||
-                    "Unnamed"
-                  )}
-                </div>
-
-                <div
-                  class="muted"
-                  style="font-size:11px"
-                >
-                  ${
-                    member.approved
-                      ? "✅ Approved"
-                      : "⏳ Pending"
-                  }
-                </div>
-
+      return `
+        <div class="admin-member">
+          <div class="admin-member-info">
+            <div>
+              <div class="admin-member-name">
+                ${escapeHTML(member.full_name || "Unnamed")}
               </div>
-
+              <div class="muted" style="font-size:11px">
+                ${statusLabel}
+              </div>
             </div>
-
-
-            <div class="admin-actions">
-
-              ${
-                member.approved
-                  ? `
-                    <button
-                      class="btn btn-warning"
-                      onclick="
-                        setMemberApproval(
-                          '${member.id}',
-                          false
-                        )
-                      "
-                    >
-                      Unapprove
-                    </button>
-                  `
-                  : `
-                    <button
-                      class="btn btn-success"
-                      onclick="
-                        setMemberApproval(
-                          '${member.id}',
-                          true
-                        )
-                      "
-                    >
-                      Approve
-                    </button>
-                  `
-              }
-
-            </div>
-
           </div>
-
-        `
-      ).join("");
+          <div class="admin-actions">
+            ${approveButton}
+            ${rejectButton}
+          </div>
+        </div>
+      `;
+    }).join("");
 
   } catch (err) {
-
     console.error(err);
-
     container.innerHTML = `
       <div class="danger">
-        Admin member list load করা যায়নি।
-        <br>
-        ${escapeHTML(
-          err.message || ""
-        )}
+        Admin member list load করা যায়নি।<br>
+        ${escapeHTML(err.message || "")}
+        <br><small>Supabase SQL migration চালানো হয়েছে কি না যাচাই করুন।</small>
       </div>
     `;
-
   }
-
 }
 
 
-async function setMemberApproval(
-  memberId,
-  approved
-) {
+async function setMemberStatus(memberId, status) {
 
   if (!currentProfile?.is_admin) {
+    toast("Admin access required", "error");
     return;
   }
 
+  if (!["pending", "approved", "rejected"].includes(status)) {
+    toast("Invalid member status", "error");
+    return;
+  }
+
+  const confirmMessage = status === "rejected"
+    ? "এই সদস্যের account Reject করতে চান?"
+    : status === "approved"
+      ? "এই সদস্যকে Approve করতে চান?"
+      : "এই সদস্যকে Pending অবস্থায় ফেরত নিতে চান?";
+
+  if (!window.confirm(confirmMessage)) return;
 
   try {
+    const { error } = await db.rpc("admin_set_member_status", {
+      target_id: memberId,
+      new_status: status
+    });
 
-    const {
-      error
-    } = await db.rpc(
-      "admin_set_member_approval",
-      {
-        target_id:
-          memberId,
-
-        make_approved:
-          approved
-      }
-    );
-
-
-    if (error) {
-      throw error;
-    }
-
+    if (error) throw error;
 
     toast(
-      approved
+      status === "approved"
         ? "Member approved ✅"
-        : "Member unapproved",
+        : status === "rejected"
+          ? "Member rejected ❌"
+          : "Member status updated",
       "success"
     );
 
-
     await loadAdminMembers();
-
     await loadMembers();
-
     await loadStats();
 
   } catch (err) {
-
+    console.error(err);
     toast(
-      err.message ||
-      "Approval update failed",
+      err.message || "Member status update failed. Supabase SQL migration চালানো হয়েছে কি না যাচাই করুন।",
       "error"
     );
-
   }
-
 }
 
 
-window.setMemberApproval =
-  setMemberApproval;
+// Keep compatibility with any existing inline call that uses the old function.
+async function setMemberApproval(memberId, approved) {
+  return setMemberStatus(memberId, approved ? "approved" : "pending");
+}
+
+window.setMemberStatus = setMemberStatus;
+window.setMemberApproval = setMemberApproval;
 
 
 /* =========================================================
