@@ -14,6 +14,7 @@
       padding: 0;
     }
     :root {
+      color-scheme: light;
       --primary: #2563eb;
       --primary-dark: #1d4ed8;
       --bg: #f3f6fb;
@@ -26,6 +27,27 @@
       --warning: #d97706;
     }
 
+    body.theme-dark {
+      color-scheme: dark;
+      --bg:#0b1220; --card:#111c2e; --text:#e5edf8; --muted:#9aa9bf; --border:#29364b;
+    }
+    body.theme-dark .card, body.theme-dark .feed-toolbar, body.theme-dark .post,
+    body.theme-dark .member-card, body.theme-dark .notification-item,
+    body.theme-dark .admin-member { background:var(--card) !important; color:var(--text); border-color:var(--border) !important; }
+    body.theme-dark input, body.theme-dark textarea, body.theme-dark select {
+      background:#0b1424 !important; color:var(--text) !important; border-color:var(--border) !important;
+    }
+    body.theme-dark .post-content, body.theme-dark .comment, body.theme-dark .member-info { color:var(--text); }
+    body.theme-dark .page-title p, body.theme-dark .muted { color:var(--muted); }
+    .theme-control { position:fixed; right:14px; bottom:16px; z-index:1000; border:0; border-radius:999px; padding:11px 14px; background:var(--primary); color:white; box-shadow:0 5px 18px #0003; font-weight:700; }
+    .member-search-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; }
+    .reaction-wrap { position:relative; display:inline-flex; }
+    .reaction-menu { display:flex; gap:4px; flex-wrap:wrap; padding:6px; border:1px solid var(--border); border-radius:12px; margin-top:5px; background:var(--card); }
+    .reaction-option { border:1px solid var(--border); background:var(--bg); color:var(--text); border-radius:999px; padding:5px 8px; font-size:12px; }
+    .reaction-option.selected { border-color:var(--primary); background:#dbeafe; color:#1d4ed8; }
+    .post-media { display:block; width:100%; max-height:520px; object-fit:contain; background:#020617; border-radius:10px; margin-top:10px; }
+    .analytics-extra { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; margin-top:14px; }
+    .analytics-tile { padding:12px; border-radius:12px; background:var(--bg); border:1px solid var(--border); }
     body {
       font-family:
         Arial,
@@ -1394,8 +1416,8 @@
         </div>
         <textarea id="postContent" placeholder="আপনার মনে যা আছে লিখুন..." aria-label="Post text"></textarea>
         <div class="form-group" style="margin-top:10px">
-          <label for="postImageFile">ছবি যোগ করুন (ঐচ্ছিক, সর্বোচ্চ 5MB)</label>
-          <input id="postImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+          <label for="postImageFile">ছবি বা ভিডিও যোগ করুন (ঐচ্ছিক; ছবি 5MB, ভিডিও 20MB পর্যন্ত)</label>
+          <input id="postImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime">
         </div>
         <div style="display:flex;justify-content:flex-end;margin-top:10px">
           <button id="createPostBtn" class="btn btn-primary" type="button">➕ Post</button>
@@ -1528,11 +1550,11 @@
 
       <div class="card">
 
-        <input
-          id="memberSearch"
-          type="search"
-          placeholder="🔍 নাম দিয়ে খুঁজুন..."
-        >
+        <div class="member-search-grid">
+          <input id="memberSearch" type="search" placeholder="🔍 নাম, ব্যাচ বা তথ্য দিয়ে খুঁজুন..." aria-label="মেম্বার খুঁজুন">
+          <select id="memberBatchFilter" aria-label="ব্যাচ ফিল্টার"><option value="">সব Batch</option></select>
+          <select id="memberBloodFilter" aria-label="রক্তের গ্রুপ ফিল্টার"><option value="">সব Blood Group</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+        </div>
 
       </div>
 
@@ -1858,6 +1880,11 @@
             </div>
 
           </div>
+          <div class="analytics-extra">
+            <div class="analytics-tile"><strong>❤️ Reactions</strong><div id="adminStatReactions" class="stat-number">—</div></div>
+            <div class="analytics-tile"><strong>💬 Comments</strong><div id="adminStatComments" class="stat-number">—</div></div>
+            <div class="analytics-tile"><strong>📝 Complaints</strong><div id="adminStatComplaints" class="stat-number">—</div></div>
+          </div>
 
         </div>
 
@@ -1869,6 +1896,8 @@
 
 </div>
 
+
+<button id="themeToggle" class="theme-control" type="button" aria-label="থিম পরিবর্তন করুন">🌙 Dark</button>
 
 <footer class="site-footer" aria-label="Website footer">
   <div class="footer-title">⚔️ LBP Fighters Fifteen</div>
@@ -2174,6 +2203,19 @@ refreshVisitorStats();
 setInterval(refreshVisitorStats, 60000);
 
 
+
+/* =========================================================
+   THEME SETTINGS
+========================================================= */
+function applyTheme(theme) {
+  const dark = theme === "dark";
+  document.body.classList.toggle("theme-dark", dark);
+  const button = $("themeToggle");
+  if (button) { button.textContent = dark ? "☀️ Light" : "🌙 Dark"; button.setAttribute("aria-pressed", String(dark)); }
+  try { localStorage.setItem("lbp_theme", dark ? "dark" : "light"); } catch (_) {}
+}
+applyTheme((() => { try { return localStorage.getItem("lbp_theme") || "light"; } catch (_) { return "light"; } })());
+$("themeToggle")?.addEventListener("click", () => applyTheme(document.body.classList.contains("theme-dark") ? "light" : "dark"));
 
 /* =========================================================
    STATE
@@ -3369,7 +3411,7 @@ async function loadMembers() {
 
 
     membersCache = data || [];
-
+    populateMemberFilters();
 
     profileMap = {};
 
@@ -3501,32 +3543,27 @@ async function renderMembers(members) {
 }
 
 
-$("memberSearch").addEventListener(
-  "input",
-  () => {
-
-    const query =
-      $("memberSearch")
-        .value
-        .trim()
-        .toLowerCase();
-
-
-    const filtered =
-      membersCache.filter(
-        member =>
-          (
-            member.full_name || ""
-          )
-            .toLowerCase()
-            .includes(query)
-      );
-
-
-    renderMembers(filtered);
-
-  }
-);
+function applyMemberFilters() {
+  const query = ($("memberSearch")?.value || "").trim().toLocaleLowerCase();
+  const batch = $("memberBatchFilter")?.value || "";
+  const blood = $("memberBloodFilter")?.value || "";
+  const filtered = membersCache.filter(member => {
+    const searchable = [member.full_name, member.batch, member.blood_group, member.phone, member.bio].filter(Boolean).join(" ").toLocaleLowerCase();
+    return (!query || searchable.includes(query)) && (!batch || String(member.batch || "") === batch) && (!blood || String(member.blood_group || "") === blood);
+  });
+  renderMembers(filtered);
+}
+["memberSearch", "memberBatchFilter", "memberBloodFilter"].forEach(id => {
+  $(id)?.addEventListener(id === "memberSearch" ? "input" : "change", applyMemberFilters);
+});
+function populateMemberFilters() {
+  const select = $("memberBatchFilter");
+  if (!select) return;
+  const selected = select.value;
+  const batches = [...new Set(membersCache.map(m => String(m.batch || "").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+  select.innerHTML = '<option value="">সব Batch</option>' + batches.map(batch => `<option value="${escapeHTML(batch)}">${escapeHTML(batch)}</option>`).join("");
+  if (batches.includes(selected)) select.value = selected;
+}
 
 
 /* =========================================================
@@ -3748,21 +3785,18 @@ async function loadPosts() {
 
     if (postIds.length && !guestMode) {
 
-      const likesResult =
-        await db
-          .from("post_likes")
-          .select(
-            "post_id,user_id"
-          )
-          .in(
-            "post_id",
-            postIds
-          );
+      let likesResult = await db.from("post_likes").select("post_id,user_id,reaction_type").in("post_id", postIds);
+      if (likesResult.error && /reaction_type|column .* does not exist/i.test(likesResult.error.message || "")) {
+        likesResult = await db.from("post_likes").select("post_id,user_id").in("post_id", postIds);
+        if (!likesResult.error) likesResult.data = (likesResult.data || []).map(like => ({...like, reaction_type:"like"}));
+      }
 
 
       if (!likesResult.error) {
-        likes =
-          likesResult.data || [];
+        likes = likesResult.data || [];
+      } else if (/reaction_type|column .* does not exist/i.test(likesResult.error.message || "")) {
+        const legacyLikes = await db.from("post_likes").select("post_id,user_id").in("post_id", postIds);
+        if (!legacyLikes.error) likes = (legacyLikes.data || []).map(like => ({...like, reaction_type:"like"}));
       }
 
 
@@ -3911,12 +3945,10 @@ async function renderPosts(posts) {
             );
 
 
-          const liked =
-            post.likes.some(
-              like =>
-                like.user_id ===
-                currentUser?.id
-            );
+          const myReaction = post.likes.find(like => like.user_id === currentUser?.id)?.reaction_type || null;
+          const reactionCounts = post.likes.reduce((acc, like) => { const key = like.reaction_type || "like"; acc[key] = (acc[key] || 0) + 1; return acc; }, {});
+          const reactionTotal = post.likes.length;
+          const reactionEmoji = {like:"👍",love:"❤️",haha:"😂",wow:"😮",support:"💪"};
 
 
           const commentsHtml =
@@ -3997,19 +4029,10 @@ async function renderPosts(posts) {
 
 
               ${post.content ? `<div class="post-content">${escapeHTML(post.content)}</div>` : ""}
-              ${post.image_path ? (() => { const img = db.storage.from("community-gallery").getPublicUrl(post.image_path).data?.publicUrl; return img ? `<a class="post-image-link" href="${escapeHTML(img)}" target="_blank" rel="noopener"><img class="post-image" loading="lazy" src="${escapeHTML(img)}" alt="Post image"></a>` : ""; })() : ""}
+              ${post.image_path ? (() => { const media = db.storage.from("community-gallery").getPublicUrl(post.image_path).data?.publicUrl; if (!media) return ""; const isVideo = /\.(mp4|webm|mov|m4v)(?:$|\?)/i.test(post.image_path); return isVideo ? `<video class="post-media" controls playsinline preload="metadata"><source src="${escapeHTML(media)}">আপনার ব্রাউজার ভিডিও চালাতে পারে না।</video>` : `<a class="post-image-link" href="${escapeHTML(media)}" target="_blank" rel="noopener"><img class="post-image post-media" loading="lazy" src="${escapeHTML(media)}" alt="Post image"></a>`; })() : ""}
 
               <div class="post-actions">
-
-                <button
-                  class="
-                    action-btn
-                    ${liked ? "liked" : ""}
-                  "
-                  onclick="toggleLike(${post.id})"
-                >
-                  ❤️ ${post.likes.length}
-                </button>
+                <div class="reaction-wrap"><button class="action-btn ${myReaction ? "liked" : ""}" onclick="toggleReaction(${post.id}, '${myReaction || "like"}')" type="button">${reactionEmoji[myReaction || "like"] || "👍"} ${reactionTotal}</button></div>
 
                 <button
                   class="action-btn"
@@ -4036,7 +4059,9 @@ async function renderPosts(posts) {
                 }
 
               </div>
-
+              <div class="reaction-menu" aria-label="Reaction options">
+                ${[["like","👍 Like"],["love","❤️ Love"],["haha","😂 Haha"],["wow","😮 Wow"],["support","💪 Support"]].map(([key,label]) => `<button type="button" class="reaction-option ${myReaction===key?"selected":""}" onclick="toggleReaction(${post.id}, '${key}')" title="${label}">${label} ${reactionCounts[key] || ""}</button>`).join("")}
+              </div>
 
               <div class="comments">
 
@@ -4144,8 +4169,10 @@ $("createPostBtn").addEventListener("click", async () => {
   const content = textarea.value.trim();
   const file = $("postImageFile")?.files?.[0] || null;
   if (!content && !file) { toast("লেখা বা একটি ছবি যোগ করুন", "error"); return; }
-  if (file && !/^image\/(jpeg|png|webp|gif)$/.test(file.type)) { toast("JPG, PNG, WebP বা GIF ছবি দিন", "error"); return; }
-  if (file && file.size > 5 * 1024 * 1024) { toast("ছবির সর্বোচ্চ সাইজ 5MB", "error"); return; }
+  const isImage = !!file && /^image\/(jpeg|png|webp|gif)$/.test(file.type);
+  const isVideo = !!file && /^video\/(mp4|webm|quicktime)$/.test(file.type);
+  if (file && !isImage && !isVideo) { toast("JPG, PNG, WebP, GIF অথবা MP4/WebM/MOV ভিডিও দিন", "error"); return; }
+  if (file && file.size > (isVideo ? 20 : 5) * 1024 * 1024) { toast(isVideo ? "ভিডিওর সর্বোচ্চ সাইজ 20MB" : "ছবির সর্বোচ্চ সাইজ 5MB", "error"); return; }
   const button = $("createPostBtn"); button.disabled = true;
   let uploadedPath = null;
   try {
@@ -4169,96 +4196,31 @@ $("createPostBtn").addEventListener("click", async () => {
    LIKE
 ========================================================= */
 
-async function toggleLike(postId) {
-
-  if (!currentUser || guestMode) {
-    toast("Like দিতে আগে Login করুন।", "error");
-    return;
-  }
-
-
+async function toggleReaction(postId, reactionType = "like") {
+  if (!currentUser || guestMode || !currentProfile?.approved) { toast("রিঅ্যাকশন দিতে Approved Member হিসেবে Login করুন।", "error"); return; }
+  const allowed = ["like", "love", "haha", "wow", "support"];
+  if (!allowed.includes(reactionType)) reactionType = "like";
   try {
-
-    const {
-      data: existing,
-      error: checkError
-    } = await db
-      .from("post_likes")
-      .select("post_id,user_id")
-      .eq(
-        "post_id",
-        postId
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      )
-      .maybeSingle();
-
-
-    if (checkError) {
-      throw checkError;
-    }
-
-
-    if (existing) {
-
-      const {
-        error
-      } = await db
-        .from("post_likes")
-        .delete()
-        .eq(
-          "post_id",
-          postId
-        )
-        .eq(
-          "user_id",
-          currentUser.id
-        );
-
-
-      if (error) {
-        throw error;
-      }
-
+    const { data: existing, error: checkError } = await db.from("post_likes").select("post_id,user_id,reaction_type").eq("post_id", postId).eq("user_id", currentUser.id).maybeSingle();
+    if (checkError) throw checkError;
+    if (existing && (existing.reaction_type || "like") === reactionType) {
+      const { error } = await db.from("post_likes").delete().eq("post_id", postId).eq("user_id", currentUser.id);
+      if (error) throw error;
+    } else if (existing) {
+      const { error } = await db.from("post_likes").update({ reaction_type: reactionType }).eq("post_id", postId).eq("user_id", currentUser.id);
+      if (error) throw error;
     } else {
-
-      const {
-        error
-      } = await db
-        .from("post_likes")
-        .insert({
-
-          post_id:
-            postId,
-
-          user_id:
-            currentUser.id
-
-        });
-
-
-      if (error) {
-        throw error;
-      }
-
+      const { error } = await db.from("post_likes").insert({ post_id: postId, user_id: currentUser.id, reaction_type: reactionType });
+      if (error) throw error;
     }
-
-
     await loadPosts();
-
   } catch (err) {
-
-    toast(
-      err.message ||
-      "Like update failed",
-      "error"
-    );
-
+    console.error(err);
+    toast(/reaction_type|column .* does not exist/i.test(err.message || "") ? "Multiple Reactions চালাতে নিচের Supabase migration একবার Run করুন।" : (err.message || "Reaction দেওয়া যায়নি"), "error");
   }
-
 }
+async function toggleLike(postId) { return toggleReaction(postId, "like"); }
+window.toggleReaction = toggleReaction;
 
 
 window.toggleLike =
@@ -4576,10 +4538,25 @@ async function loadNotifications(markAsRead = false) {
     }
 
 
+    // Personal activity notifications are stored separately from Admin broadcast notices.
+    let personalNotifications = [];
+    try {
+      const personalResult = await db.from("user_notifications").select("id,recipient_id,actor_id,post_id,type,created_at,is_read").eq("recipient_id", currentUser.id).order("created_at", {ascending:false}).limit(100);
+      if (!personalResult.error && personalResult.data?.length) {
+        const actorIds = [...new Set(personalResult.data.map(n=>n.actor_id).filter(Boolean))];
+        let actorMap = {};
+        if (actorIds.length) {
+          const actorResult = await db.from("profiles").select("id,full_name").in("id", actorIds);
+          (actorResult.data || []).forEach(a => actorMap[a.id] = a.full_name || "একজন সদস্য");
+        }
+        personalNotifications = personalResult.data.map(n => ({...n, title:"কমিউনিটি আপডেট", body:`${actorMap[n.actor_id] || "একজন সদস্য"} ${n.type === "comment" ? "আপনার পোস্টে মন্তব্য করেছেন" : "আপনার পোস্টে রিঅ্যাক্ট করেছেন"}`, _personal:true}));
+      }
+    } catch (_) { /* Migration not installed yet; broadcast notifications still work. */ }
+
     const hiddenKey = "lbp_hidden_notifications_" + currentUser.id;
     let hiddenIds = [];
     try { hiddenIds = JSON.parse(localStorage.getItem(hiddenKey) || "[]"); } catch (_) { hiddenIds = []; }
-    const notifications = (data || []).filter(n => !hiddenIds.includes(String(n.id)));
+    const notifications = [...(data || []), ...personalNotifications].filter(n => !hiddenIds.includes(String(n.id))).sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
 
 
     $("statNotifications").textContent =
@@ -4630,7 +4607,7 @@ async function loadNotifications(markAsRead = false) {
             </div>
             <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:8px">
               <button class="btn btn-secondary" style="padding:5px 9px;font-size:12px" onclick='hideNotification(${JSON.stringify(String(notification.id))})' >🗑️ আমার তালিকা থেকে মুছুন</button>
-              ${currentProfile?.is_admin ? `<button class="btn btn-danger" style="padding:5px 9px;font-size:12px" onclick='deleteNotification(${JSON.stringify(String(notification.id))})' >সবাইয়ের জন্য Delete</button>` : ""}
+              ${currentProfile?.is_admin && !notification._personal ? `<button class="btn btn-danger" style="padding:5px 9px;font-size:12px" onclick='deleteNotification(${JSON.stringify(String(notification.id))})' >সবাইয়ের জন্য Delete</button>` : ""}
             </div>
           </div>
 
@@ -5470,7 +5447,14 @@ async function loadStats() {
 
     const notifications =
       notificationResult.count || 0;
-
+    const [reactionsResult, commentsResult, complaintsResult] = await Promise.all([
+      db.from("post_likes").select("post_id", {count:"exact",head:true}),
+      db.from("post_comments").select("id", {count:"exact",head:true}),
+      db.from("complaints").select("id", {count:"exact",head:true})
+    ]);
+    const reactions = reactionsResult.count ?? 0;
+    const comments = commentsResult.count ?? 0;
+    const complaints = complaintsResult.count ?? 0;
 
     $("statMembers").textContent =
       members;
@@ -5502,6 +5486,9 @@ async function loadStats() {
       $("adminStatNotifications")
         .textContent =
         notifications;
+      if ($("adminStatReactions")) $("adminStatReactions").textContent = reactions;
+      if ($("adminStatComments")) $("adminStatComments").textContent = comments;
+      if ($("adminStatComplaints")) $("adminStatComplaints").textContent = complaints;
 
     }
 
@@ -6339,6 +6326,17 @@ function setupRealtime() {
         loadNotifications();
 
       }
+    )
+
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "user_notifications",
+        filter: `recipient_id=eq.${currentUser?.id || "00000000-0000-0000-0000-000000000000"}`
+      },
+      () => { if (currentUser && !guestMode) loadNotifications(); }
     )
 
     .on(
