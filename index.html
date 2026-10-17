@@ -5024,7 +5024,7 @@ async function renderChatMessage(
 
       <div class="chat-bubble">
         ${escapeHTML(
-          message.message
+          message.content || message.message || ""
         )}
       </div>
 
@@ -5132,11 +5132,36 @@ $("chatForm").addEventListener(
           };
 
         profileMap[currentUser.id] = profile;
-        await renderChatMessage(
-          sentMessage,
-          profile
-        );
-        scrollChatToBottom();
+
+        // Render locally first so the sender sees it immediately,
+        // even if Supabase Realtime is delayed or unavailable.
+        const chatContainer = $("chatMessages");
+        if (chatContainer) {
+          const localMessage = {
+            id: sentMessage.id,
+            user_id: sentMessage.user_id,
+            content: sentMessage.content,
+            created_at: sentMessage.created_at
+          };
+          chatIds.add(localMessage.id);
+          const photo = await getProfilePhotoUrl(profile.profile_photo);
+          const wrapper = document.createElement("div");
+          wrapper.className = "chat-message mine";
+          wrapper.dataset.messageId = localMessage.id;
+          wrapper.innerHTML = `
+            <img class="avatar" src="${photo}" alt="Profile">
+            <div class="chat-bubble-wrap">
+              <div class="chat-name">You</div>
+              <div class="chat-bubble">${escapeHTML(localMessage.content || "")}</div>
+              <div class="chat-time">${formatDate(localMessage.created_at)}</div>
+            </div>
+          `;
+          chatContainer.appendChild(wrapper);
+          while (chatContainer.children.length > 300) {
+            chatContainer.firstElementChild?.remove();
+          }
+          scrollChatToBottom();
+        }
       }
 
     } catch (err) {
@@ -5260,6 +5285,8 @@ function setupRealtime() {
         const message =
           payload.new;
 
+
+        if (message?.id && chatIds.has(message.id)) return;
 
         let profile =
           profileMap[
