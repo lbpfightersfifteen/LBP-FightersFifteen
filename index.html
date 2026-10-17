@@ -1218,6 +1218,14 @@
 
       </div>
 
+      <div class="card" style="margin-top:18px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+          <h3>📰 সাম্প্রতিক পোস্ট</h3>
+          <button class="btn btn-secondary" type="button" onclick="showPage('feed')">সব পোস্ট দেখুন</button>
+        </div>
+        <div id="homeRecentPosts" class="muted">সাম্প্রতিক পোস্ট লোড হচ্ছে...</div>
+      </div>
+
     </section>
 
 
@@ -3120,6 +3128,7 @@ async function loadPosts() {
       `;
 
       $("statPosts").textContent = "0";
+      renderHomeRecentPosts([]);
 
       return;
     }
@@ -3288,6 +3297,8 @@ async function loadPosts() {
       postCache
     );
 
+    renderHomeRecentPosts(postCache.slice(0, 3));
+
 
     $("statPosts").textContent =
       posts.length;
@@ -3307,6 +3318,25 @@ async function loadPosts() {
 
   }
 
+}
+
+
+function renderHomeRecentPosts(posts) {
+  const container = $("homeRecentPosts");
+  if (!container) return;
+
+  if (!posts || !posts.length) {
+    container.innerHTML = '<div class="muted">এখনো কোনো পোস্ট নেই। News Feed থেকে প্রথম পোস্টটি করুন।</div>';
+    return;
+  }
+
+  container.innerHTML = posts.map(post => `
+    <div style="padding:12px 0;border-bottom:1px solid var(--border)">
+      <strong>${escapeHTML(post.author?.full_name || "Member")}</strong>
+      <div style="margin-top:5px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere">${escapeHTML((post.content || "").length > 220 ? post.content.slice(0, 220) + "…" : post.content || "")}</div>
+      <div class="muted" style="font-size:11px;margin-top:5px">${formatDate(post.created_at)} · ❤️ ${post.likes?.length || 0} · 💬 ${post.comments?.length || 0}</div>
+    </div>
+  `).join("");
 }
 
 
@@ -4033,7 +4063,7 @@ async function loadAnnouncements() {
         announcements
           .map(
             item =>
-              `${item.title || ""}: ${item.message || ""}`
+              `${item.title || ""}: ${item.content || ""}`
           )
           .join("     •     ");
 
@@ -4100,7 +4130,7 @@ function renderAdminAnnouncements(
 
           <div class="muted">
             ${escapeHTML(
-              item.message || ""
+              item.content || ""
             )}
           </div>
 
@@ -4195,7 +4225,8 @@ $("announcementForm").addEventListener(
           .update({
 
             title,
-            message
+            content: message,
+            is_published: true
 
           })
           .eq(
@@ -4223,7 +4254,8 @@ $("announcementForm").addEventListener(
           .insert({
 
             title,
-            message,
+            content: message,
+            is_published: true,
 
             created_by:
               currentUser.id
@@ -4293,7 +4325,7 @@ function editAnnouncement(id) {
           data.title || "";
 
         $("announcementMessage").value =
-          data.message || "";
+          data.content || "";
 
         $("cancelAnnouncementEdit")
           .classList.remove(
@@ -4820,7 +4852,7 @@ async function loadChat() {
     } = await db
       .from("chat_messages")
       .select(
-        "id,user_id,message,created_at"
+        "id,user_id,content,created_at"
       )
       .order(
         "created_at",
@@ -5024,7 +5056,7 @@ async function renderChatMessage(
 
       <div class="chat-bubble">
         ${escapeHTML(
-          message.message
+          message.content
         )}
       </div>
 
@@ -5110,7 +5142,7 @@ $("chatForm").addEventListener(
           user_id:
             currentUser.id,
 
-          message
+          content: message
 
         });
 
