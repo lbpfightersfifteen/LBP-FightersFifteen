@@ -1140,7 +1140,7 @@
     </button>
 
     <button class="nav-btn" id="chatNavBtn">
-      💬 Live SMS
+      💬 Live Chat
     </button>
 
     <button class="nav-btn hidden" data-page="league" id="leagueNavBtn">🏏 Cricket League</button>
@@ -1245,7 +1245,7 @@
             class="btn btn-secondary"
             onclick="openChat()"
           >
-            💬 Live SMS
+            💬 Live Chat
           </button>
 
         </div>
@@ -1885,7 +1885,7 @@
     <div class="chat-header">
 
       <div>
-        <strong>💬 Live SMS</strong>
+        <strong>💬 Live Chat</strong>
         <div style="font-size:11px;opacity:.8">
           সর্বশেষ ৩০০টি message
         </div>
@@ -2314,10 +2314,11 @@ $("guestModeBtn")?.addEventListener("click", async () => {
 
   // Show the site's navigation in guest mode. Protected sections display a login prompt.
   document.querySelectorAll("nav .nav-btn").forEach(btn => {
-    btn.classList.toggle("hidden", btn.id === "adminNavBtn" || btn.id === "logoutBtn");
+    // Guests can browse public pages, but never see protected navigation.
+    btn.classList.toggle("hidden", ["adminNavBtn", "logoutBtn", "leagueNavBtn"].includes(btn.id));
   });
   $("chatNavBtn")?.classList.remove("hidden");
-  $("leagueNavBtn")?.classList.remove("hidden");
+  $("leagueNavBtn")?.classList.add("hidden");
   $("adminNavBtn")?.classList.add("hidden");
   $("logoutBtn")?.classList.add("hidden");
   $("page-feed")?.querySelector(".post-composer")?.classList.add("hidden");
@@ -2429,12 +2430,11 @@ async function initializeApp(user) {
 
     if (profile.is_admin) {
       $("adminNavBtn").classList.remove("hidden");
-      $("chatNavBtn").classList.remove("hidden");
     } else {
       $("adminNavBtn").classList.add("hidden");
-      // Live SMS chat is reserved for Admin; ordinary members cannot view it.
-      $("chatNavBtn").classList.add("hidden");
     }
+    // Live Chat is available to approved, logged-in members and Admin.
+    $("chatNavBtn")?.classList.remove("hidden");
 
 
     await loadProfile();
@@ -2508,7 +2508,14 @@ function showPage(page) {
   // Home always opens the News Feed.
   if (page === "home") page = "feed";
 
-  if (guestMode && ["profile", "notifications", "league", "admin"].includes(page)) {
+  if (guestMode && page === "league") {
+    // Keep Cricket League completely unavailable to guests, including direct navigation.
+    $("leagueNavBtn")?.classList.add("hidden");
+    toast("Cricket League দেখতে আগে Log in করুন", "error");
+    page = "feed";
+  }
+
+  if (guestMode && ["profile", "notifications", "admin"].includes(page)) {
     document.querySelectorAll(".page-section").forEach(section => section.classList.remove("active"));
     const target = $("page-" + page);
     if (target) {
@@ -5150,8 +5157,8 @@ function openChat() {
     return;
   }
 
-  if (!currentProfile?.is_admin) {
-    toast("Live SMS শুধু Admin দেখতে পারবেন।", "error");
+  if (!currentProfile || (!currentProfile.approved && !currentProfile.is_admin)) {
+    toast("Live Chat ব্যবহার করতে অনুমোদিত Member হতে হবে।", "error");
     return;
   }
 
