@@ -1123,7 +1123,7 @@
       💬 Live SMS
     </button>
 
-    <button class="nav-btn" data-page="league" id="leagueNavBtn">🏏 Cricket League</button>
+    <button class="nav-btn hidden" data-page="league" id="leagueNavBtn">🏏 Cricket League</button>
 
     <button
       class="nav-btn hidden"
@@ -2333,6 +2333,8 @@ async function initializeApp(user) {
     }
 
     currentProfile = profile;
+    // Admin must be able to access League settings to turn the section on.
+    if (profile.is_admin) $("leagueNavBtn")?.classList.remove("hidden");
 
 
     if (!profile.is_admin &&
@@ -2442,6 +2444,11 @@ document
 
 
 function showPage(page) {
+
+  if (page === "league" && !currentProfile?.is_admin && !leagueSettingsCache.enabled) {
+    toast("Admin এখনো Cricket League চালু করেননি।", "error");
+    return;
+  }
 
   if (
     page === "admin" &&
@@ -3942,6 +3949,18 @@ window.deletePost =
 let leagueSettingsCache = { enabled: false, voting_open: false, game_info: "" };
 let playerVoteRows = [];
 
+function updateLeagueVisibility() {
+  const button = $("leagueNavBtn");
+  if (!button) return;
+  // Admin always sees the League section so they can enable/disable it.
+  // Everyone else sees it only after Admin enables it.
+  const visible = !!currentProfile?.is_admin || !!leagueSettingsCache.enabled;
+  button.classList.toggle("hidden", !visible);
+  if (!visible && document.getElementById("page-league")?.classList.contains("active")) {
+    showPage("home");
+  }
+}
+
 async function loadLeague() {
   const disabled = $("leagueDisabledNotice");
   const content = $("leagueContent");
@@ -3951,6 +3970,7 @@ async function loadLeague() {
       .from("league_settings").select("id,enabled,voting_open,game_info").eq("id", 1).maybeSingle();
     if (settingsError) throw settingsError;
     leagueSettingsCache = settings || { enabled: false, voting_open: false, game_info: "" };
+    updateLeagueVisibility();
 
     if (currentProfile?.is_admin) {
       $("leagueGameInfoInput").value = leagueSettingsCache.game_info || "";
