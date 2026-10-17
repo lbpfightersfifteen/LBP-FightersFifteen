@@ -39,7 +39,7 @@
     }
     body.theme-dark .post-content, body.theme-dark .comment, body.theme-dark .member-info { color:var(--text); }
     body.theme-dark .page-title p, body.theme-dark .muted { color:var(--muted); }
-    .theme-control { position:fixed; right:14px; bottom:16px; z-index:1000; border:0; border-radius:999px; padding:11px 14px; background:var(--primary); color:white; box-shadow:0 5px 18px #0003; font-weight:700; }
+    .theme-control { position:fixed; right:12px; top:10px; z-index:1200; border:0; border-radius:999px; padding:11px 14px; background:var(--primary); color:white; box-shadow:0 5px 18px #0003; font-weight:700; }
     .member-search-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; }
     .reaction-wrap { position:relative; display:inline-flex; }
     .reaction-menu { display:flex; gap:4px; flex-wrap:wrap; padding:6px; border:1px solid var(--border); border-radius:12px; margin-top:5px; background:var(--card); }
@@ -1003,6 +1003,20 @@
 
 
 
+    /* SOCIAL PROFILE LAYOUT inspired by the supplied reference */
+    #page-profile { max-width: 900px; margin-left:auto; margin-right:auto; }
+    #page-profile .profile-hero-card { border-radius:0 0 18px 18px; overflow:hidden; }
+    #page-profile .profile-cover { height:230px; object-fit:cover; }
+    #page-profile .profile-hero-body { min-height:130px; padding:0 22px 18px; margin-top:-58px; align-items:flex-end; background:linear-gradient(to bottom,transparent 0,#fff 58px); }
+    body.theme-dark #page-profile .profile-hero-body { background:linear-gradient(to bottom,transparent 0,var(--card) 58px); }
+    #page-profile #profileAvatar { width:132px; height:132px; border:5px solid var(--card); box-shadow:0 2px 8px #0002; }
+    #page-profile .profile-name { color:var(--text) !important; background:transparent; padding:0; text-shadow:none; font-size:clamp(24px,4vw,32px); }
+    #page-profile .profile-meta { overflow-wrap:anywhere; }
+    #page-profile .profile-grid > div { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; }
+    #memberModal .profile-cover { height:180px; object-fit:cover; }
+    #memberModal .profile-grid > div { border:1px solid var(--border); border-radius:12px; padding:12px; background:var(--bg); }
+    @media(max-width:600px) { #page-profile .profile-cover{height:170px} #page-profile .profile-hero-body{flex-direction:row;align-items:flex-end;margin-top:-52px;padding:0 14px 16px;gap:12px} #page-profile #profileAvatar{width:100px;height:100px} }
+
     /* PROFILE UPGRADE */
     .profile-cover { width:100%; height:190px; object-fit:cover; border-radius:14px; background:linear-gradient(135deg,#1e3a8a,#60a5fa); display:block; }
     .profile-hero-card { overflow:hidden; }
@@ -1317,6 +1331,8 @@
     >
       🛡️ Admin
     </button>
+
+    <button class="nav-btn hidden" id="adminAnalyticsNavBtn" data-page="analytics">📊 Admin Analytics</button>
 
     <button class="nav-btn" id="logoutBtn">
       🚪 Logout
@@ -1892,12 +1908,37 @@
 
     </section>
 
+    <!-- ADMIN ANALYTICS: dedicated page and navigation entry -->
+    <section id="page-analytics" class="page-section">
+      <div class="page-title" style="padding:20px 22px;border-radius:16px;color:#fff;background:linear-gradient(120deg,#0f172a,#1d4ed8)">
+        <h2>📊 Admin Analytics</h2>
+        <p style="color:#dbeafe">ওয়েবসাইটের সার্বিক পরিসংখ্যান</p>
+      </div>
+      <div class="admin-grid" style="margin-top:16px">
+        <div class="card" style="grid-column:1/-1">
+          <h3 style="margin-bottom:14px">📈 Site Overview</h3>
+          <div class="profile-grid">
+            <div><strong>👥 Members</strong><div id="analyticsStatMembers" class="stat-number">লোড হচ্ছে...</div></div>
+            <div><strong>📝 Posts</strong><div id="analyticsStatPosts" class="stat-number">লোড হচ্ছে...</div></div>
+            <div><strong>💬 Chat Messages</strong><div id="analyticsStatChat" class="stat-number">লোড হচ্ছে...</div></div>
+            <div><strong>🔔 Notifications</strong><div id="analyticsStatNotifications" class="stat-number">লোড হচ্ছে...</div></div>
+          </div>
+          <div class="analytics-extra">
+            <div class="analytics-tile"><strong>❤️ Reactions</strong><div id="analyticsStatReactions" class="stat-number">লোড হচ্ছে...</div></div>
+            <div class="analytics-tile"><strong>💬 Comments</strong><div id="analyticsStatComments" class="stat-number">লোড হচ্ছে...</div></div>
+            <div class="analytics-tile"><strong>📝 Complaints</strong><div id="analyticsStatComplaints" class="stat-number">লোড হচ্ছে...</div></div>
+          </div>
+          <button class="btn btn-primary" type="button" onclick="loadStats()" style="margin-top:16px">🔄 Refresh Analytics</button>
+        </div>
+      </div>
+    </section>
+
   </main>
 
 </div>
 
 
-<button id="themeToggle" class="theme-control" type="button" aria-label="থিম পরিবর্তন করুন">🌙 Dark</button>
+<button id="themeToggle" class="theme-control" type="button" aria-label="থিম পরিবর্তন করুন" title="Dark Mode / Light Mode">🌙 Dark</button>
 
 <footer class="site-footer" aria-label="Website footer">
   <div class="footer-title">⚔️ LBP Fighters Fifteen</div>
@@ -2698,8 +2739,10 @@ async function initializeApp(user) {
 
     if (profile.is_admin) {
       $("adminNavBtn").classList.remove("hidden");
+      $("adminAnalyticsNavBtn")?.classList.remove("hidden");
     } else {
       $("adminNavBtn").classList.add("hidden");
+      $("adminAnalyticsNavBtn")?.classList.add("hidden");
     }
     // Live Chat is available to approved, logged-in members and Admin.
     $("chatNavBtn")?.classList.remove("hidden");
@@ -2778,6 +2821,8 @@ function showPage(page) {
 
   // Home is the main page and contains the composer and News Feed.
   if (page === "feed") page = "home";
+  // Keep the current section in the URL so refresh returns to the same section.
+  try { if (location.hash !== "#" + page) history.replaceState(null, "", "#" + page); } catch (_) {}
 
   if (guestMode && page === "league") {
     // Keep Cricket League completely unavailable to guests, including direct navigation.
@@ -2850,6 +2895,7 @@ function showPage(page) {
   if (target) {
     target.classList.add("active");
   }
+  if (page === "analytics") loadStats();
 
 
   document
@@ -2902,6 +2948,17 @@ window.leaveGuestAndLogin = function() {
 };
 
 window.showPage = showPage;
+
+// Restore the selected section after refresh once the signed-in app is ready.
+function restoreSavedSection() {
+  const requested = (location.hash || "").slice(1);
+  const allowed = ["home", "profile", "members", "gallery", "notifications", "complaints", "league", "admin", "analytics"];
+  if (currentUser && allowed.includes(requested) && document.getElementById("page-" + requested)) {
+    showPage(requested);
+  }
+}
+window.addEventListener("load", () => setTimeout(restoreSavedSection, 700));
+
 
 
 /* =========================================================
@@ -3571,6 +3628,14 @@ function populateMemberFilters() {
 ========================================================= */
 
 async function viewMember(id) {
+  if (guestMode || !currentUser) {
+    toast("অন্য সদস্যের Profile দেখতে আগে Member হিসেবে Log in করুন", "error");
+    const modal = $("memberModal");
+    const content = $("memberModalContent");
+    if (content) content.innerHTML = '<div class="card" style="text-align:center;padding:24px"><h3>🔐 Member Login প্রয়োজন</h3><p style="margin:10px 0">অন্য সদস্যের প্রোফাইল দেখতে লগইন করুন।</p><button class="btn btn-primary" onclick="closeMemberModal();leaveGuestAndLogin()">Login করুন</button></div>';
+    modal?.classList.add("show");
+    return;
+  }
 
   const member =
     membersCache.find(
@@ -5489,8 +5554,16 @@ async function loadStats() {
       if ($("adminStatReactions")) $("adminStatReactions").textContent = reactions;
       if ($("adminStatComments")) $("adminStatComments").textContent = comments;
       if ($("adminStatComplaints")) $("adminStatComplaints").textContent = complaints;
-
     }
+    const analyticsValues = {
+      analyticsStatMembers: members, analyticsStatPosts: posts,
+      analyticsStatChat: chat, analyticsStatNotifications: notifications,
+      analyticsStatReactions: reactions, analyticsStatComments: comments,
+      analyticsStatComplaints: complaints
+    };
+    Object.entries(analyticsValues).forEach(([id, value]) => {
+      const el = $(id); if (el) el.textContent = value;
+    });
 
   } catch (err) {
 
