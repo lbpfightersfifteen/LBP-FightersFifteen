@@ -94,9 +94,11 @@
       border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
       gap: 5px;
       padding: 8px;
-      overflow-x: auto;
+      overflow-x: visible;
       box-shadow: 0 2px 8px rgba(0,0,0,.06);
     }
 
@@ -108,6 +110,8 @@
       border-radius: 9px;
       white-space: nowrap;
       font-weight: 600;
+      flex: 0 0 auto;
+      max-width: 100%;
     }
 
     nav button:hover {
@@ -929,15 +933,14 @@
     }
     body.guest-mode .post-actions,
     body.guest-mode .comments,
-    body.guest-mode .post-composer,
-    body.guest-mode #page-home,
-    body.guest-mode #page-profile,
-    body.guest-mode #page-members,
-    body.guest-mode #page-notifications,
-    body.guest-mode #page-admin,
-    body.guest-mode #page-league {
+    body.guest-mode .post-composer {
       display: none !important;
     }
+    .chat-message-tools { display:flex; gap:8px; align-items:center; justify-content:flex-end; margin-top:5px; flex-wrap:wrap; }
+    .chat-message-tools button { border:0; background:transparent; color:#64748b; font-size:11px; cursor:pointer; padding:3px 5px; }
+    .chat-seen { color:#2563eb; font-size:11px; margin-top:4px; text-align:right; }
+    .chat-message.mine .chat-seen { color:#dbeafe; }
+    @media (max-width:600px) { nav { justify-content:flex-start; gap:4px; padding:6px; } nav button { padding:8px 9px; font-size:12px; } }
   </style>
 </head>
 
@@ -2298,33 +2301,34 @@ $("adminLoginForm").addEventListener(
 
 
 /* =========================================================
-   GUEST MODE — public read-only News Feed
+   GUEST MODE — browse public site, protected areas ask for login
 ========================================================= */
 $("guestModeBtn")?.addEventListener("click", async () => {
   guestMode = true;
-  document.body.classList.add("guest-mode");
   currentUser = null;
   currentProfile = null;
+  document.body.classList.add("guest-mode");
   cleanupRealtime();
-
   $("authArea").classList.add("hidden");
   $("appArea").classList.remove("hidden");
 
-  // Guests only get the public feed; hide member/private sections.
+  // Show the site's navigation in guest mode. Protected sections display a login prompt.
   document.querySelectorAll("nav .nav-btn").forEach(btn => {
-    const page = btn.dataset.page;
-    const allowed = page === "home" || page === "feed";
-    btn.classList.toggle("hidden", !allowed);
+    btn.classList.toggle("hidden", btn.id === "adminNavBtn" || btn.id === "logoutBtn");
   });
-  $("chatNavBtn")?.classList.add("hidden");
-  $("leagueNavBtn")?.classList.add("hidden");
+  $("chatNavBtn")?.classList.remove("hidden");
+  $("leagueNavBtn")?.classList.remove("hidden");
   $("adminNavBtn")?.classList.add("hidden");
   $("logoutBtn")?.classList.add("hidden");
   $("page-feed")?.querySelector(".post-composer")?.classList.add("hidden");
-  $("postsList").innerHTML = '<div class="card muted">আপনি Guest Mode-এ আছেন। News Feed শুধু দেখা যাবে; পোস্ট, ভোট ও সদস্যদের ব্যক্তিগত তথ্যের জন্য Login করুন।</div>';
+
+  // Public home/feed content is visible; no private account data is fetched.
   showPage("feed");
   await loadPosts();
   await loadAnnouncements();
+  $("statMembers").textContent = "—";
+  $("statMessages").textContent = "—";
+  $("statNotifications").textContent = "—";
 });
 
 /* =========================================================
@@ -2386,6 +2390,8 @@ async function initializeApp(user) {
     currentProfile = profile;
     guestMode = false;
     document.body.classList.remove("guest-mode");
+    document.querySelectorAll('[id^="guest-login-prompt-"]').forEach(el => el.remove());
+    document.querySelectorAll("#page-profile > *, #page-notifications > *, #page-league > *, #page-admin > *").forEach(el => el.classList.remove("hidden"));
     $("page-feed")?.querySelector(".post-composer")?.classList.remove("hidden");
     // Admin must be able to access League settings to turn the section on.
     if (profile.is_admin) $("leagueNavBtn")?.classList.remove("hidden");
@@ -2502,9 +2508,34 @@ function showPage(page) {
   // Home always opens the News Feed.
   if (page === "home") page = "feed";
 
-  if (guestMode && !["feed"].includes(page)) {
-    toast("এই অংশ দেখতে Login করুন।", "error");
+  if (guestMode && ["profile", "notifications", "league", "admin"].includes(page)) {
+    document.querySelectorAll(".page-section").forEach(section => section.classList.remove("active"));
+    const target = $("page-" + page);
+    if (target) {
+      target.classList.add("active");
+      const promptId = "guest-login-prompt-" + page;
+      let prompt = $(promptId);
+      if (!prompt) {
+        prompt = document.createElement("div");
+        prompt.id = promptId;
+        prompt.className = "card";
+        prompt.style.margin = "12px 0";
+        prompt.innerHTML = '<h3>🔐 আগে Log in করুন</h3><p style="margin-top:8px">এই অংশের ব্যক্তিগত তথ্য, ভোট বা ফলাফল দেখতে আগে Login করুন।</p><button class="btn btn-primary" type="button" onclick="leaveGuestAndLogin()">Login করুন</button>';
+        target.prepend(prompt);
+      }
+      target.querySelectorAll(":scope > *:not(#" + promptId + ")").forEach(el => el.classList.add("hidden"));
+    }
+    document.querySelectorAll("nav .nav-btn[data-page]").forEach(button => button.classList.toggle("active", button.dataset.page === page));
+    if (page === "notifications") toast("আগে Log in করুন", "error");
     return;
+  }
+
+  if (guestMode && page === "members") {
+    // Public member directory can be browsed, but contact/private actions stay unavailable.
+    loadMembers();
+  }
+  if (guestMode && page === "feed") {
+    // Read-only feed.
   }
 
   if (page === "league" && !currentProfile?.is_admin && !leagueSettingsCache.enabled) {
@@ -2564,7 +2595,7 @@ function showPage(page) {
   }
 
   if (page === "notifications") {
-    loadNotifications();
+    loadNotifications(true);
   }
 
   if (page === "league") {
@@ -2577,6 +2608,14 @@ function showPage(page) {
 
 }
 
+
+window.leaveGuestAndLogin = function() {
+  guestMode = false;
+  document.body.classList.remove("guest-mode");
+  $("appArea").classList.add("hidden");
+  $("authArea").classList.remove("hidden");
+  document.querySelectorAll("#appArea .page-section > .guest-login-prompt").forEach(el => el.remove());
+};
 
 window.showPage = showPage;
 
@@ -2920,7 +2959,9 @@ async function loadMembers() {
     } = await db
       .from("profiles")
       .select(
-        "id,full_name,approved,is_admin,batch,blood_group,bio,phone,profile_photo,created_at"
+        guestMode
+          ? "id,full_name,approved,batch,blood_group,bio,profile_photo,created_at"
+          : "id,full_name,approved,is_admin,batch,blood_group,bio,phone,profile_photo,created_at"
       )
       .eq(
         "approved",
@@ -4136,10 +4177,16 @@ $("leagueSettingsForm").addEventListener("submit", async e => {
    NOTIFICATIONS
 ========================================================= */
 
-async function loadNotifications() {
+async function loadNotifications(markAsRead = false) {
 
   const container =
     $("notificationsList");
+
+  if (guestMode || !currentUser) {
+    container.innerHTML = '<div class="card"><h3>🔐 আগে Log in করুন</h3><p style="margin-top:8px">Notification দেখতে হলে আগে Login করতে হবে।</p><button class="btn btn-primary" onclick="leaveGuestAndLogin()">Login করুন</button></div>';
+    updateNotificationBadge(0);
+    return;
+  }
 
   setLoading(
     container,
@@ -4175,6 +4222,10 @@ async function loadNotifications() {
     $("statNotifications").textContent =
       notifications.length;
 
+    const readKey = "lbp_notifications_read_" + currentUser.id;
+    const lastRead = localStorage.getItem(readKey) || "";
+    const unreadCount = notifications.filter(n => String(n.created_at || "") > lastRead).length;
+
 
     if (!notifications.length) {
 
@@ -4185,7 +4236,7 @@ async function loadNotifications() {
       `;
 
       updateNotificationBadge(0);
-
+      localStorage.setItem("lbp_notifications_read_" + currentUser.id, new Date().toISOString());
       return;
     }
 
@@ -4223,9 +4274,13 @@ async function loadNotifications() {
       ).join("");
 
 
-    updateNotificationBadge(
-      notifications.length
-    );
+    // Only opening the Notifications page marks the current list as read.
+    if (markAsRead) {
+      localStorage.setItem(readKey, new Date().toISOString());
+      updateNotificationBadge(0);
+    } else {
+      updateNotificationBadge(unreadCount);
+    }
 
   } catch (err) {
 
@@ -4912,13 +4967,20 @@ async function setMemberStatus(memberId, status) {
   if (!window.confirm(confirmMessage)) return;
 
   try {
-    const { error } = status === "rejected"
-      ? await db.rpc("admin_reject_and_delete_member", { target_id: memberId })
-      : await db.rpc("admin_set_member_status", {
-          target_id: memberId,
-          new_status: status
-        });
-
+    let error = null;
+    if (status === "rejected") {
+      const rpcResult = await db.rpc("admin_reject_and_delete_member", { target_id: memberId });
+      error = rpcResult.error;
+      // If the database function was never installed, remove the profile row as a fallback.
+      // This still requires an Admin DELETE policy on profiles; auth.users deletion requires server-side admin privileges.
+      if (error && /function|schema cache|does not exist|could not find/i.test(error.message || "")) {
+        const fallback = await db.from("profiles").delete().eq("id", memberId);
+        error = fallback.error;
+      }
+    } else {
+      const rpcResult = await db.rpc("admin_set_member_status", { target_id: memberId, new_status: status });
+      error = rpcResult.error;
+    }
     if (error) throw error;
 
     toast(
@@ -5083,18 +5145,13 @@ $("chatNavBtn").addEventListener(
 
 function openChat() {
 
-  if (!currentProfile?.is_admin) {
-    toast("Live SMS শুধু Admin দেখতে পারবেন।", "error");
+  if (!currentUser || guestMode) {
+    toast("আগে Login করুন", "error");
     return;
   }
 
-  if (!currentUser) {
-
-    toast(
-      "আগে Login করুন",
-      "error"
-    );
-
+  if (!currentProfile?.is_admin) {
+    toast("Live SMS শুধু Admin দেখতে পারবেন।", "error");
     return;
   }
 
@@ -5249,6 +5306,13 @@ async function loadChat() {
     }
 
 
+    // Record that the current admin has seen the loaded messages (requires chat_message_reads table).
+    if (currentUser && messages.length) {
+      try {
+        const rows = messages.map(m => ({ message_id: m.id, reader_id: currentUser.id, read_at: new Date().toISOString() }));
+        await db.from("chat_message_reads").upsert(rows, { onConflict: "message_id,reader_id" });
+      } catch (_) {}
+    }
     scrollChatToBottom();
 
   } catch (err) {
@@ -5329,6 +5393,16 @@ async function renderChatMessage(
     message.id;
 
 
+  const canDelete = currentProfile?.is_admin || mine;
+  let seenLabel = "";
+  try {
+    const { data: receipts, error: receiptError } = await db.from("chat_message_reads").select("reader_id").eq("message_id", message.id);
+    if (!receiptError && receipts?.length) {
+      const names = receipts.map(r => profileMap[r.reader_id]?.full_name || (r.reader_id === currentUser?.id ? "You" : "Member")).filter(Boolean);
+      if (names.length) seenLabel = "Seen by " + [...new Set(names)].join(", ");
+    }
+  } catch (_) {}
+
   wrapper.innerHTML = `
 
     <img
@@ -5361,6 +5435,8 @@ async function renderChatMessage(
           message.created_at
         )}
       </div>
+      ${mine ? `<div class="chat-seen">${escapeHTML(seenLabel || "Sent")}</div>` : ""}
+      ${canDelete ? `<div class="chat-message-tools"><button type="button" onclick="deleteChatMessage('${String(message.id).replace(/'/g, "\\'")}')">🗑️ Delete</button></div>` : ""}
 
     </div>
 
@@ -5389,6 +5465,19 @@ async function renderChatMessage(
 
 }
 
+
+async function deleteChatMessage(messageId) {
+  if (!currentUser || !currentProfile?.is_admin) { toast("Admin access required", "error"); return; }
+  if (!window.confirm("এই message-টি delete করতে চান?")) return;
+  try {
+    const { error } = await db.from("chat_messages").delete().eq("id", messageId);
+    if (error) throw error;
+    document.querySelector(`[data-message-id="${CSS.escape(String(messageId))}"]`)?.remove();
+    chatIds.delete(messageId);
+    toast("Message delete হয়েছে", "success");
+  } catch (err) { toast(err.message || "Message delete করা যায়নি। Supabase DELETE policy দেখুন।", "error"); }
+}
+window.deleteChatMessage = deleteChatMessage;
 
 function scrollChatToBottom() {
 
@@ -5482,6 +5571,8 @@ $("chatForm").addEventListener(
               <div class="chat-name">You</div>
               <div class="chat-bubble">${escapeHTML(localMessage.content || "")}</div>
               <div class="chat-time">${formatDate(localMessage.created_at)}</div>
+              <div class="chat-seen">Sent</div>
+              <div class="chat-message-tools"><button type="button" onclick="deleteChatMessage('${String(sentMessage.id).replace(/'/g, "\\'")}')">🗑️ Delete</button></div>
             </div>
           `;
           chatContainer.appendChild(wrapper);
