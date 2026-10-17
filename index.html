@@ -927,6 +927,17 @@
         border-radius: 0;
       }
     }
+    body.guest-mode .post-actions,
+    body.guest-mode .comments,
+    body.guest-mode .post-composer,
+    body.guest-mode #page-home,
+    body.guest-mode #page-profile,
+    body.guest-mode #page-members,
+    body.guest-mode #page-notifications,
+    body.guest-mode #page-admin,
+    body.guest-mode #page-league {
+      display: none !important;
+    }
   </style>
 </head>
 
@@ -986,6 +997,12 @@
       <div class="auth-switch">
         <button class="link-btn" id="showAdminLogin">
           Admin Login
+        </button>
+      </div>
+
+      <div class="auth-switch" style="margin-top:14px">
+        <button class="btn btn-secondary btn-full" id="guestModeBtn" type="button">
+          👀 Guest Mode — Login ছাড়া দেখুন
         </button>
       </div>
 
@@ -1941,6 +1958,7 @@ const db = createClient(
 
 let currentUser = null;
 let currentProfile = null;
+let guestMode = false;
 
 let membersCache = [];
 let profileMap = {};
@@ -2280,6 +2298,36 @@ $("adminLoginForm").addEventListener(
 
 
 /* =========================================================
+   GUEST MODE — public read-only News Feed
+========================================================= */
+$("guestModeBtn")?.addEventListener("click", async () => {
+  guestMode = true;
+  document.body.classList.add("guest-mode");
+  currentUser = null;
+  currentProfile = null;
+  cleanupRealtime();
+
+  $("authArea").classList.add("hidden");
+  $("appArea").classList.remove("hidden");
+
+  // Guests only get the public feed; hide member/private sections.
+  document.querySelectorAll("nav .nav-btn").forEach(btn => {
+    const page = btn.dataset.page;
+    const allowed = page === "home" || page === "feed";
+    btn.classList.toggle("hidden", !allowed);
+  });
+  $("chatNavBtn")?.classList.add("hidden");
+  $("leagueNavBtn")?.classList.add("hidden");
+  $("adminNavBtn")?.classList.add("hidden");
+  $("logoutBtn")?.classList.add("hidden");
+  $("page-feed")?.querySelector(".post-composer")?.classList.add("hidden");
+  $("postsList").innerHTML = '<div class="card muted">আপনি Guest Mode-এ আছেন। News Feed শুধু দেখা যাবে; পোস্ট, ভোট ও সদস্যদের ব্যক্তিগত তথ্যের জন্য Login করুন।</div>';
+  showPage("feed");
+  await loadPosts();
+  await loadAnnouncements();
+});
+
+/* =========================================================
    AUTH STATE
 ========================================================= */
 
@@ -2287,7 +2335,8 @@ db.auth.onAuthStateChange(
   async (_event, session) => {
 
     if (session?.user) {
-
+      guestMode = false;
+      document.body.classList.remove("guest-mode");
       setTimeout(
         () => initializeApp(session.user),
         0
@@ -2295,6 +2344,8 @@ db.auth.onAuthStateChange(
 
     } else {
 
+      guestMode = false;
+      document.body.classList.remove("guest-mode");
       currentUser = null;
       currentProfile = null;
 
@@ -2333,6 +2384,9 @@ async function initializeApp(user) {
     }
 
     currentProfile = profile;
+    guestMode = false;
+    document.body.classList.remove("guest-mode");
+    $("page-feed")?.querySelector(".post-composer")?.classList.remove("hidden");
     // Admin must be able to access League settings to turn the section on.
     if (profile.is_admin) $("leagueNavBtn")?.classList.remove("hidden");
 
@@ -2434,7 +2488,7 @@ document
       () => {
 
         showPage(
-          button.dataset.page
+          button.dataset.page === "home" ? "feed" : button.dataset.page
         );
 
       }
@@ -2444,6 +2498,14 @@ document
 
 
 function showPage(page) {
+
+  // Home always opens the News Feed.
+  if (page === "home") page = "feed";
+
+  if (guestMode && !["feed"].includes(page)) {
+    toast("এই অংশ দেখতে Login করুন।", "error");
+    return;
+  }
 
   if (page === "league" && !currentProfile?.is_admin && !leagueSettingsCache.enabled) {
     toast("Admin এখনো Cricket League চালু করেননি।", "error");
@@ -3262,7 +3324,7 @@ async function loadPosts() {
     let comments = [];
 
 
-    if (postIds.length) {
+    if (postIds.length && !guestMode) {
 
       const likesResult =
         await db
@@ -3622,7 +3684,10 @@ $("createPostBtn").addEventListener(
   "click",
   async () => {
 
-    if (!currentUser) return;
+    if (!currentUser || guestMode) {
+      toast("Post করতে আগে Login করুন।", "error");
+      return;
+    }
 
 
     const textarea =
@@ -3704,7 +3769,10 @@ $("createPostBtn").addEventListener(
 
 async function toggleLike(postId) {
 
-  if (!currentUser) return;
+  if (!currentUser || guestMode) {
+    toast("Like দিতে আগে Login করুন।", "error");
+    return;
+  }
 
 
   try {
@@ -3807,7 +3875,10 @@ async function addComment(
   event.preventDefault();
 
 
-  if (!currentUser) return;
+  if (!currentUser || guestMode) {
+    toast("Comment করতে আগে Login করুন।", "error");
+    return;
+  }
 
 
   const input =
