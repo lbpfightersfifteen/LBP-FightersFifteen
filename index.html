@@ -559,6 +559,18 @@
       margin-top: 6px;
     }
 
+    /* CRICKET LEAGUE / VOTING */
+    .league-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .player-vote-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin:12px 0; }
+    .player-vote-option { display:flex; align-items:center; gap:9px; padding:10px; border:1px solid var(--border); border-radius:10px; background:#fff; }
+    .player-vote-option input { width:auto; }
+    .vote-result { margin:10px 0; }
+    .vote-result-head { display:flex; justify-content:space-between; gap:10px; font-size:13px; margin-bottom:5px; }
+    .vote-bar { height:8px; background:#e5e7eb; border-radius:99px; overflow:hidden; }
+    .vote-bar span { display:block; height:100%; background:var(--primary); border-radius:99px; }
+    .league-info { white-space:pre-wrap; line-height:1.7; }
+    @media (max-width:700px) { .league-grid { grid-template-columns:1fr; } .player-vote-list { grid-template-columns:1fr; } }
+
     /* ADMIN */
 
     .admin-grid {
@@ -1111,6 +1123,8 @@
       💬 Live SMS
     </button>
 
+    <button class="nav-btn" data-page="league" id="leagueNavBtn">🏏 Cricket League</button>
+
     <button
       class="nav-btn hidden"
       id="adminNavBtn"
@@ -1417,6 +1431,35 @@
     </section>
 
 
+    <!-- CRICKET LEAGUE: game information and member voting -->
+    <section id="page-league" class="page-section">
+      <div class="page-title">
+        <h2>🏏 Cricket League</h2>
+        <p>খেলার তথ্য দেখুন এবং পছন্দের খেলোয়াড়দের ভোট দিন</p>
+      </div>
+      <div id="leagueDisabledNotice" class="card hidden">
+        <h3>🏏 Cricket League আপাতত বন্ধ</h3>
+        <p class="muted" style="margin-top:8px">Admin সেকশন চালু করলে এখানে খেলার তথ্য দেখা যাবে।</p>
+      </div>
+      <div id="leagueContent" class="league-grid">
+        <div class="card">
+          <h3 style="margin-bottom:10px">📋 খেলার তথ্য</h3>
+          <div id="leagueGameInfo" class="league-info muted">খেলার তথ্য লোড হচ্ছে...</div>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:8px">🗳️ খেলোয়াড় নির্বাচন ভোট</h3>
+          <p class="muted" style="font-size:13px">তালিকা থেকে সর্বোচ্চ ১৫ জন খেলোয়াড় বেছে একবার ভোট জমা দিন।</p>
+          <div id="votingStatus" class="muted" style="margin-top:10px">ভোটের অবস্থা লোড হচ্ছে...</div>
+          <div id="playerVoteList" class="player-vote-list"></div>
+          <button id="submitPlayerVote" class="btn btn-primary" type="button">🗳️ ভোট জমা দিন</button>
+          <div id="myVoteStatus" class="muted" style="margin-top:10px"></div>
+          <hr style="border:0;border-top:1px solid var(--border);margin:15px 0">
+          <h4 style="margin-bottom:8px">📊 ভোটের ফলাফল</h4>
+          <div id="playerVoteResults" class="muted">ফলাফল লোড হচ্ছে...</div>
+        </div>
+      </div>
+    </section>
+
     <!-- ADMIN -->
 
     <section id="page-admin" class="page-section">
@@ -1577,6 +1620,23 @@
 
         </div>
 
+
+        <!-- CRICKET LEAGUE SETTINGS -->
+        <div class="card" style="grid-column:1/-1">
+          <h3 style="margin-bottom:12px">🏏 Cricket League Settings</h3>
+          <form id="leagueSettingsForm">
+            <div class="form-group">
+              <label>খেলার তথ্য</label>
+              <textarea id="leagueGameInfoInput" placeholder="খেলার তারিখ, সময়, মাঠ, নিয়ম ইত্যাদি লিখুন"></textarea>
+            </div>
+            <div class="profile-grid" style="margin-bottom:12px">
+              <label style="display:flex;align-items:center;gap:8px"><input id="leagueEnabledInput" type="checkbox" style="width:auto"> Cricket League সেকশন চালু</label>
+              <label style="display:flex;align-items:center;gap:8px"><input id="leagueVotingOpenInput" type="checkbox" style="width:auto"> ভোট গ্রহণ চালু</label>
+            </div>
+            <button class="btn btn-primary" type="submit">💾 League Settings Save</button>
+          </form>
+          <p class="muted" style="font-size:12px;margin-top:8px">মেম্বাররা শুধু খেলার তথ্য ও ভোটের সেকশন দেখবে; সেটিংস শুধু Admin পরিবর্তন করতে পারবেন।</p>
+        </div>
 
         <!-- ADMIN STATS -->
 
@@ -1781,6 +1841,21 @@
 </div>
 
 
+<!-- ADMIN NEW-MEMBER APPROVAL POPUP -->
+<div id="adminPendingModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div>
+        <h3>🛡️ নতুন সদস্যের অনুমোদন</h3>
+        <p class="muted" style="font-size:12px;margin-top:5px">নতুন সাইনআপগুলো Approve অথবা Reject করুন</p>
+      </div>
+      <button class="close-btn" type="button" onclick="closeAdminPendingModal()">×</button>
+    </div>
+    <div id="adminPendingList"></div>
+  </div>
+</div>
+
+
 <!-- CHAT -->
 
 <div id="chatOverlay" class="chat-overlay">
@@ -1874,6 +1949,7 @@ let postCache = [];
 let chatChannel = null;
 let postsChannel = null;
 let notificationsChannel = null;
+let adminMembersChannel = null;
 
 let chatIds = new Set();
 
@@ -2290,15 +2366,12 @@ async function initializeApp(user) {
 
 
     if (profile.is_admin) {
-
-      $("adminNavBtn")
-        .classList.remove("hidden");
-
+      $("adminNavBtn").classList.remove("hidden");
+      $("chatNavBtn").classList.remove("hidden");
     } else {
-
-      $("adminNavBtn")
-        .classList.add("hidden");
-
+      $("adminNavBtn").classList.add("hidden");
+      // Live SMS chat is reserved for Admin; ordinary members cannot view it.
+      $("chatNavBtn").classList.add("hidden");
     }
 
 
@@ -2309,6 +2382,8 @@ async function initializeApp(user) {
     await loadPosts();
 
     await loadNotifications();
+
+    await loadLeague();
 
     await loadAnnouncements();
 
@@ -2421,6 +2496,10 @@ function showPage(page) {
 
   if (page === "notifications") {
     loadNotifications();
+  }
+
+  if (page === "league") {
+    loadLeague();
   }
 
   if (page === "admin") {
@@ -3857,6 +3936,112 @@ window.deletePost =
 
 
 /* =========================================================
+   CRICKET LEAGUE / MEMBER VOTING
+   Requires the companion Supabase SQL migration.
+========================================================= */
+let leagueSettingsCache = { enabled: false, voting_open: false, game_info: "" };
+let playerVoteRows = [];
+
+async function loadLeague() {
+  const disabled = $("leagueDisabledNotice");
+  const content = $("leagueContent");
+  if (!currentUser || !currentProfile?.approved && !currentProfile?.is_admin) return;
+  try {
+    const { data: settings, error: settingsError } = await db
+      .from("league_settings").select("id,enabled,voting_open,game_info").eq("id", 1).maybeSingle();
+    if (settingsError) throw settingsError;
+    leagueSettingsCache = settings || { enabled: false, voting_open: false, game_info: "" };
+
+    if (currentProfile?.is_admin) {
+      $("leagueGameInfoInput").value = leagueSettingsCache.game_info || "";
+      $("leagueEnabledInput").checked = !!leagueSettingsCache.enabled;
+      $("leagueVotingOpenInput").checked = !!leagueSettingsCache.voting_open;
+    }
+
+    if (!leagueSettingsCache.enabled && !currentProfile?.is_admin) {
+      disabled.classList.remove("hidden"); content.classList.add("hidden"); return;
+    }
+    disabled.classList.add("hidden"); content.classList.remove("hidden");
+    $("leagueGameInfo").textContent = leagueSettingsCache.game_info || "Admin এখনো খেলার তথ্য যোগ করেননি।";
+
+    const { data: players, error: playersError } = await db.from("profiles")
+      .select("id,full_name,batch,profile_photo").eq("approved", true).order("full_name", { ascending: true });
+    if (playersError) throw playersError;
+    const { data: ballots, error: ballotError } = await db.from("player_votes").select("voter_id,player_ids");
+    if (ballotError) throw ballotError;
+    playerVoteRows = ballots || [];
+    const mine = playerVoteRows.find(row => row.voter_id === currentUser.id);
+    const votedIds = new Set((mine?.player_ids || []).map(String));
+    const canVote = !!leagueSettingsCache.voting_open && !mine;
+    $("votingStatus").textContent = leagueSettingsCache.voting_open ? (mine ? "আপনি ইতিমধ্যে ভোট দিয়েছেন।" : "ভোট গ্রহণ চলছে — সর্বোচ্চ ১৫ জন বাছুন।") : "এখন ভোট গ্রহণ বন্ধ।";
+    $("playerVoteList").innerHTML = (players || []).map(player => `
+      <label class="player-vote-option"><input type="checkbox" class="player-vote-checkbox" value="${escapeHTML(player.id)}" ${votedIds.has(String(player.id)) ? "checked" : ""} ${canVote ? "" : "disabled"}><span>${escapeHTML(player.full_name || "Unnamed")}</span></label>
+    `).join("") || '<p class="muted">কোনো approved খেলোয়াড় পাওয়া যায়নি।</p>';
+    $("submitPlayerVote").classList.toggle("hidden", !canVote);
+    $("myVoteStatus").textContent = mine ? `আপনার ভোট জমা হয়েছে (${(mine.player_ids || []).length} জন খেলোয়াড়)।` : "একজন সদস্য একবারই ভোট জমা দিতে পারবেন।";
+    renderPlayerVoteResults(players || [], playerVoteRows);
+  } catch (err) {
+    console.error("League load error", err);
+    $("leagueGameInfo").textContent = "League সেটিংস লোড করা যায়নি। Supabase SQL migration চালানো হয়েছে কি না যাচাই করুন.";
+    $("votingStatus").textContent = "ভোট লোড করা যায়নি।";
+    $("playerVoteResults").textContent = escapeHTML(err.message || "Database error");
+  }
+}
+
+function renderPlayerVoteResults(players, ballots) {
+  const counts = {};
+  (ballots || []).forEach(ballot => (ballot.player_ids || []).forEach(id => { counts[String(id)] = (counts[String(id)] || 0) + 1; }));
+  const total = (ballots || []).length;
+  const sorted = [...players].sort((a,b) => (counts[String(b.id)] || 0) - (counts[String(a.id)] || 0));
+  $("playerVoteResults").innerHTML = total ? sorted.map(player => {
+    const count = counts[String(player.id)] || 0;
+    const percent = Math.round(count / total * 100);
+    return `<div class="vote-result"><div class="vote-result-head"><span>${escapeHTML(player.full_name || "Unnamed")}</span><strong>${count} ভোট</strong></div><div class="vote-bar"><span style="width:${percent}%"></span></div></div>`;
+  }).join("") : "এখনো কোনো ভোট জমা হয়নি।";
+}
+
+$("playerVoteList").addEventListener("change", e => {
+  if (!e.target.classList.contains("player-vote-checkbox")) return;
+  const selected = [...document.querySelectorAll(".player-vote-checkbox:checked")];
+  if (selected.length > 15) { e.target.checked = false; toast("সর্বোচ্চ ১৫ জন খেলোয়াড় বেছে নিতে পারবেন।", "error"); }
+});
+
+$("submitPlayerVote").addEventListener("click", async () => {
+  if (!currentUser || !currentProfile?.approved || !leagueSettingsCache.voting_open) {
+    toast("ভোট দেওয়ার অনুমতি নেই বা ভোট বন্ধ।", "error"); return;
+  }
+  const playerIds = [...document.querySelectorAll(".player-vote-checkbox:checked")].map(el => el.value);
+  if (!playerIds.length) { toast("কমপক্ষে একজন খেলোয়াড় বাছুন।", "error"); return; }
+  if (playerIds.length > 15) { toast("সর্বোচ্চ ১৫ জন খেলোয়াড় বেছে নিতে পারবেন।", "error"); return; }
+  if (!window.confirm(`${playerIds.length} জন খেলোয়াড়ের জন্য একবার ভোট জমা দেবেন? পরে পরিবর্তন করা যাবে না।`)) return;
+  const button = $("submitPlayerVote"); button.disabled = true;
+  try {
+    const { error } = await db.from("player_votes").insert({ voter_id: currentUser.id, player_ids: playerIds });
+    if (error) throw error;
+    toast("আপনার ভোট জমা হয়েছে।", "success"); await loadLeague();
+  } catch (err) {
+    toast(err.code === "23505" ? "আপনি ইতিমধ্যে ভোট দিয়েছেন।" : (err.message || "ভোট জমা দেওয়া যায়নি।"), "error");
+  } finally { button.disabled = false; }
+});
+
+$("leagueSettingsForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!currentProfile?.is_admin) { toast("Admin access required", "error"); return; }
+  try {
+    const { error } = await db.from("league_settings").upsert({
+      id: 1,
+      enabled: $("leagueEnabledInput").checked,
+      voting_open: $("leagueVotingOpenInput").checked,
+      game_info: $("leagueGameInfoInput").value.trim(),
+      updated_by: currentUser.id,
+      updated_at: new Date().toISOString()
+    }, { onConflict: "id" });
+    if (error) throw error;
+    toast("Cricket League settings saved.", "success"); await loadLeague();
+  } catch (err) { toast(err.message || "League settings save failed. SQL migration চালানো হয়েছে কি না দেখুন।", "error"); }
+});
+
+/* =========================================================
    NOTIFICATIONS
 ========================================================= */
 
@@ -4477,7 +4662,7 @@ async function loadAdminDashboard() {
   }
 
 
-  await loadAdminMembers();
+  await loadAdminMembers(true);
 
   await loadAnnouncements();
 
@@ -4486,7 +4671,7 @@ async function loadAdminDashboard() {
 }
 
 
-async function loadAdminMembers() {
+async function loadAdminMembers(showPendingPopup = false) {
 
   const container = $("adminMembersList");
 
@@ -4504,6 +4689,7 @@ async function loadAdminMembers() {
       container.innerHTML = `
         <div class="muted">কোনো member নেই।</div>
       `;
+      renderAdminPendingPopup([], showPendingPopup);
       return;
     }
 
@@ -4557,6 +4743,8 @@ async function loadAdminMembers() {
       `;
     }).join("");
 
+    renderAdminPendingPopup(members, showPendingPopup);
+
   } catch (err) {
     console.error(err);
     container.innerHTML = `
@@ -4567,6 +4755,48 @@ async function loadAdminMembers() {
       </div>
     `;
   }
+}
+
+
+function closeAdminPendingModal() {
+  const modal = $("adminPendingModal");
+  if (modal) modal.classList.remove("show");
+}
+window.closeAdminPendingModal = closeAdminPendingModal;
+
+function renderAdminPendingPopup(members, forceOpen = false) {
+  const modal = $("adminPendingModal");
+  const list = $("adminPendingList");
+  if (!modal || !list || !currentProfile?.is_admin) return;
+
+  const pending = (members || []).filter(member => {
+    const status = member.approval_status || (member.approved ? "approved" : "pending");
+    return status === "pending";
+  });
+
+  if (!pending.length) {
+    closeAdminPendingModal();
+    list.innerHTML = '<p class="muted">এখন কোনো নতুন pending সদস্য নেই।</p>';
+    return;
+  }
+
+  list.innerHTML = pending.map(member => `
+    <div class="admin-member">
+      <div class="admin-member-info">
+        <div>
+          <div class="admin-member-name">${escapeHTML(member.full_name || "Unnamed")}</div>
+          <div class="muted" style="font-size:11px">⏳ Pending approval</div>
+          ${member.created_at ? `<div class="muted" style="font-size:10px">${escapeHTML(formatDate(member.created_at))}</div>` : ""}
+        </div>
+      </div>
+      <div class="admin-actions">
+        <button class="btn btn-success" onclick="setMemberStatus('${member.id}', 'approved')">Approve</button>
+        <button class="btn btn-danger" onclick="setMemberStatus('${member.id}', 'rejected')">Reject</button>
+      </div>
+    </div>
+  `).join("");
+
+  if (forceOpen || modal.classList.contains("show")) modal.classList.add("show");
 }
 
 
@@ -4591,10 +4821,12 @@ async function setMemberStatus(memberId, status) {
   if (!window.confirm(confirmMessage)) return;
 
   try {
-    const { error } = await db.rpc("admin_set_member_status", {
-      target_id: memberId,
-      new_status: status
-    });
+    const { error } = status === "rejected"
+      ? await db.rpc("admin_reject_and_delete_member", { target_id: memberId })
+      : await db.rpc("admin_set_member_status", {
+          target_id: memberId,
+          new_status: status
+        });
 
     if (error) throw error;
 
@@ -4759,6 +4991,11 @@ $("chatNavBtn").addEventListener(
 
 
 function openChat() {
+
+  if (!currentProfile?.is_admin) {
+    toast("Live SMS শুধু Admin দেখতে পারবেন।", "error");
+    return;
+  }
 
   if (!currentUser) {
 
@@ -5367,6 +5604,20 @@ function setupRealtime() {
 
     .subscribe();
 
+  /* New signups: notify an already logged-in admin immediately. */
+  adminMembersChannel = db.channel("admin-new-members-channel");
+  adminMembersChannel
+    .on("postgres_changes", {
+      event: "INSERT",
+      schema: "public",
+      table: "profiles"
+    }, () => {
+      if (currentProfile?.is_admin) {
+        loadAdminMembers(true);
+      }
+    })
+    .subscribe();
+
 }
 
 
@@ -5402,6 +5653,11 @@ function cleanupRealtime() {
 
     notificationsChannel = null;
 
+  }
+
+  if (adminMembersChannel) {
+    db.removeChannel(adminMembersChannel);
+    adminMembersChannel = null;
   }
 
 }
@@ -5445,6 +5701,12 @@ $("memberModal")
 
     }
   );
+
+
+$("adminPendingModal")
+  .addEventListener("click", e => {
+    if (e.target === $("adminPendingModal")) closeAdminPendingModal();
+  });
 
 
 $("chatOverlay")
