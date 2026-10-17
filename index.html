@@ -2712,6 +2712,20 @@ async function loadComplaints() {
     const { data, error } = await query;
     if (error) throw error;
     const complaints = data || [];
+    // Resolve complaint submitter names from profiles.
+    const submitterNames = {};
+    const submitterIds = [...new Set(complaints.map(item => item.user_id).filter(Boolean))];
+    if (submitterIds.length) {
+      const { data: submitterProfiles, error: profileError } = await db
+        .from("profiles")
+        .select("id,full_name")
+        .in("id", submitterIds);
+      if (!profileError) {
+        (submitterProfiles || []).forEach(profile => {
+          submitterNames[profile.id] = profile.full_name || "নাম দেওয়া নেই";
+        });
+      }
+    }
     $("complaintsListHeading").textContent = currentProfile?.is_admin ? "সদস্যদের অভিযোগ" : (isGuest ? "Admin অনুমোদিত প্রকাশ্য অভিযোগ" : "আমার ও প্রকাশ্য অভিযোগসমূহ");
     $("complaintFormCard")?.classList.toggle("hidden", isGuest || !!currentProfile?.is_admin);
     if (!complaints.length) {
@@ -2732,13 +2746,16 @@ async function loadComplaints() {
           <input id="complaint-note-${item.id}" maxlength="2000" value="${escapeHTML(item.admin_note || "")}" placeholder="সদস্যকে উত্তর (ঐচ্ছিক)" style="flex:1;min-width:180px;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text)">
           <button class="btn btn-primary" type="button" onclick="saveComplaintUpdate(${Number(item.id)})">আপডেট</button>
         </div>` : "";
-      const memberLabel = currentProfile?.is_admin ? `<p class="muted" style="margin-top:4px">সদস্য ID: ${escapeHTML(item.user_id)}</p>` : "";
+      const submitterName = submitterNames[item.user_id] || (currentUser?.id === item.user_id ? (currentProfile?.full_name || "আপনি") : "সদস্য");
+      const memberLabel = `<p style="margin-top:5px;font-size:13px;color:var(--muted)">অভিযোগকারী: <strong>${escapeHTML(submitterName)}</strong></p>`;
+      const canDeleteComplaint = !!currentUser?.id && (currentUser.id === item.user_id || !!currentProfile?.is_admin);
+      const deleteButton = canDeleteComplaint ? `<button class="btn btn-danger" type="button" style="margin-top:12px;background:#dc2626;color:#fff;border:0;padding:8px 12px;border-radius:8px" onclick="deleteComplaint(${Number(item.id)})">🗑️ অভিযোগ ডিলিট</button>` : "";
       return `<article style="border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px">
         <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><h4>${escapeHTML(item.subject)}</h4><span class="muted">${escapeHTML(status)}</span></div>
         ${memberLabel}
         <p style="white-space:pre-wrap;margin-top:8px">${escapeHTML(item.message)}</p>
         <p class="muted" style="font-size:12px;margin-top:8px">জমা: ${escapeHTML(formatDate(item.created_at))}</p>
-        ${adminNote}${adminControls}
+        ${adminNote}${adminControls}${deleteButton}
       </article>`;
     }).join("");
   } catch (error) {
@@ -2746,6 +2763,26 @@ async function loadComplaints() {
     container.innerHTML = `<p class="muted">অভিযোগ লোড করা যায়নি: ${escapeHTML(error?.message || "Unknown error")}</p><p class="muted" style="margin-top:6px">Supabase SQL সেটআপ চালানো হয়েছে কি না নিশ্চিত করুন।</p>`;
   }
 }
+
+
+window.deleteComplaint = async function(complaintId) {
+  if (!currentUser?.id) {
+    toast("অভিযোগ ডিলিট করতে লগইন করুন", "error");
+    return;
+  }
+  if (!window.confirm("এই অভিযোগটি স্থায়ীভাবে ডিলিট করতে চান?")) return;
+  try {
+    let query = db.from("complaints").delete().eq("id", complaintId);
+    // Server-side RLS must permit only the complaint owner or an Admin.
+    const { error } = await query;
+    if (error) throw error;
+    toast("অভিযোগ ডিলিট হয়েছে", "success");
+    await loadComplaints();
+  } catch (error) {
+    console.error("Delete complaint failed:", error);
+    toast(error?.message || "অভিযোগ ডিলিট করা যায়নি। Supabase DELETE policy পরীক্ষা করুন।", "error");
+  }
+};
 
 window.saveComplaintUpdate = async function(complaintId) {
   if (!currentProfile?.is_admin) {
