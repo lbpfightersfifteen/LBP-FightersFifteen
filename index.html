@@ -943,6 +943,27 @@
     @media (max-width:600px) { nav { justify-content:flex-start; gap:4px; padding:6px; } nav button { padding:8px 9px; font-size:12px; } }
 
 
+
+    /* PROFILE UPGRADE */
+    .profile-cover { width:100%; height:190px; object-fit:cover; border-radius:14px; background:linear-gradient(135deg,#1e3a8a,#60a5fa); display:block; }
+    .profile-hero-card { overflow:hidden; }
+    .profile-hero-body { display:flex; align-items:flex-end; gap:16px; margin-top:-42px; padding:0 18px 18px; position:relative; }
+    .profile-hero-body .avatar { width:100px; height:100px; border:4px solid var(--card); }
+    .profile-subnav { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
+    .profile-stat-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .profile-stat-box { background:var(--bg); border:1px solid var(--border); padding:12px; border-radius:12px; text-align:center; }
+    .profile-stat-box strong { display:block; font-size:20px; color:var(--primary); }
+    .badge-list { display:flex; gap:8px; flex-wrap:wrap; }
+    .achievement-badge { border:1px solid #fbbf24; background:#fffbeb; color:#92400e; border-radius:999px; padding:7px 11px; font-size:12px; font-weight:800; }
+    .gallery-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .gallery-item { border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--card); }
+    .gallery-item img { display:block; width:100%; aspect-ratio:1/1; object-fit:cover; }
+    .gallery-item .gallery-caption { padding:8px; font-size:12px; }
+    .notice-card { border-left:4px solid var(--primary); }
+    .privacy-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); }
+    .privacy-row input[type=checkbox] { width:auto; }
+    @media(max-width:600px) { .profile-cover{height:135px}.profile-hero-body{align-items:flex-start;flex-direction:column;gap:8px;margin-top:-35px}.profile-hero-body .avatar{width:82px;height:82px}.profile-stat-grid{grid-template-columns:1fr 1fr}.gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+
     /* VISITOR COUNTER + FOOTER */
     .site-footer {
       margin-top: 32px;
@@ -1155,6 +1176,10 @@
       👥 Members
     </button>
 
+    <button class="nav-btn" data-page="notices">📌 Notice Board</button>
+    <button class="nav-btn" data-page="gallery">🖼️ Gallery</button>
+    <button class="nav-btn" data-page="birthdays">🎂 Birthdays</button>
+
     <button class="nav-btn" data-page="notifications">
       🔔 Notifications
       <span id="notificationBadge" class="notification-badge hidden">0</span>
@@ -1291,33 +1316,16 @@
         <p>আপনার profile information</p>
       </div>
 
-      <div class="card">
-
-        <div class="profile-header">
-
-          <img
-            id="profileAvatar"
-            class="avatar"
-            src=""
-            alt="Profile"
-          >
-
-          <div>
-
-            <div id="profileName" class="profile-name">
-              -
-            </div>
-
-            <div id="profileEmail" class="profile-meta">
-              -
-            </div>
-
-            <div id="profileStatus" class="profile-meta">
-              -
-            </div>
-
+      <div class="card profile-hero-card">
+        <img id="profileCover" class="profile-cover" src="" alt="Cover Photo">
+        <div class="profile-hero-body">
+          <img id="profileAvatar" class="avatar" src="" alt="Profile">
+          <div style="min-width:0;flex:1">
+            <div id="profileName" class="profile-name">-</div>
+            <div id="profileEmail" class="profile-meta">-</div>
+            <div id="profileStatus" class="profile-meta">-</div>
+            <div id="profileBadges" class="badge-list" style="margin-top:8px"></div>
           </div>
-
         </div>
 
         <div class="profile-grid">
@@ -1357,6 +1365,68 @@
 
       </div>
 
+      <div class="card">
+        <h3 style="margin-bottom:12px">🏏 Cricket Player Statistics</h3>
+        <div id="profileCricketStats" class="profile-stat-grid"><div class="muted">পরিসংখ্যান লোড হচ্ছে...</div></div>
+        <p class="muted" style="font-size:12px;margin-top:8px">শুধু যাচাইকৃত পরিসংখ্যান দেখানো হবে।</p>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:12px">📰 My Activity — Posts & Comments</h3>
+        <div id="profileActivity"><p class="muted">নিজের পোস্ট ও মন্তব্য দেখতে নিচের বাটনে চাপ দিন।</p></div>
+        <button type="button" class="btn btn-secondary" onclick="loadProfileActivity()">🔄 Activity দেখুন</button>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:12px">🔒 Profile Privacy</h3>
+        <p class="muted" style="font-size:13px;margin-bottom:8px">এই সেটিংস আপনার পাবলিক প্রোফাইলে কী দেখানো হবে তা নিয়ন্ত্রণ করে।</p>
+        <label class="privacy-row"><span>ফোন নম্বর Guest-সহ সবার জন্য প্রকাশ (সম্মতি প্রয়োজন)</span><input id="privacyPhonePublic" type="checkbox"></label>
+        <label class="privacy-row"><span>জন্মদিন Member-দের দেখানো</span><input id="privacyBirthdayPublic" type="checkbox"></label>
+        <label class="privacy-row"><span>Bio পাবলিক প্রোফাইলে দেখানো</span><input id="privacyBioPublic" type="checkbox" checked></label>
+        <button type="button" class="btn btn-primary" style="margin-top:12px" onclick="saveProfilePrivacy()">💾 Privacy Save</button>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:12px">⚙️ Account Settings & Security</h3>
+        <form id="passwordChangeForm">
+          <div class="form-group"><label>নতুন Password</label><input id="newAccountPassword" type="password" minlength="8" autocomplete="new-password" placeholder="কমপক্ষে ৮ অক্ষর" required></div>
+          <button class="btn btn-secondary" type="submit">🔑 Password পরিবর্তন</button>
+        </form>
+        <hr style="border:0;border-top:1px solid var(--border);margin:16px 0">
+        <form id="emailChangeForm">
+          <div class="form-group"><label>নতুন Email</label><input id="newAccountEmail" type="email" autocomplete="email" placeholder="নতুন ইমেইল ঠিকানা" required></div>
+          <button class="btn btn-secondary" type="submit">✉️ Email পরিবর্তনের অনুরোধ</button>
+        </form>
+        <p class="muted" style="font-size:12px;margin-top:10px">Email পরিবর্তনে Supabase confirmation email চাইতে পারে। Account deletion চাইলে Admin-এর কাছে অনুরোধ করতে হবে।</p>
+      </div>
+
+    </section>
+
+
+    <!-- PUBLIC NOTICE BOARD -->
+    <section id="page-notices" class="page-section">
+      <div class="page-title"><h2>📌 Notice Board</h2><p>Admin-এর প্রকাশিত ঘোষণা ও গুরুত্বপূর্ণ নোটিশ</p></div>
+      <div id="publicNoticesList" class="card"><div class="muted">নোটিশ লোড হচ্ছে...</div></div>
+    </section>
+
+    <!-- PHOTO GALLERY -->
+    <section id="page-gallery" class="page-section">
+      <div class="page-title"><h2>🖼️ Photo Gallery</h2><p>ম্যাচ, অনুষ্ঠান ও কমিউনিটির ছবি</p></div>
+      <div class="card" id="galleryUploadCard">
+        <form id="galleryUploadForm">
+          <div class="form-group"><label>ছবির ক্যাপশন</label><input id="galleryCaption" maxlength="160" placeholder="ছবির বর্ণনা"></div>
+          <div class="form-group"><label>ছবি নির্বাচন (সর্বোচ্চ 5MB)</label><input id="galleryFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required></div>
+          <button class="btn btn-primary" type="submit">⬆️ ছবি আপলোড</button>
+        </form>
+        <p class="muted" style="font-size:12px;margin-top:8px">ছবি আপলোড করতে অনুমোদিত সদস্য হিসেবে লগইন করতে হবে।</p>
+      </div>
+      <div id="galleryGrid" class="gallery-grid"><div class="card muted">Gallery লোড হচ্ছে...</div></div>
+    </section>
+
+    <!-- BIRTHDAY REMINDERS -->
+    <section id="page-birthdays" class="page-section">
+      <div class="page-title"><h2>🎂 Birthday Reminder</h2><p>যেসব সদস্য জন্মদিন প্রকাশ করতে সম্মতি দিয়েছেন</p></div>
+      <div id="birthdayList" class="card"><div class="muted">জন্মদিনের তালিকা লোড হচ্ছে...</div></div>
     </section>
 
 
@@ -1870,7 +1940,16 @@
 
 
       <div class="form-group">
+        <label>জন্মদিন (ঐচ্ছিক)</label>
+        <input id="editBirthday" type="date" max="2099-12-31">
+      </div>
 
+      <div class="form-group">
+        <label>Cover Photo (সর্বোচ্চ 5MB)</label>
+        <input id="editCoverPhoto" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+      </div>
+
+      <div class="form-group">
         <label>Profile Photo</label>
 
         <input
@@ -2084,6 +2163,8 @@ let notificationsChannel = null;
 let adminMembersChannel = null;
 
 let chatIds = new Set();
+let profileCoverPreviewUrl = null;
+let galleryChannel = null;
 
 
 /* =========================================================
@@ -2438,6 +2519,9 @@ $("guestModeBtn")?.addEventListener("click", async () => {
   showPage("feed");
   await loadPosts();
   await loadAnnouncements();
+  await loadPublicNotices();
+  await loadGallery();
+  await loadBirthdays();
   $("statMembers").textContent = "—";
   $("statMessages").textContent = "—";
   $("statNotifications").textContent = "—";
@@ -2552,6 +2636,9 @@ async function initializeApp(user) {
     await loadProfile();
 
     await loadMembers();
+    await loadGallery();
+    await loadBirthdays();
+    await loadPublicNotices();
 
     await loadPosts();
 
@@ -2708,6 +2795,10 @@ function showPage(page) {
   if (page === "members") {
     loadMembers();
   }
+
+  if (page === "notices") loadPublicNotices();
+  if (page === "gallery") loadGallery();
+  if (page === "birthdays") loadBirthdays();
 
   if (page === "feed") {
     loadPosts();
@@ -2975,6 +3066,14 @@ async function loadProfile() {
 
 
   $("profileAvatar").src = avatar;
+  const cover = await getProfilePhotoUrl(currentProfile.cover_photo || "");
+  $("profileCover").src = currentProfile.cover_photo ? cover : "data:image/svg+xml;charset=UTF-8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300"><defs><linearGradient id="g"><stop stop-color="#1e3a8a"/><stop offset="1" stop-color="#60a5fa"/></linearGradient></defs><rect width="100%" height="100%" fill="url(#g)"/><text x="50%" y="55%" font-size="38" text-anchor="middle" fill="white" font-family="Arial">LBP Fighters Fifteen</text></svg>');
+  $("privacyPhonePublic").checked = currentProfile.phone_public === true;
+  $("privacyBirthdayPublic").checked = currentProfile.birthday_public === true;
+  $("privacyBioPublic").checked = currentProfile.bio_public !== false;
+  $("editBirthday").value = currentProfile.birthday || "";
+  renderProfileBadges();
+  loadProfileCricketStats();
 
   $("profileName").textContent =
     currentProfile.full_name || "Unnamed";
@@ -3077,7 +3176,7 @@ $("profileForm").addEventListener(
 
       const bio =
         $("editBio").value.trim();
-
+      const birthday = $("editBirthday").value || null;
 
       let profilePhoto =
         currentProfile.profile_photo;
@@ -3137,6 +3236,17 @@ $("profileForm").addEventListener(
 
       }
 
+      let coverPhoto = currentProfile.cover_photo || null;
+      const coverFile = $("editCoverPhoto").files[0];
+      if (coverFile) {
+        if (!coverFile.type.startsWith("image/")) throw new Error("Cover Photo হিসেবে শুধু image upload করা যাবে।");
+        if (coverFile.size > 5 * 1024 * 1024) throw new Error("Cover Photo সর্বোচ্চ 5MB হতে পারবে।");
+        const ext = (coverFile.name.split(".").pop() || "jpg").replace(/[^a-zA-Z0-9]/g, "").toLowerCase() || "jpg";
+        const coverPath = `${currentUser.id}/cover-${Date.now()}.${ext}`;
+        const { error: coverUploadError } = await db.storage.from("profile-photos").upload(coverPath, coverFile, { upsert:true, contentType:coverFile.type });
+        if (coverUploadError) throw coverUploadError;
+        coverPhoto = coverPath;
+      }
 
       /*
         class_name intentionally NOT updated.
@@ -3155,7 +3265,9 @@ $("profileForm").addEventListener(
           blood_group: bloodGroup,
           phone: phone,
           bio: bio,
-          profile_photo: profilePhoto
+          birthday: birthday,
+          profile_photo: profilePhoto,
+          cover_photo: coverPhoto
 
         })
         .eq(
@@ -3222,26 +3334,9 @@ async function loadMembers() {
 
   try {
 
-    const {
-      data,
-      error
-    } = await db
-      .from("profiles")
-      .select(
-        guestMode
-          ? "id,full_name,approved,batch,blood_group,bio,profile_photo,created_at"
-          : "id,full_name,approved,is_admin,batch,blood_group,bio,phone,profile_photo,created_at"
-      )
-      .eq(
-        "approved",
-        true
-      )
-      .order(
-        "full_name",
-        {
-          ascending: true
-        }
-      );
+    // Use the same privacy-filtered directory for Guests and Members.
+    // Private phone/birthday fields are masked by the database RPC unless opted in.
+    const { data, error } = await db.rpc("get_public_member_directory");
 
 
     if (error) {
@@ -3350,6 +3445,7 @@ async function renderMembers(members) {
                     : ""
                 }
               </div>
+              ${member.phone && member.phone_public === true ? `<div class="member-info">📞 ${escapeHTML(member.phone)}</div>` : ""}
 
               ${
                 member.is_admin
@@ -3428,12 +3524,12 @@ async function viewMember(id) {
     await getProfilePhotoUrl(
       member.profile_photo
     );
-
+  const cover = member.cover_photo ? await getProfilePhotoUrl(member.cover_photo) : "";
 
   $("memberModalContent").innerHTML = `
 
     <div style="text-align:center">
-
+      ${cover ? `<img class="profile-cover" style="height:130px;margin-bottom:-25px" src="${cover}" alt="Cover Photo">` : ""}
       <img
         class="avatar"
         style="
@@ -3489,20 +3585,17 @@ async function viewMember(id) {
       <div>
         <strong>Phone</strong>
         <div class="muted">
-          ${escapeHTML(
-            member.phone || "Not set"
-          )}
+          ${member.phone && (member.phone_public === true || member.id === currentUser?.id) ? escapeHTML(member.phone) : "প্রকাশ করা হয়নি"}
         </div>
       </div>
 
       <div>
         <strong>Bio</strong>
         <div class="muted">
-          ${escapeHTML(
-            member.bio || "No bio"
-          )}
+          ${member.bio_public !== false || member.id === currentUser?.id ? escapeHTML(member.bio || "No bio") : "Bio ব্যক্তিগত রাখা হয়েছে"}
         </div>
       </div>
+      ${member.birthday && member.birthday_public === true ? `<div><strong>Birthday</strong><div class="muted">${escapeHTML(String(member.birthday).slice(5,10))}</div></div>` : ""}
 
     </div>
 
@@ -5871,6 +5964,178 @@ $("chatForm").addEventListener(
   }
 );
 
+
+
+/* =========================================================
+   PROFILE UPGRADE: ACTIVITY, STATS, BADGES, PRIVACY, SECURITY
+========================================================= */
+async function renderProfileBadges() {
+  const el = $("profileBadges");
+  if (!el) return;
+  const badges = [];
+  if (currentProfile?.approved) badges.push("✅ Verified Member");
+  if (currentProfile?.is_admin) badges.push("🛡️ Admin");
+  if (currentProfile?.player_badge) badges.push(String(currentProfile.player_badge));
+  if (currentUser && !guestMode) {
+    try {
+      const {data,error} = await db.from("member_badges").select("badge_name").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(12);
+      if (error) throw error;
+      (data||[]).forEach(item => { if (item.badge_name) badges.push(item.badge_name); });
+    } catch (e) { console.warn("Badges unavailable",e.message); }
+  }
+  el.innerHTML = [...new Set(badges)].map(b => `<span class="achievement-badge">${escapeHTML(b)}</span>`).join("");
+}
+
+async function loadProfileCricketStats() {
+  const el = $("profileCricketStats");
+  if (!el) return;
+  if (!currentUser || guestMode) { el.innerHTML = '<div class="muted">নিজের Player Statistics দেখতে Login করুন।</div>'; return; }
+  try {
+    const { data, error } = await db.from("player_statistics").select("matches_played,runs_scored,wickets_taken,catches_taken").eq("user_id", currentUser.id).maybeSingle();
+    if (error) throw error;
+    const st = data || {};
+    el.innerHTML = [["ম্যাচ",st.matches_played],["রান",st.runs_scored],["উইকেট",st.wickets_taken],["ক্যাচ",st.catches_taken]].map(([label,val]) => `<div class="profile-stat-box"><strong>${Number(val || 0)}</strong><span>${label}</span></div>`).join("");
+  } catch (e) {
+    console.warn("Player statistics unavailable. Run the additive setup code.", e.message);
+    el.innerHTML = '<div class="muted">Player Statistics এখনো সেটআপ হয়নি বা কোনো রেকর্ড নেই।</div>';
+  }
+}
+
+async function loadProfileActivity() {
+  const el = $("profileActivity");
+  if (!el) return;
+  if (!currentUser || guestMode) { el.innerHTML = '<p class="muted">Activity দেখতে Login করুন।</p>'; return; }
+  el.innerHTML = '<p class="muted">Activity লোড হচ্ছে...</p>';
+  try {
+    const [{data:posts,error:postErr},{data:comments,error:commentErr}] = await Promise.all([
+      db.from("posts").select("id,content,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(10),
+      db.from("post_comments").select("id,post_id,content,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(10)
+    ]);
+    if (postErr) throw postErr;
+    if (commentErr) throw commentErr;
+    const items = [ ...(posts||[]).map(x=>({...x,_kind:"Post"})), ...(comments||[]).map(x=>({...x,_kind:"Comment"})) ].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,15);
+    el.innerHTML = items.length ? items.map(x=>`<div class="announcement-item"><strong>${x._kind === "Post" ? "📰 নিজের পোস্ট" : "💬 নিজের Comment"}</strong><div style="white-space:pre-wrap;margin-top:5px">${escapeHTML(x.content||"")}</div><div class="muted" style="font-size:11px;margin-top:5px">${formatDate(x.created_at)}</div></div>`).join("") : '<p class="muted">এখনো কোনো পোস্ট বা কমেন্ট নেই।</p>';
+  } catch (e) {
+    console.error(e);
+    el.innerHTML = '<p class="muted">Activity লোড করা যায়নি। Database permissions বা table columns পরীক্ষা করুন।</p>';
+  }
+}
+
+async function saveProfilePrivacy() {
+  if (!currentUser || guestMode) return toast("আগে Login করুন", "error");
+  try {
+    const { data, error } = await db.from("profiles").update({
+      phone_public: $("privacyPhonePublic").checked,
+      birthday_public: $("privacyBirthdayPublic").checked,
+      bio_public: $("privacyBioPublic").checked
+    }).eq("id", currentUser.id).select().single();
+    if (error) throw error;
+    currentProfile = data;
+    await loadMembers();
+    toast("Privacy Settings সংরক্ষণ হয়েছে", "success");
+  } catch (e) { toast(e.message || "Privacy save failed. Database setup প্রয়োজন হতে পারে।", "error"); }
+}
+window.saveProfilePrivacy = saveProfilePrivacy;
+window.loadProfileActivity = loadProfileActivity;
+
+$("passwordChangeForm")?.addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!currentUser || guestMode) return toast("আগে Login করুন", "error");
+  const password = $("newAccountPassword").value;
+  if (password.length < 8) return toast("Password কমপক্ষে ৮ অক্ষরের হতে হবে", "error");
+  const btn = e.submitter; btn.disabled = true;
+  try {
+    const { error } = await db.auth.updateUser({ password });
+    if (error) throw error;
+    e.target.reset(); toast("Password পরিবর্তন হয়েছে", "success");
+  } catch (err) { toast(err.message || "Password পরিবর্তন করা যায়নি", "error"); }
+  finally { btn.disabled = false; }
+});
+
+$("emailChangeForm")?.addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!currentUser || guestMode) return toast("আগে Login করুন", "error");
+  const email = $("newAccountEmail").value.trim();
+  const btn = e.submitter; btn.disabled = true;
+  try {
+    const { error } = await db.auth.updateUser({ email });
+    if (error) throw error;
+    e.target.reset(); toast("Email পরিবর্তনের confirmation link পাঠানো হয়েছে। Inbox দেখুন।", "success");
+  } catch (err) { toast(err.message || "Email update request failed", "error"); }
+  finally { btn.disabled = false; }
+});
+
+/* =========================================================
+   PUBLIC NOTICE BOARD, PHOTO GALLERY, BIRTHDAY REMINDER
+========================================================= */
+async function loadPublicNotices() {
+  const el = $("publicNoticesList"); if (!el) return;
+  try {
+    const {data,error} = await db.from("announcements").select("id,title,message,created_at").order("created_at",{ascending:false}).limit(50);
+    if (error) throw error;
+    el.innerHTML = data?.length ? data.map(n=>`<article class="card notice-card"><h3>${escapeHTML(n.title||"Notice")}</h3><p style="white-space:pre-wrap;margin-top:8px;line-height:1.6">${escapeHTML(n.message||"")}</p><div class="muted" style="font-size:11px;margin-top:10px">${formatDate(n.created_at)}</div></article>`).join("") : '<p class="muted">এখনো কোনো নোটিশ নেই।</p>';
+  } catch(e) { console.warn("Notice Board",e.message); el.innerHTML='<p class="muted">Notice Board লোড করা যায়নি।</p>'; }
+}
+
+async function loadGallery() {
+  const grid = $("galleryGrid"); if (!grid) return;
+  if (guestMode) $("galleryUploadCard")?.classList.add("hidden"); else $("galleryUploadCard")?.classList.remove("hidden");
+  try {
+    const {data,error} = await db.from("gallery_photos").select("id,user_id,caption,storage_path,created_at").order("created_at",{ascending:false}).limit(60);
+    if (error) throw error;
+    if (!data?.length) { grid.innerHTML='<div class="card muted">এখনো কোনো ছবি নেই।</div>'; return; }
+    grid.innerHTML = data.map(photo => {
+      const {data:publicData} = db.storage.from("community-gallery").getPublicUrl(photo.storage_path);
+      const canDelete = currentProfile?.is_admin || photo.user_id === currentUser?.id;
+      return `<article class="gallery-item"><a href="${escapeHTML(publicData.publicUrl)}" target="_blank" rel="noopener"><img loading="lazy" src="${escapeHTML(publicData.publicUrl)}" alt="${escapeHTML(photo.caption||"Community photo")}"></a><div class="gallery-caption">${escapeHTML(photo.caption||"")}<div class="muted" style="font-size:10px;margin-top:4px">${formatDate(photo.created_at)}</div>${canDelete ? `<button class="btn btn-danger" style="padding:5px 8px;margin-top:6px" onclick="deleteGalleryPhoto('${String(photo.id).replace(/'/g,"\\'")}','${escapeHTML(photo.storage_path).replace(/'/g,"\\'")}')">Delete</button>` : ""}</div></article>`;
+    }).join("");
+  } catch(e) { console.warn("Gallery unavailable",e.message); grid.innerHTML='<div class="card muted">Gallery Database/Storage setup না হওয়ায় ছবি দেখানো যাচ্ছে না। Setup code চালানোর পর Refresh করুন।</div>'; }
+}
+
+$("galleryUploadForm")?.addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!currentUser || guestMode || !currentProfile?.approved) return toast("ছবি আপলোড করতে Approved Member হিসেবে Login করুন", "error");
+  const file = $("galleryFile").files[0]; const caption = $("galleryCaption").value.trim();
+  if (!file) return;
+  if (!/^image\/(jpeg|png|webp|gif)$/.test(file.type)) return toast("JPG, PNG, WebP বা GIF ছবি দিন", "error");
+  if (file.size > 5*1024*1024) return toast("ছবির সর্বোচ্চ সাইজ 5MB", "error");
+  const btn = e.submitter; btn.disabled = true;
+  try {
+    const ext = (file.name.split(".").pop()||"jpg").replace(/[^a-zA-Z0-9]/g,"").toLowerCase();
+    const path = `${currentUser.id}/${Date.now()}-${crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)}.${ext}`;
+    const {error:uploadError} = await db.storage.from("community-gallery").upload(path,file,{contentType:file.type,upsert:false});
+    if (uploadError) throw uploadError;
+    const {error} = await db.from("gallery_photos").insert({user_id:currentUser.id,caption,storage_path:path});
+    if (error) { await db.storage.from("community-gallery").remove([path]); throw error; }
+    e.target.reset(); toast("ছবি আপলোড হয়েছে", "success"); await loadGallery();
+  } catch(err) { toast(err.message || "Upload failed. Storage/Table setup হয়েছে কি না দেখুন।", "error"); }
+  finally { btn.disabled = false; }
+});
+
+async function deleteGalleryPhoto(id,path) {
+  if (!currentUser || (!currentProfile?.is_admin && !confirm("নিজের ছবিটি মুছতে চান?"))) return;
+  if (currentProfile?.is_admin && !confirm("এই ছবিটি মুছবেন?")) return;
+  try {
+    const {error} = await db.from("gallery_photos").delete().eq("id",id);
+    if (error) throw error;
+    await db.storage.from("community-gallery").remove([path]);
+    toast("ছবি মুছে ফেলা হয়েছে", "success"); await loadGallery();
+  } catch(e) { toast(e.message || "ছবি মুছতে ব্যর্থ", "error"); }
+}
+window.deleteGalleryPhoto = deleteGalleryPhoto;
+
+async function loadBirthdays() {
+  const el = $("birthdayList"); if (!el) return;
+  try {
+    const {data,error} = await db.rpc("get_public_birthdays");
+    if (error) throw error;
+    const today = new Date(); const md = `${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+    const list = (data||[]).map(p=>({...p,monthDay:String(p.month_day||"").slice(0,5)})).filter(p=>/^\d{2}-\d{2}$/.test(p.monthDay)).sort((a,b)=>a.monthDay.localeCompare(b.monthDay));
+    const todayList = list.filter(p=>p.monthDay===md);
+    const upcoming = list.filter(p=>p.monthDay!==md);
+    el.innerHTML = `${todayList.length ? `<h3>🎉 আজ জন্মদিন</h3>${todayList.map(p=>`<div class="announcement-item"><strong>🎂 ${escapeHTML(p.full_name||"Member")}</strong>${p.batch?`<div class="muted">Batch: ${escapeHTML(p.batch)}</div>`:""}</div>`).join("")}` : `<p class="muted">আজ কারও প্রকাশিত জন্মদিন পাওয়া যায়নি।</p>`}<h3 style="margin-top:18px">📅 আসন্ন জন্মদিন</h3>${upcoming.length ? upcoming.map(p=>`<div class="announcement-item"><strong>${escapeHTML(p.full_name||"Member")}</strong><div class="muted">${escapeHTML(p.monthDay.slice(3,5)+"/"+p.monthDay.slice(0,2))}${p.batch?" • Batch: "+escapeHTML(p.batch):""}</div></div>`).join("") : '<p class="muted">কোনো আসন্ন জন্মদিন নেই।</p>'}`;
+  } catch(e) { console.warn("Birthday reminder unavailable",e.message); el.innerHTML='<p class="muted">জন্মদিনের তালিকা লোড করা যায়নি। profiles-এ birthday ও birthday_public কলাম যোগ হয়েছে কি না দেখুন।</p>'; }
+}
 
 /* =========================================================
    REALTIME
