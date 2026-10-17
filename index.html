@@ -1024,7 +1024,67 @@
     .footer-credit { font-size: 14px; margin-bottom: 8px; }
     .footer-copy { color: #94a3b8; font-size: 12px; }
 
-  </style>
+  
+
+    /* SOCIAL HOME / FEED POLISH */
+    #page-home { max-width: 100%; }
+    #page-home > .hero { position:relative; overflow:hidden; padding:28px 26px; box-shadow:0 10px 28px rgba(30,64,175,.14); }
+    #page-home > .hero:after { content:"⚔️"; position:absolute; right:22px; bottom:-22px; font-size:112px; opacity:.13; transform:rotate(-12deg); pointer-events:none; }
+    #page-home .stats-grid { gap:10px; }
+    #page-home .stat-card { border-radius:16px; box-shadow:0 3px 12px rgba(15,23,42,.04); }
+    .post-composer { border:1px solid #dbe4f0; border-radius:18px; box-shadow:0 5px 18px rgba(15,23,42,.055); padding:18px; }
+    .post-composer textarea { width:100%; min-height:86px; resize:vertical; border:1px solid #e2e8f0; border-radius:14px; padding:14px; background:#f8fafc; font:inherit; }
+    .post-composer textarea:focus,.feed-controls input:focus,.feed-controls select:focus { outline:2px solid rgba(37,99,235,.22); border-color:#60a5fa; }
+    .feed-toolbar { padding:16px 18px; border-radius:16px; box-shadow:0 3px 12px rgba(15,23,42,.035); }
+    .feed-toolbar-title { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    .feed-toolbar-title h3 { font-size:20px; margin-top:2px; }
+    .feed-eyebrow { color:#2563eb; letter-spacing:.12em; font-size:10px; font-weight:900; }
+    .feed-live-dot { width:9px; height:9px; background:#22c55e; border-radius:50%; box-shadow:0 0 0 5px #dcfce7; }
+    .feed-controls { display:grid; grid-template-columns:minmax(0,1fr) 180px; gap:9px; }
+    .feed-controls input,.feed-controls select { width:100%; min-width:0; padding:11px 12px; border:1px solid #dbe3ef; border-radius:11px; background:#f8fafc; color:#0f172a; }
+    .posts-feed { max-width:860px; margin-left:auto; margin-right:auto; }
+    .post { border:1px solid #e2e8f0; border-radius:17px; padding:17px; box-shadow:0 4px 14px rgba(15,23,42,.045); transition:box-shadow .18s ease,transform .18s ease; }
+    .post:hover { box-shadow:0 8px 24px rgba(15,23,42,.075); }
+    .post-header { margin-bottom:8px; }
+    .post-header .avatar { width:48px; height:48px; border-radius:50%; }
+    .post-author { color:#111827; font-size:15px; }
+    .post-time { font-size:12px; }
+    .post-content { font-size:15px; line-height:1.75; overflow-wrap:anywhere; }
+    .post-image { max-height:620px; border-radius:13px; margin:12px 0; }
+    .post-actions { display:grid; grid-template-columns:repeat(auto-fit,minmax(90px,1fr)); gap:8px; }
+    .action-btn { padding:10px 8px; font-weight:700; border-radius:10px; }
+    .comments { background:#f8fafc; border-radius:12px; padding:10px; }
+    .comment-form input { border-radius:999px; padding:10px 14px; }
+    /* Profile visual hierarchy */
+    .profile-hero-card { border-radius:18px; box-shadow:0 6px 22px rgba(15,23,42,.06); }
+    .profile-cover { border-radius:0; }
+    .profile-hero-body { background:linear-gradient(to bottom,#fff,#f8fafc); }
+    .profile-name { color:#111827 !important; font-size:30px; font-weight:900; line-height:1.25; letter-spacing:-.025em; }
+    .verified-badge { display:inline-flex; align-items:center; justify-content:center; width:19px; height:19px; margin-left:5px; border-radius:50%; color:white !important; background:#1877f2; font-size:13px; font-weight:900; vertical-align:middle; box-shadow:0 0 0 2px white; }
+    .profile-grid { gap:12px; }
+    .profile-grid > div { background:#f8fafc; border:1px solid #e8edf4; border-radius:12px; padding:12px; overflow-wrap:anywhere; }
+    /* Admin dashboard: clearer panels and responsive controls */
+    #page-admin .page-title { padding:20px 22px; border-radius:16px; color:#fff; background:linear-gradient(120deg,#0f172a,#1d4ed8); }
+    #page-admin .page-title p { color:#dbeafe; }
+    #page-admin .admin-grid { align-items:start; gap:16px; }
+    #page-admin .admin-grid > .card { border-radius:16px; border:1px solid #e2e8f0; box-shadow:0 5px 18px rgba(15,23,42,.045); min-width:0; }
+    #page-admin .admin-grid h3 { display:flex; align-items:center; gap:8px; }
+    #page-admin .admin-member { border-radius:12px; margin-bottom:8px; padding:10px; background:#f8fafc; }
+    #page-admin .stat-number { font-variant-numeric:tabular-nums; }
+    @media(max-width:650px) {
+      #page-home > .hero { padding:22px 18px; }
+      #page-home > .hero h2 { font-size:24px; }
+      #page-home > .hero:after { right:5px; font-size:76px; }
+      #page-home .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .feed-controls { grid-template-columns:1fr; }
+      .feed-toolbar { padding:14px; }
+      .post { padding:13px; }
+      .post-actions { gap:5px; }
+      .profile-name { font-size:25px; }
+      #page-admin .admin-grid { grid-template-columns:1fr !important; }
+    }
+
+</style>
 </head>
 
 <body>
@@ -1341,7 +1401,14 @@
           <button id="createPostBtn" class="btn btn-primary" type="button">➕ Post</button>
         </div>
       </div>
-      <div id="postsList" style="margin-top:14px">
+      <div class="feed-toolbar card" style="margin-top:16px">
+        <div class="feed-toolbar-title"><div><span class="feed-eyebrow">COMMUNITY</span><h3>📰 News Feed</h3></div><span class="feed-live-dot" aria-hidden="true"></span></div>
+        <div class="feed-controls">
+          <input id="feedSearch" type="search" placeholder="পোস্ট বা সদস্যের নাম খুঁজুন..." aria-label="পোস্ট খুঁজুন">
+          <select id="feedSort" aria-label="পোস্ট সাজান"><option value="newest">সর্বশেষ পোস্ট</option><option value="oldest">পুরোনো পোস্ট</option></select>
+        </div>
+      </div>
+      <div id="postsList" class="posts-feed" style="margin-top:14px">
         <div class="loading"><div class="spinner"></div>Loading posts...</div>
       </div>
 
@@ -3644,7 +3711,7 @@ async function loadPosts() {
     } = await db
       .from("profiles")
       .select(
-        "id,full_name,profile_photo,is_admin"
+        "id,full_name,profile_photo,is_admin,approved"
       )
       .in(
         "id",
@@ -3787,9 +3854,7 @@ async function loadPosts() {
     );
 
 
-    renderPosts(
-      postCache
-    );
+    applyFeedFilters();
 
 
     $("statPosts").textContent =
@@ -3822,8 +3887,9 @@ async function renderPosts(posts) {
   if (!posts.length) {
 
     container.innerHTML = `
-      <div class="card">
-        কোনো post নেই।
+      <div class="card" style="text-align:center;padding:26px">
+        <div style="font-size:28px;margin-bottom:8px">🔎</div>
+        কোনো পোস্ট পাওয়া যায়নি। অন্য শব্দ দিয়ে খুঁজুন অথবা নতুন পোস্ট করুন।
       </div>
     `;
 
@@ -3916,10 +3982,7 @@ async function renderPosts(posts) {
                 <div>
 
                   <div class="post-author">
-                    ${escapeHTML(
-                      author.full_name ||
-                      "Member"
-                    )}
+                    ${escapeHTML(author.full_name || "Member")}${author.approved ? ' <span class="verified-badge" title="Approved Member" aria-label="Approved member">✓</span>' : ""}
                   </div>
 
                   <div class="post-time">
@@ -3954,6 +4017,8 @@ async function renderPosts(posts) {
                 >
                   💬 ${post.comments.length}
                 </button>
+
+                <button class="action-btn" onclick="sharePost(${post.id})" type="button">↗️ Share</button>
 
                 ${
                   post.user_id ===
@@ -4029,6 +4094,46 @@ async function renderPosts(posts) {
     html.join("");
 
 }
+
+
+async function sharePost(postId) {
+  const url = new URL(window.location.href);
+  url.hash = `post-${postId}`;
+  const post = postCache.find(item => String(item.id) === String(postId));
+  const shareData = { title: "LBP Fighters Fifteen", text: (post?.content || "আমাদের কমিউনিটির পোস্ট দেখুন").slice(0,180), url: url.href };
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(url.href);
+      toast("পোস্টের লিংক কপি হয়েছে", "success");
+    } else {
+      window.prompt("পোস্টের লিংক কপি করুন:", url.href);
+    }
+  } catch (err) {
+    if (err?.name !== "AbortError") toast("পোস্ট শেয়ার করা যায়নি", "error");
+  }
+}
+window.sharePost = sharePost;
+
+
+function applyFeedFilters() {
+  const query = ($("feedSearch")?.value || "").trim().toLocaleLowerCase();
+  const sort = $("feedSort")?.value || "newest";
+  let items = [...postCache];
+  if (query) items = items.filter(post => {
+    const author = post.author?.full_name || "";
+    return String(post.content || "").toLocaleLowerCase().includes(query) || author.toLocaleLowerCase().includes(query);
+  });
+  items.sort((a,b) => {
+    const delta = new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
+    return sort === "oldest" ? delta : -delta;
+  });
+  renderPosts(items);
+}
+
+$("feedSearch")?.addEventListener("input", applyFeedFilters);
+$("feedSort")?.addEventListener("change", applyFeedFilters);
 
 
 $("createPostBtn").addEventListener("click", async () => {
