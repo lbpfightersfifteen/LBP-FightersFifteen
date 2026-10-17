@@ -941,6 +941,31 @@
     .chat-seen { color:#2563eb; font-size:11px; margin-top:4px; text-align:right; }
     .chat-message.mine .chat-seen { color:#dbeafe; }
     @media (max-width:600px) { nav { justify-content:flex-start; gap:4px; padding:6px; } nav button { padding:8px 9px; font-size:12px; } }
+
+
+    /* VISITOR COUNTER + FOOTER */
+    .site-footer {
+      margin-top: 32px;
+      padding: 28px 16px 22px;
+      color: #e5e7eb;
+      text-align: center;
+      background: linear-gradient(135deg, #111827, #1e3a8a);
+    }
+    .site-footer .footer-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+    .site-footer .footer-tagline { color: #cbd5e1; font-size: 13px; margin-bottom: 18px; }
+    .visitor-stats {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+      max-width: 760px; margin: 0 auto 20px;
+    }
+    .visitor-stat {
+      min-width: 145px; padding: 12px 16px; border: 1px solid #334155;
+      border-radius: 12px; background: rgba(255,255,255,.07);
+    }
+    .visitor-stat .stat-label { display: block; color: #cbd5e1; font-size: 12px; margin-bottom: 5px; }
+    .visitor-stat .stat-value { display: block; color: #fff; font-size: 22px; font-weight: 800; }
+    .footer-credit { font-size: 14px; margin-bottom: 8px; }
+    .footer-copy { color: #94a3b8; font-size: 12px; }
+
   </style>
 </head>
 
@@ -1745,6 +1770,18 @@
 </div>
 
 
+<footer class="site-footer" aria-label="Website footer">
+  <div class="footer-title">⚔️ LBP Fighters Fifteen</div>
+  <div class="footer-tagline">Connect • Share • Stay Together</div>
+  <div class="visitor-stats" aria-live="polite">
+    <div class="visitor-stat"><span class="stat-label">🌐 মোট ভিজিট</span><span class="stat-value" id="visitorTotal">—</span></div>
+    <div class="visitor-stat"><span class="stat-label">📅 আজকের ভিজিট</span><span class="stat-value" id="visitorToday">—</span></div>
+    <div class="visitor-stat"><span class="stat-label">🟢 Online Now (আনুমানিক)</span><span class="stat-value" id="visitorOnline">—</span></div>
+  </div>
+  <div class="footer-credit">Made with ❤️ by <strong>Abdur Rahman</strong></div>
+  <div class="footer-copy">© <span id="footerYear">2026</span> LBP Fighters Fifteen. All rights reserved.</div>
+</footer>
+
 <!-- PROFILE EDIT MODAL -->
 
 <div id="profileModal" class="modal">
@@ -1977,6 +2014,56 @@ const db = createClient(
   SUPABASE_URL,
   SUPABASE_ANON_KEY
 );
+
+/* =========================================================
+   PUBLIC VISITOR COUNTER
+   Requires the SQL setup snippet supplied with this file.
+========================================================= */
+let visitorSessionId = null;
+try {
+  visitorSessionId = sessionStorage.getItem("lbp_visitor_session_id");
+  if (!visitorSessionId) {
+    visitorSessionId = (typeof crypto !== "undefined" && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+          const r = Math.random() * 16 | 0;
+          return (c === "x" ? r : (r & 3 | 8)).toString(16);
+        });
+    sessionStorage.setItem("lbp_visitor_session_id", visitorSessionId);
+  }
+} catch (e) {
+  visitorSessionId = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === "x" ? r : (r & 3 | 8)).toString(16);
+  });
+}
+
+function displayVisitorStats(stats) {
+  if (!stats) return;
+  const total = document.getElementById("visitorTotal");
+  const today = document.getElementById("visitorToday");
+  const online = document.getElementById("visitorOnline");
+  if (total && stats.total_visits != null) total.textContent = Number(stats.total_visits).toLocaleString("en-US");
+  if (today && stats.today_visits != null) today.textContent = Number(stats.today_visits).toLocaleString("en-US");
+  if (online && stats.online_now != null) online.textContent = Number(stats.online_now).toLocaleString("en-US");
+}
+
+async function refreshVisitorStats() {
+  try {
+    const { data, error } = await db.rpc("track_site_visit", { p_session_id: visitorSessionId });
+    if (error) throw error;
+    displayVisitorStats(data);
+  } catch (err) {
+    console.warn("Visitor counter unavailable. Run the visitor-counter SQL setup in Supabase.", err);
+  }
+}
+
+const footerYear = document.getElementById("footerYear");
+if (footerYear) footerYear.textContent = String(new Date().getFullYear());
+refreshVisitorStats();
+// Heartbeat keeps Online Now approximate; duplicate session IDs do not inflate total visits.
+setInterval(refreshVisitorStats, 60000);
+
 
 
 /* =========================================================
