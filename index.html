@@ -1135,6 +1135,8 @@
       <span id="notificationBadge" class="notification-badge hidden">0</span>
     </button>
 
+    <button class="nav-btn hidden" data-page="complaints" id="complaintsNavBtn">📝 অভিযোগ বক্স</button>
+
     <button class="nav-btn" data-page="feed">
       📰 News Feed
     </button>
@@ -1393,6 +1395,28 @@
 
     </section>
 
+
+    <!-- COMPLAINT BOX -->
+    <section id="page-complaints" class="page-section">
+      <div class="page-title">
+        <h2>📝 অভিযোগ বক্স</h2>
+        <p>সদস্যরা অভিযোগ জমা দিতে পারবেন। Admin অনুমোদন করলে অভিযোগটি সবাই দেখতে পারবে।</p>
+      </div>
+      <div class="card" id="complaintFormCard">
+        <h3>নতুন অভিযোগ জমা দিন</h3>
+        <form id="complaintForm" style="margin-top:12px">
+          <label for="complaintSubject">অভিযোগের বিষয়</label>
+          <input id="complaintSubject" type="text" maxlength="120" required placeholder="যেমন: ওয়েবসাইটের সমস্যা" style="width:100%;margin:7px 0 12px;padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text)">
+          <label for="complaintMessage">বিস্তারিত অভিযোগ</label>
+          <textarea id="complaintMessage" required maxlength="5000" rows="5" placeholder="আপনার অভিযোগ বিস্তারিত লিখুন..." style="width:100%;margin:7px 0 12px"></textarea>
+          <button class="btn btn-primary" id="submitComplaintBtn" type="submit">📨 অভিযোগ জমা দিন</button>
+        </form>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h3 id="complaintsListHeading">আমার অভিযোগসমূহ</h3>
+        <div id="complaintsList" style="margin-top:12px"><div class="muted">অভিযোগ লোড হচ্ছে...</div></div>
+      </div>
+    </section>
 
     <!-- FEED -->
 
@@ -2390,6 +2414,7 @@ async function initializeApp(user) {
 
     currentProfile = profile;
     guestMode = false;
+    $("complaintsNavBtn")?.classList.remove("hidden");
     document.body.classList.remove("guest-mode");
     document.querySelectorAll('[id^="guest-login-prompt-"]').forEach(el => el.remove());
     document.querySelectorAll("#page-profile > *, #page-notifications > *, #page-league > *, #page-admin > *").forEach(el => el.classList.remove("hidden"));
@@ -2605,6 +2630,10 @@ function showPage(page) {
     loadNotifications(true);
   }
 
+  if (page === "complaints") {
+    loadComplaints();
+  }
+
   if (page === "league") {
     loadLeague();
   }
@@ -2626,6 +2655,115 @@ window.leaveGuestAndLogin = function() {
 
 window.showPage = showPage;
 
+
+/* =========================================================
+   COMPLAINT BOX
+========================================================= */
+
+const complaintStatusLabels = {
+  new: "🆕 নতুন",
+  reviewing: "🔎 পর্যালোচনাধীন",
+  approved: "📢 সবার জন্য অনুমোদিত",
+  resolved: "✅ সমাধান হয়েছে"
+};
+
+$("complaintForm")?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (guestMode || !currentUser?.id) {
+    toast("অভিযোগ জমা দিতে আগে Log in করুন", "error");
+    return;
+  }
+  const subject = $("complaintSubject").value.trim();
+  const message = $("complaintMessage").value.trim();
+  if (!subject || !message) {
+    toast("বিষয় ও অভিযোগের বিস্তারিত লিখুন", "error");
+    return;
+  }
+  const button = $("submitComplaintBtn");
+  button.disabled = true;
+  button.textContent = "জমা হচ্ছে...";
+  try {
+    const { error } = await db.from("complaints").insert({
+      user_id: currentUser.id,
+      subject,
+      message
+    });
+    if (error) throw error;
+    $("complaintForm").reset();
+    toast("আপনার অভিযোগ Admin-এর কাছে জমা হয়েছে", "success");
+    await loadComplaints();
+  } catch (error) {
+    console.error("Complaint submit failed:", error);
+    toast(error?.message || "অভিযোগ জমা হয়নি। Supabase সেটআপ পরীক্ষা করুন।", "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "📨 অভিযোগ জমা দিন";
+  }
+});
+
+async function loadComplaints() {
+  const container = $("complaintsList");
+  if (!container) return;
+  const isGuest = guestMode || !currentUser?.id;
+  container.innerHTML = '<p class="muted">অভিযোগ লোড হচ্ছে...</p>';
+  try {
+    let query = db.from("complaints").select("id,user_id,subject,message,status,admin_note,created_at").order("created_at", { ascending: false });
+    // RLS exposes only approved complaints publicly, own complaints to members, and all to Admin.
+    const { data, error } = await query;
+    if (error) throw error;
+    const complaints = data || [];
+    $("complaintsListHeading").textContent = currentProfile?.is_admin ? "সদস্যদের অভিযোগ" : (isGuest ? "Admin অনুমোদিত প্রকাশ্য অভিযোগ" : "আমার ও প্রকাশ্য অভিযোগসমূহ");
+    $("complaintFormCard")?.classList.toggle("hidden", isGuest || !!currentProfile?.is_admin);
+    if (!complaints.length) {
+      container.innerHTML = '<p class="muted">এখনো কোনো অভিযোগ জমা হয়নি।</p>';
+      return;
+    }
+    container.innerHTML = complaints.map(item => {
+      const status = complaintStatusLabels[item.status] || complaintStatusLabels.new;
+      const adminNote = item.admin_note ? `<div style="margin-top:8px;padding:10px;background:var(--bg);border-radius:8px"><strong>Admin-এর উত্তর:</strong> ${escapeHTML(item.admin_note)}</div>` : "";
+      const adminControls = currentProfile?.is_admin ? `
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+          <select id="complaint-status-${item.id}" style="padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text)">
+            <option value="new" ${item.status === "new" ? "selected" : ""}>নতুন</option>
+            <option value="reviewing" ${item.status === "reviewing" ? "selected" : ""}>পর্যালোচনাধীন</option>
+            <option value="approved" ${item.status === "approved" ? "selected" : ""}>সবার জন্য অনুমোদন</option>
+            <option value="resolved" ${item.status === "resolved" ? "selected" : ""}>সমাধান হয়েছে</option>
+          </select>
+          <input id="complaint-note-${item.id}" maxlength="2000" value="${escapeHTML(item.admin_note || "")}" placeholder="সদস্যকে উত্তর (ঐচ্ছিক)" style="flex:1;min-width:180px;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text)">
+          <button class="btn btn-primary" type="button" onclick="saveComplaintUpdate(${Number(item.id)})">আপডেট</button>
+        </div>` : "";
+      const memberLabel = currentProfile?.is_admin ? `<p class="muted" style="margin-top:4px">সদস্য ID: ${escapeHTML(item.user_id)}</p>` : "";
+      return `<article style="border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><h4>${escapeHTML(item.subject)}</h4><span class="muted">${escapeHTML(status)}</span></div>
+        ${memberLabel}
+        <p style="white-space:pre-wrap;margin-top:8px">${escapeHTML(item.message)}</p>
+        <p class="muted" style="font-size:12px;margin-top:8px">জমা: ${escapeHTML(formatDate(item.created_at))}</p>
+        ${adminNote}${adminControls}
+      </article>`;
+    }).join("");
+  } catch (error) {
+    console.error("Load complaints failed:", error);
+    container.innerHTML = `<p class="muted">অভিযোগ লোড করা যায়নি: ${escapeHTML(error?.message || "Unknown error")}</p><p class="muted" style="margin-top:6px">Supabase SQL সেটআপ চালানো হয়েছে কি না নিশ্চিত করুন।</p>`;
+  }
+}
+
+window.saveComplaintUpdate = async function(complaintId) {
+  if (!currentProfile?.is_admin) {
+    toast("শুধু Admin অভিযোগ আপডেট করতে পারবেন", "error");
+    return;
+  }
+  const status = $("complaint-status-" + complaintId)?.value;
+  const admin_note = $("complaint-note-" + complaintId)?.value.trim() || null;
+  try {
+    const { error } = await db.from("complaints").update({ status, admin_note }).eq("id", complaintId);
+    if (error) throw error;
+    toast("অভিযোগ আপডেট হয়েছে", "success");
+    await loadComplaints();
+  } catch (error) {
+    console.error("Update complaint failed:", error);
+    toast(error?.message || "অভিযোগ আপডেট করা যায়নি", "error");
+  }
+};
 
 /* =========================================================
    PROFILE
