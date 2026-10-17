@@ -5203,6 +5203,12 @@ function setupRealtime() {
     );
 
 
+  /*
+    Posts + Likes + Comments
+    IMPORTANT: সব postgres_changes callback আগে যোগ করতে হবে,
+    তারপর channel-এ একবারই subscribe() করতে হবে।
+  */
+
   postsChannel
     .on(
       "postgres_changes",
@@ -5217,14 +5223,7 @@ function setupRealtime() {
 
       }
     )
-    .subscribe();
 
-
-  /*
-    Likes
-  */
-
-  postsChannel
     .on(
       "postgres_changes",
       {
@@ -5238,14 +5237,7 @@ function setupRealtime() {
 
       }
     )
-    .subscribe();
 
-
-  /*
-    Comments
-  */
-
-  postsChannel
     .on(
       "postgres_changes",
       {
@@ -5259,6 +5251,7 @@ function setupRealtime() {
 
       }
     )
+
     .subscribe();
 
 
@@ -5338,6 +5331,11 @@ function setupRealtime() {
     );
 
 
+  /*
+    Notifications + Announcements
+    একই channel-এ সব callback যোগ করার পর একবার subscribe().
+  */
+
   notificationsChannel
     .on(
       "postgres_changes",
@@ -5352,14 +5350,7 @@ function setupRealtime() {
 
       }
     )
-    .subscribe();
 
-
-  /*
-    Announcements
-  */
-
-  notificationsChannel
     .on(
       "postgres_changes",
       {
@@ -5373,6 +5364,7 @@ function setupRealtime() {
 
       }
     )
+
     .subscribe();
 
 }
