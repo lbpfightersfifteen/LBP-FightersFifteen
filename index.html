@@ -1196,8 +1196,10 @@
     .lbp-main-nav{display:flex!important;position:sticky;top:0;justify-content:center;background:#fff;padding:4px max(8px,calc((100% - 900px)/2));gap:8px}
     .lbp-main-nav .nav-btn{flex:1;max-width:150px;min-width:80px;min-height:52px;border-radius:8px;background:transparent;color:#536471}
     .lbp-main-nav .nav-btn.active{background:#fff;color:#1877f2;box-shadow:inset 0 -3px #1877f2}
-    .lbp-main-nav .nav-btn:nth-child(n+6){display:none!important}
-    .lbp-main-nav .nav-btn:nth-child(1),.lbp-main-nav .nav-btn:nth-child(2),.lbp-main-nav .nav-btn:nth-child(3),.lbp-main-nav .nav-btn:nth-child(4),.lbp-main-nav .nav-btn:nth-child(5){display:flex!important}
+    .lbp-main-nav .nav-btn:nth-child(n+7){display:none!important}
+    .lbp-main-nav .nav-btn:nth-child(-n+6){display:flex!important}
+    .lbp-main-nav .nav-btn{flex-direction:column;gap:3px}
+    .lbp-main-nav .nav-icon{font-size:21px;line-height:1.1}
     .container{width:min(1600px,100% - 28px);margin:16px auto}
     .social-home-layout{grid-template-columns:minmax(185px,220px) minmax(0, min(680px,1fr)) minmax(210px,270px);gap:16px;align-items:start}
     .social-home-layout .home-main{gap:12px}
@@ -1242,10 +1244,15 @@
     .lbp-pop-menu.open{display:grid;gap:3px}
     .lbp-pop-menu button{border:0;background:transparent;text-align:left;padding:12px;border-radius:8px;font:inherit;color:inherit;cursor:pointer}
     .lbp-pop-menu button:hover{background:#f0f2f5}
+    .home-left.lbp-menu-collapsed{display:none!important}
+    #themeToggle{position:static!important;display:none!important}
+    body.theme-dark .lbp-pop-menu{background:#111827;color:#e5e7eb;border-color:#334155}
+    body.theme-dark .lbp-pop-menu button:hover{background:#263449}
+    @media(min-width:761px){.home-left.lbp-menu-open{display:grid!important}.home-left.lbp-menu-collapsed{display:none!important}.lbp-main-nav{z-index:150}}
     .lbp-composer-actions{display:flex;gap:7px;flex-wrap:wrap;border-top:1px solid #e4e6eb;margin-top:12px;padding-top:10px}
     .lbp-composer-actions button{flex:1;min-width:110px;border:0;background:transparent;border-radius:9px;padding:10px 7px;color:#536471;font-weight:650;cursor:pointer}
     .lbp-composer-actions button:hover{background:#f0f2f5}
-    .lbp-home-stories{order:2}
+    .lbp-home-stories{order:0!important}
     .lbp-nav-order-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid #e4e6eb;border-radius:9px;margin:5px 0;background:#f8fafc}
     .lbp-nav-order-row label{flex:1;font-weight:650}.lbp-nav-order-row button{border:0;border-radius:6px;padding:5px 9px;cursor:pointer;background:#e7f0ff;color:#1459a8}
     @media(max-width:760px){.lbp-brand-header{flex-wrap:wrap}.lbp-brand-copy{flex:1}.lbp-header-actions{gap:5px}.lbp-head-icon{width:39px;height:39px;font-size:23px}.home-left.lbp-menu-open{display:grid!important;position:fixed;z-index:400;left:8px;right:8px;top:72px;max-height:80vh;overflow:auto;background:#fff;padding:8px;border-radius:12px;box-shadow:0 8px 28px #0003}.lbp-composer-actions button{min-width:90px;font-size:12px}}
@@ -1256,14 +1263,13 @@
 <body>
 
 <header class="lbp-brand-header">
-  <button class="lbp-head-icon" id="lbpMenuToggle" type="button" aria-label="Menu" title="Menu" onclick="document.querySelector('.home-left')?.classList.toggle('lbp-menu-open')">☰</button>
+  <button class="lbp-head-icon" id="lbpMenuToggle" type="button" aria-label="Menu" title="Menu" onclick="(function(){const m=document.querySelector('.home-left');if(!m)return;if(window.matchMedia('(max-width:760px)').matches){m.classList.toggle('lbp-menu-open')}else{m.classList.toggle('lbp-menu-collapsed')}})()">☰</button>
   <div class="lbp-brand-mark" aria-hidden="true">⚔️</div>
   <div class="lbp-brand-copy"><h1>LBP Fighters Fifteen</h1><p>Connect • Share • Stay Together</p></div>
   <div class="lbp-header-actions">
     <div class="lbp-create-wrap"><button class="lbp-head-icon" type="button" title="Create" aria-label="Create" onclick="document.getElementById('lbpCreateMenu').classList.toggle('open')">＋</button>
       <div id="lbpCreateMenu" class="lbp-pop-menu"><button type="button" onclick="document.getElementById('postContent')?.focus();document.getElementById('lbpCreateMenu').classList.remove('open');document.getElementById('postContent')?.scrollIntoView({behavior:'smooth',block:'center'})">✍️ পোস্ট লিখুন</button><button type="button" onclick="showPage('stories');document.getElementById('lbpCreateMenu').classList.remove('open')">⭕ Story তৈরি</button><button type="button" onclick="document.getElementById('postImageFile')?.click();document.getElementById('lbpCreateMenu').classList.remove('open')">🎬 ছবি / ভিডিও পোস্ট</button></div>
     </div>
-    <button class="lbp-head-icon" type="button" title="Live Chat" aria-label="Live Chat" onclick="openChat()">☏</button>
     <div class="lbp-profile-wrap"><button class="lbp-head-icon lbp-avatar-button" type="button" title="Account menu" aria-label="Account menu" onclick="document.getElementById('lbpAccountMenu').classList.toggle('open')">👤⌄</button><div id="lbpAccountMenu" class="lbp-pop-menu"><button id="lbpAdminMenuEntry" type="button" style="display:none" onclick="if(!document.getElementById('adminNavBtn')?.classList.contains('hidden'))showPage('admin');else toast('Admin access প্রয়োজন','error');document.getElementById('lbpAccountMenu').classList.remove('open')">🛡️ Admin Panel</button><button type="button" onclick="showPage('profile');document.getElementById('lbpAccountMenu').classList.remove('open')">👤 My Profile</button><button type="button" onclick="document.getElementById('logoutBtn')?.click()">↪ Log Out</button></div></div>
   </div>
 </header>
@@ -1437,16 +1443,16 @@
     <button class="nav-btn active" data-page="home"><span class="nav-icon">⌂</span><span>Home</span></button>
     <button class="nav-btn" data-page="profile"><span class="nav-icon">♙</span><span>My Profile</span></button>
     <button class="nav-btn" data-page="members"><span class="nav-icon">♧</span><span>Members</span></button>
-    <button class="nav-btn" data-page="inbox"><span class="nav-icon">☏</span><span>Messenger</span></button>
+    <button class="nav-btn" data-page="inbox"><span class="nav-icon">✉</span><span>Message</span></button>
+    <button class="nav-btn" id="adminNavBtn" data-page="admin"><span class="nav-icon">🛡</span><span>Admin</span></button>
+    <button class="nav-btn" id="logoutBtn"><span class="nav-icon">↪</span><span>Log Out</span></button>
     <button class="nav-btn" data-page="notifications"><span class="nav-icon">♧</span><span>Notifications</span><span id="notificationBadge" class="notification-badge hidden">0</span></button>
     <button class="nav-btn" data-page="stories">⭕ Stories</button>
     <button class="nav-btn" data-page="social">🤝 Friends</button>
     <button class="nav-btn" data-page="gallery">🖼️ Gallery</button>
     <button class="nav-btn hidden" data-page="complaints" id="complaintsNavBtn">📝 Complaints</button>
-    <button class="nav-btn" id="chatNavBtn">💬 Live Chat</button>
+    <button class="nav-btn" id="chatNavBtn" style="display:none">💬 Live Chat</button>
     <button class="nav-btn hidden" data-page="league" id="leagueNavBtn">🏏 Cricket League</button>
-    <button class="nav-btn hidden" id="adminNavBtn" data-page="admin">🛡️ Admin</button>
-    <button class="nav-btn" id="logoutBtn">🚪 Logout</button>
   </nav>
 
 
@@ -1487,12 +1493,14 @@
          <button class="home-shortcut" onclick="showPage('notifications')">🔔 Notifications</button>
          <button class="home-shortcut" onclick="showPage('gallery')">🖼️ Gallery</button>
          <button class="home-shortcut" onclick="showPage('profile')">⚙️ Account Settings</button>
+         <button class="home-shortcut" type="button" onclick="document.getElementById('themeToggle')?.click()">🌙 Dark Mode / Light Mode</button>
          <button class="home-shortcut" onclick="document.getElementById('logoutBtn').click()">🚪 Logout</button>
         </div>
         <div class="card home-brand-card"><div class="home-emblem">⚔️</div><strong>LBP Fighters Fifteen</strong><small>Together We Are Stronger</small></div>
         <div class="card home-news-card"><h3>📰 Latest News</h3><p>🏏 Cricket League<br><small>নতুন ম্যাচের আপডেট দেখুন</small></p><p>📣 Community Update<br><small>সবার সঙ্গে যুক্ত থাকুন</small></p><p>⭐ Member Stories<br><small>বন্ধুদের মুহূর্ত দেখুন</small></p></div>
        </aside>
        <div class="home-main">
+      <div class="card lbp-home-stories" style="margin-top:0"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3>⭕ Stories</h3><button class="btn btn-secondary" onclick="showPage('stories')" type="button">＋ Story তৈরি</button></div><div id="homeStories" class="story-strip" style="margin-top:8px"><div class="muted">স্টোরি লোড হচ্ছে...</div></div></div>
       <div class="hero">
 
         <h2>⚔️ Welcome to LBP Fighters Fifteen</h2>
@@ -1529,38 +1537,12 @@
 
       </div>
 
-      <div class="card" style="margin-top:18px">
-
-        <h3 style="margin-bottom:10px">
-          📌 Quick Access
-        </h3>
-
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-
-          <button
-            class="btn btn-primary"
-            onclick="showPage('members')"
-          >
-            👥 Members
-          </button>
-
-          <button
-            class="btn btn-secondary"
-            onclick="openChat()"
-          >
-            💬 Live Chat
-          </button>
-
-        </div>
-
-      </div>
-
       <div class="card post-composer" style="margin-top:18px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
           <span style="font-size:22px">📝</span><strong>নতুন পোস্ট</strong>
         </div>
         <textarea id="postContent" placeholder="আপনার মনে যা আছে লিখুন..." aria-label="Post text"></textarea>
-        <div class="lbp-composer-actions"><button type="button" onclick="document.getElementById('postImageFile')?.click()">🎬 ছবি / ভিডিও পোস্ট</button><button type="button" onclick="showPage('stories')">⭕ Story</button><button type="button" onclick="openChat()">🔴 Live Chat</button></div>
+        <div class="lbp-composer-actions"><button type="button" onclick="document.getElementById('postImageFile')?.click()">🎬 ছবি / ভিডিও পোস্ট</button><button type="button" onclick="showPage('stories')">⭕ Story তৈরি</button></div>
         <div class="form-group" style="margin-top:10px">
           <label for="postImageFile">ছবি বা ভিডিও যোগ করুন (ঐচ্ছিক; ছবি 5MB, ভিডিও 200MB পর্যন্ত)</label>
           <input id="postImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime">
@@ -1569,7 +1551,6 @@
           <button id="createPostBtn" class="btn btn-primary" type="button">➕ Post</button>
         </div>
       </div>
-      <div class="card lbp-home-stories" style="margin-top:0"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3>⭕ Stories</h3><button class="btn btn-secondary" onclick="showPage('stories')" type="button">＋ Story তৈরি</button></div><div id="homeStories" class="story-strip" style="margin-top:8px"><div class="muted">স্টোরি লোড হচ্ছে...</div></div></div>
       <div class="feed-toolbar card" style="margin-top:16px">
         <div class="feed-toolbar-title"><div><span class="feed-eyebrow">COMMUNITY</span><h3>📰 News Feed</h3></div><span class="feed-live-dot" aria-hidden="true"></span></div>
         <div class="feed-controls">
@@ -6784,14 +6765,16 @@ async function respondLbpFriend(id,status){if(!lbpNeedMember())return;const {err
 async function startLbpDM(peer){const select=$("dmMemberSelect");if(select)select.value=peer;showPage("inbox");await openLbpConversation();}
 window.createLbpStory=createLbpStory;window.deleteLbpStory=deleteLbpStory;window.openLbpConversation=openLbpConversation;window.sendLbpMessage=sendLbpMessage;window.selectLbpConversation=selectLbpConversation;window.toggleLbpFollow=toggleLbpFollow;window.sendLbpFriendRequest=sendLbpFriendRequest;window.respondLbpFriend=respondLbpFriend;window.startLbpDM=startLbpDM;window.renderSocialMembers=renderSocialMembers;
 
-function lbpNavButtons(){return Array.from(document.querySelectorAll('.lbp-main-nav .nav-btn[data-page]')).filter(b=>!['admin','logout'].includes(b.dataset.page));}
-function renderLbpNavOrder(){const box=document.getElementById('lbpNavOrderList');if(!box)return;const buttons=lbpNavButtons();let order=[];try{order=JSON.parse(localStorage.getItem('lbpHomeNavOrder')||'[]')}catch(_){};const byId=new Map(buttons.map(b=>[b.dataset.page,b]));const ids=[...order.filter(id=>byId.has(id)),...buttons.map(b=>b.dataset.page).filter(id=>!order.includes(id))];box.innerHTML=ids.map((id,i)=>{const b=byId.get(id);const title=b?.innerText?.replace(/\s+/g,' ').trim()||id;return `<div class="lbp-nav-order-row" data-page="${id}"><label><input type="checkbox" ${i<5?'checked':''} disabled> ${title}</label><button type="button" onclick="moveLbpNavItem('${id}',-1)" ${i===0?'disabled':''}>↑</button><button type="button" onclick="moveLbpNavItem('${id}',1)" ${i===ids.length-1?'disabled':''}>↓</button></div>`}).join('');}
+function lbpNavButtons(){return Array.from(document.querySelectorAll('.lbp-main-nav .nav-btn')).filter(b=>b.id!=='chatNavBtn');}
+function lbpNavKey(b){return b.dataset.page || b.id;}
+function renderLbpNavOrder(){const box=document.getElementById('lbpNavOrderList');if(!box)return;const buttons=lbpNavButtons();let order=[],visibility={};try{order=JSON.parse(localStorage.getItem('lbpHomeNavOrder')||'[]')}catch(_){};try{visibility=JSON.parse(localStorage.getItem('lbpNavVisibility')||'{}')}catch(_){};const byId=new Map(buttons.map(b=>[lbpNavKey(b),b]));const ids=[...order.filter(id=>byId.has(id)),...buttons.map(lbpNavKey).filter(id=>!order.includes(id))];box.innerHTML=ids.map((id,i)=>{const b=byId.get(id);const title=b?.innerText?.replace(/\s+/g,' ').trim()||id;const visible=visibility[id]!==false;const fixed=['home','profile','members','inbox','admin','logoutBtn'].includes(id);return `<div class="lbp-nav-order-row" data-page="${id}"><label><input type="checkbox" class="lbp-nav-visible" ${visible?'checked':''} ${fixed?'disabled':''} onchange="toggleLbpNavVisibility('${id}',this.checked)"> ${title}</label><button type="button" onclick="moveLbpNavItem('${id}',-1)" ${i===0?'disabled':''}>↑</button><button type="button" onclick="moveLbpNavItem('${id}',1)" ${i===ids.length-1?'disabled':''}>↓</button></div>`}).join('');}
 function moveLbpNavItem(id,delta){const rows=[...document.querySelectorAll('#lbpNavOrderList .lbp-nav-order-row')],ids=rows.map(r=>r.dataset.page),i=ids.indexOf(id),j=i+delta;if(i<0||j<0||j>=ids.length)return;[ids[i],ids[j]]=[ids[j],ids[i]];localStorage.setItem('lbpHomeNavOrder',JSON.stringify(ids));renderLbpNavOrder();}
-function saveLbpNavOrder(){const ids=[...document.querySelectorAll('#lbpNavOrderList .lbp-nav-order-row')].map(r=>r.dataset.page);localStorage.setItem('lbpHomeNavOrder',JSON.stringify(ids));applyLbpNavOrder();toast('উপরের বাটনের ক্রম সংরক্ষণ হয়েছে');}
-function applyLbpNavOrder(){const nav=document.querySelector('.lbp-main-nav');if(!nav)return;let ids=[];try{ids=JSON.parse(localStorage.getItem('lbpHomeNavOrder')||'[]')}catch(_){};const buttons=lbpNavButtons(),map=new Map(buttons.map(b=>[b.dataset.page,b]));ids=[...ids.filter(id=>map.has(id)),...buttons.map(b=>b.dataset.page).filter(id=>!ids.includes(id))];ids.forEach(id=>nav.insertBefore(map.get(id),nav.querySelector('#adminNavBtn')));}
-function resetLbpNavOrder(){localStorage.removeItem('lbpHomeNavOrder');const nav=document.querySelector('.lbp-main-nav');if(nav){const order=['home','profile','members','inbox','notifications','stories','social','gallery','complaints'];order.forEach(id=>{const b=nav.querySelector(`[data-page="${id}"]`);if(b)nav.insertBefore(b,nav.querySelector('#adminNavBtn'));});}renderLbpNavOrder();toast('ডিফল্ট ক্রম ফিরিয়ে আনা হয়েছে');}
-window.moveLbpNavItem=moveLbpNavItem;window.saveLbpNavOrder=saveLbpNavOrder;window.resetLbpNavOrder=resetLbpNavOrder;
-window.addEventListener('DOMContentLoaded',()=>{applyLbpNavOrder();renderLbpNavOrder();document.addEventListener('click',e=>{if(!e.target.closest('.lbp-create-wrap'))document.getElementById('lbpCreateMenu')?.classList.remove('open');if(!e.target.closest('.lbp-profile-wrap'))document.getElementById('lbpAccountMenu')?.classList.remove('open');});const admin=document.getElementById('adminNavBtn'),logout=document.getElementById('logoutBtn');if(admin){admin.style.display='none';const entry=document.getElementById('lbpAdminMenuEntry');entry?.addEventListener('click',()=>{if(admin.classList.contains('hidden'))toast('Admin access প্রয়োজন','error');});}if(logout)logout.style.display='none';});
+function toggleLbpNavVisibility(id,visible){let state={};try{state=JSON.parse(localStorage.getItem('lbpNavVisibility')||'{}')}catch(_){};state[id]=visible;localStorage.setItem('lbpNavVisibility',JSON.stringify(state));applyLbpNavOrder();renderLbpNavOrder();}
+function saveLbpNavOrder(){const ids=[...document.querySelectorAll('#lbpNavOrderList .lbp-nav-order-row')].map(r=>r.dataset.page);localStorage.setItem('lbpHomeNavOrder',JSON.stringify(ids));applyLbpNavOrder();toast('নেভিগেশন বাটনের ক্রম সংরক্ষণ হয়েছে');}
+function applyLbpNavOrder(){const nav=document.querySelector('.lbp-main-nav');if(!nav)return;let ids=[],visibility={};try{ids=JSON.parse(localStorage.getItem('lbpHomeNavOrder')||'[]')}catch(_){};try{visibility=JSON.parse(localStorage.getItem('lbpNavVisibility')||'{}')}catch(_){};const buttons=lbpNavButtons(),map=new Map(buttons.map(b=>[lbpNavKey(b),b]));ids=[...ids.filter(id=>map.has(id)),...buttons.map(lbpNavKey).filter(id=>!ids.includes(id))];ids.forEach(id=>{const b=map.get(id);if(b)nav.appendChild(b);});buttons.forEach(b=>{const key=lbpNavKey(b);if(['home','profile','members','inbox','admin','logoutBtn'].includes(key)){b.style.display='';return;}if(key in visibility)b.style.display=visibility[key]?'':'none';});}
+function resetLbpNavOrder(){localStorage.removeItem('lbpHomeNavOrder');localStorage.removeItem('lbpNavVisibility');const nav=document.querySelector('.lbp-main-nav');if(nav){const order=['home','profile','members','inbox','admin','logoutBtn','notifications','stories','social','gallery','complaints'];const map=new Map(lbpNavButtons().map(b=>[lbpNavKey(b),b]));order.forEach(id=>{const b=map.get(id);if(b)nav.appendChild(b);});}renderLbpNavOrder();toast('ডিফল্ট ক্রম ফিরিয়ে আনা হয়েছে');}
+window.moveLbpNavItem=moveLbpNavItem;window.toggleLbpNavVisibility=toggleLbpNavVisibility;window.saveLbpNavOrder=saveLbpNavOrder;window.resetLbpNavOrder=resetLbpNavOrder;
+window.addEventListener('DOMContentLoaded',()=>{applyLbpNavOrder();renderLbpNavOrder();document.addEventListener('click',e=>{if(!e.target.closest('.lbp-create-wrap'))document.getElementById('lbpCreateMenu')?.classList.remove('open');if(!e.target.closest('.lbp-profile-wrap'))document.getElementById('lbpAccountMenu')?.classList.remove('open');});const admin=document.getElementById('adminNavBtn'),logout=document.getElementById('logoutBtn');if(admin){const entry=document.getElementById('lbpAdminMenuEntry');entry?.addEventListener('click',()=>{if(admin.classList.contains('hidden'))toast('Admin access প্রয়োজন','error');});}});
 
 function placeAnalyticsInsideAdmin(){const analytics=$("page-analytics"),admin=$("page-admin");if(analytics&&admin){analytics.classList.remove("page-section");analytics.style.marginTop="16px";admin.appendChild(analytics);const heading=document.createElement("h3");heading.textContent="📊 Admin Analytics";heading.style.margin="18px 0 10px";analytics.prepend(heading);}}
 window.addEventListener("DOMContentLoaded",()=>{placeAnalyticsInsideAdmin();});
