@@ -72,6 +72,24 @@
     @media(max-width:950px){.social-home-layout{grid-template-columns:minmax(0,1fr)}.home-side{position:static;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));order:2}.home-main{order:1}.home-right{order:3}}
     @media(max-width:550px){.story-chip{min-width:96px;max-width:96px;min-height:125px}.social-home-layout .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+    /* Unified social-feed polish: mobile-first, familiar social layout */
+    :root { --social-blue:#1877f2; }
+    .social-home-layout{max-width:1500px;margin:0 auto;gap:14px}
+    .social-home-layout .home-main{display:flex;flex-direction:column;gap:12px}
+    .social-home-layout .home-main>.hero{margin-bottom:0;border-radius:16px}
+    .social-home-layout .card,.social-home-layout .feed-toolbar,.social-home-layout .post{border-radius:16px}
+    .social-home-layout .story-strip{scroll-snap-type:x mandatory;padding-bottom:8px}
+    .social-home-layout .story-chip{scroll-snap-align:start;min-width:120px;max-width:120px;min-height:180px;border-radius:16px;box-shadow:0 3px 12px #0f172a12}
+    .social-home-layout .post-composer textarea{border-radius:24px;min-height:54px;padding:14px 16px}
+    .social-home-layout .feed-toolbar{padding:14px}
+    .social-home-layout .home-shortcut{min-height:42px;transition:background .15s ease}
+    .social-home-layout .home-shortcut:focus-visible,.social-home-layout button:focus-visible{outline:3px solid #60a5fa;outline-offset:2px}
+    .social-home-layout .post-media{max-height:650px;border-radius:0;object-fit:contain}
+    .social-home-layout .home-left .card,.social-home-layout .home-right .card{box-shadow:0 2px 10px #0f172a08}
+    @media(min-width:951px){.social-home-layout{grid-template-columns:minmax(175px,220px) minmax(0,680px) minmax(200px,260px);justify-content:center}.social-home-layout .home-side{max-height:calc(100vh - 90px);overflow:auto}.social-home-layout .home-right{order:3}}
+    @media(max-width:950px){.social-home-layout{display:flex;flex-direction:column}.social-home-layout .home-main{width:100%;order:0}.social-home-layout .home-left{display:none}.social-home-layout .home-right{width:100%;order:2}.social-home-layout .story-chip{min-width:108px;max-width:108px;min-height:158px}}
+    @media(max-width:550px){.social-home-layout{gap:9px}.social-home-layout .home-main{gap:9px}.social-home-layout .story-chip{min-width:98px;max-width:98px;min-height:145px}.social-home-layout .post-composer{padding:12px}.social-home-layout .post-media{max-height:440px}.social-home-layout .hero{padding:18px 14px!important}}
+
     body {
       font-family:
         Arial,
