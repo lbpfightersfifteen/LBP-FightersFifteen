@@ -69,6 +69,17 @@
     .social-list{display:grid;gap:10px;margin-top:12px}
     .social-row{border:1px solid var(--border);background:var(--card);border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
     .social-row small{color:var(--muted)}
+    /* Messenger two-mode launcher */
+    .messenger-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:14px}
+    .messenger-choice{display:flex;align-items:center;gap:14px;width:100%;min-height:108px;padding:18px;text-align:left;border:1px solid var(--border);border-radius:18px;background:var(--card);color:var(--text);box-shadow:0 4px 18px #0f172a0a;cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}
+    .messenger-choice:hover{transform:translateY(-2px);border-color:var(--primary);box-shadow:0 8px 24px #2563eb18}
+    .messenger-choice-icon{width:54px;height:54px;flex:0 0 54px;display:grid;place-items:center;border-radius:16px;background:#e8f1ff;color:#1877f2;font-size:26px}
+    .messenger-choice strong{display:block;font-size:16px;margin-bottom:5px}
+    .messenger-choice small{display:block;color:var(--muted);line-height:1.45;font-size:12px}
+    .messenger-choice .choice-arrow{margin-left:auto;color:var(--primary);font-size:22px}
+    .messenger-note{color:var(--muted);font-size:12px;margin:0 0 14px}
+    #privateMessengerPanel[hidden]{display:none!important}
+    @media(max-width:600px){.messenger-choice-grid{grid-template-columns:1fr}.messenger-choice{min-height:88px;padding:14px}.messenger-choice-icon{width:48px;height:48px;flex-basis:48px}}
     @media(max-width:950px){.social-home-layout{grid-template-columns:minmax(0,1fr)}.home-side{position:static;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));order:2}.home-main{order:1}.home-right{order:3}}
     @media(max-width:550px){.story-chip{min-width:96px;max-width:96px;min-height:125px}.social-home-layout .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
@@ -1525,9 +1536,18 @@
     </section>
 
     <!-- MESSENGER -->
-    <section id="page-inbox" class="page-section"><div class="page-title"><h2>💌 Messenger / Inbox</h2><p>অনুমোদিত সদস্যদের সঙ্গে ব্যক্তিগত বার্তা।</p></div>
-      <div class="social-tool-grid"><div class="card"><h3>নতুন কথোপকথন</h3><label for="dmMemberSelect">সদস্য নির্বাচন</label><select id="dmMemberSelect" style="width:100%;margin:8px 0;padding:10px;border:1px solid var(--border);border-radius:8px"><option value="">সদস্য লোড হচ্ছে...</option></select><button class="btn btn-primary" onclick="openLbpConversation()">চ্যাট খুলুন</button><div id="inboxList" class="social-list"></div></div>
-      <div class="card"><h3 id="dmTitle">বার্তা</h3><div id="dmMessages" class="social-list" style="max-height:360px;overflow:auto"><p class="muted">কথোপকথন নির্বাচন করুন।</p></div><textarea id="dmContent" maxlength="5000" placeholder="বার্তা লিখুন..." style="width:100%;margin-top:10px;min-height:80px;padding:10px;border:1px solid var(--border);border-radius:8px"></textarea><button class="btn btn-primary" style="margin-top:8px" onclick="sendLbpMessage()">পাঠান</button></div></div>
+    <section id="page-inbox" class="page-section"><div class="page-title"><h2>💌 Messenger</h2><p>আপনার পছন্দমতো চ্যাটের ধরন বেছে নিন।</p></div>
+      <div class="messenger-choice-grid" aria-label="Messenger options">
+        <button class="messenger-choice" type="button" onclick="showMessengerMode('live')" aria-label="লাইভ SMS / Live Chat খুলুন">
+          <span class="messenger-choice-icon" aria-hidden="true">📡</span><span><strong>লাইভ SMS / Live Chat</strong><small>কমিউনিটির লাইভ চ্যাটে তাৎক্ষণিক কথা বলুন</small></span><span class="choice-arrow" aria-hidden="true">›</span>
+        </button>
+        <button class="messenger-choice" type="button" onclick="showMessengerMode('private')" aria-label="ব্যক্তিগত Message Inbox খুলুন">
+          <span class="messenger-choice-icon" aria-hidden="true">💬</span><span><strong>ব্যক্তিগত Message / Inbox</strong><small>সদস্য নির্বাচন করে ব্যক্তিগত বার্তা পাঠান</small></span><span class="choice-arrow" aria-hidden="true">›</span>
+        </button>
+      </div>
+      <p class="messenger-note">নোট: “লাইভ SMS” এখানে ওয়েবসাইটের Live Chat বোঝায়; মোবাইল নম্বরে অপারেটরের SMS নয়।</p>
+      <div id="privateMessengerPanel" class="social-tool-grid" hidden><div class="card"><h3>নতুন কথোপকথন</h3><label for="dmMemberSelect">সদস্য নির্বাচন</label><select id="dmMemberSelect" style="width:100%;margin:8px 0;padding:10px;border:1px solid var(--border);border-radius:8px"><option value="">সদস্য লোড হচ্ছে...</option></select><button class="btn btn-primary" onclick="openLbpConversation()">চ্যাট খুলুন</button><div id="inboxList" class="social-list"></div></div>
+      <div class="card"><h3 id="dmTitle">ব্যক্তিগত বার্তা</h3><div id="dmMessages" class="social-list" style="max-height:360px;overflow:auto"><p class="muted">কথোপকথন নির্বাচন করুন।</p></div><textarea id="dmContent" maxlength="5000" placeholder="বার্তা লিখুন..." style="width:100%;margin-top:10px;min-height:80px;padding:10px;border:1px solid var(--border);border-radius:8px"></textarea><button class="btn btn-primary" style="margin-top:8px" onclick="sendLbpMessage()">পাঠান</button></div></div>
     </section>
 
     <!-- FOLLOW & FRIENDS -->
@@ -6640,6 +6660,17 @@ $("chatOverlay")
   );
 
 
+
+function showMessengerMode(mode) {
+  const panel = document.getElementById("privateMessengerPanel");
+  if (panel) panel.hidden = mode !== "private";
+  if (mode === "private") {
+    if (guestMode || !currentUser?.id) { toast("ব্যক্তিগত মেসেজ ব্যবহার করতে Login করুন", "error"); return; }
+    if (typeof loadLbpSocialProfiles === "function") loadLbpSocialProfiles().then(() => typeof loadLbpInbox === "function" && loadLbpInbox());
+  } else if (mode === "live") {
+    if (typeof openChat === "function") openChat();
+  }
+}
 
 /* =========================================================
    STORIES / PRIVATE INBOX / FOLLOW & FRIENDS
