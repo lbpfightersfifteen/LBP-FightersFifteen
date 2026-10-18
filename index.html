@@ -1187,6 +1187,50 @@
     body.theme-dark .lbp-brand-header,body.theme-dark .lbp-main-nav{background:#111c2e;color:#e5edf8;border-color:#29364b}
     body.theme-dark .lbp-brand-copy p{color:#a8bad3}
     @media(max-width:650px){.lbp-brand-header{min-height:62px;padding:9px 12px}.lbp-brand-mark{width:40px;height:40px;font-size:24px}.lbp-main-nav{justify-content:flex-start}.lbp-main-nav .nav-btn{flex-direction:column;gap:3px;min-width:68px;padding:7px 9px;font-size:11px}.lbp-main-nav .nav-icon{font-size:20px}}
+
+    /* Facebook-inspired three-column community homepage; preserves existing app logic */
+    body{background:#f0f2f5;color:#1c1e21}
+    .lbp-brand-header{min-height:68px;padding:8px 22px;position:relative;background:#fff;box-shadow:0 1px 3px #00000012}
+    .lbp-brand-mark{background:#e7f0ff;border-radius:50%;color:#1877f2}
+    .lbp-brand-copy h1{color:#1877f2}
+    .lbp-main-nav{display:flex!important;position:sticky;top:0;justify-content:center;background:#fff;padding:4px max(8px,calc((100% - 900px)/2));gap:8px}
+    .lbp-main-nav .nav-btn{flex:1;max-width:150px;min-width:80px;min-height:52px;border-radius:8px;background:transparent;color:#536471}
+    .lbp-main-nav .nav-btn.active{background:#fff;color:#1877f2;box-shadow:inset 0 -3px #1877f2}
+    .lbp-main-nav .nav-btn:nth-child(n+6){display:none!important}
+    .lbp-main-nav .nav-btn:nth-child(1),.lbp-main-nav .nav-btn:nth-child(2),.lbp-main-nav .nav-btn:nth-child(3),.lbp-main-nav .nav-btn:nth-child(4),.lbp-main-nav .nav-btn:nth-child(5){display:flex!important}
+    .container{width:min(1600px,100% - 28px);margin:16px auto}
+    .social-home-layout{grid-template-columns:minmax(185px,220px) minmax(0, min(680px,1fr)) minmax(210px,270px);gap:16px;align-items:start}
+    .social-home-layout .home-main{gap:12px}
+    .social-home-layout .hero,.social-home-layout .stats-grid,.social-home-layout .home-main>.card[style*="Quick Access"]{display:none!important}
+    .social-home-layout .card,.social-home-layout .post,.social-home-layout .feed-toolbar{background:#fff;border:1px solid #e4e6eb;border-radius:12px;box-shadow:0 1px 2px #0000000d;margin-bottom:0}
+    .social-home-layout .home-side{position:sticky;top:76px;max-height:calc(100vh - 90px);overflow:auto;scrollbar-width:thin;gap:12px}
+    .social-home-layout .home-side .card{padding:14px}
+    .home-nav-card .home-shortcut{padding:9px 10px;min-height:40px;font-size:14px;color:#263951;border-radius:8px}
+    .home-nav-card .home-shortcut:hover{background:#e7f3ff;color:#1877f2}
+    .home-brand-card{background:linear-gradient(145deg,#05264b,#0a4b86)!important;color:#fff!important;text-align:center;padding:24px 12px!important}
+    .home-emblem{font-size:52px;margin-bottom:10px}.home-brand-card strong,.home-brand-card small{display:block}.home-brand-card small{margin-top:6px;opacity:.85}
+    .home-news-card h3,.home-right .card h3{font-size:15px;margin-bottom:12px}
+    .home-news-card p{font-size:13px;line-height:1.7;margin:12px 0;color:#334155}
+    .home-news-card small,.home-activity small,.home-topic small,.suggested-banner small{display:block;color:#718096;font-size:12px;margin-top:3px}
+    .suggested-banner{margin-top:10px;border-radius:10px;padding:28px 10px 14px;text-align:center;color:white;background:linear-gradient(135deg,#063763,#1877f2);font-size:34px}
+    .suggested-banner strong{display:block;font-size:14px;margin-top:10px}.suggested-banner small{color:#dbeafe}
+    .home-activity,.home-topic,.home-counter{display:flex;align-items:center;gap:10px;margin:12px 0;font-size:13px;color:#334155}
+    .home-activity>span,.home-topic:first-letter{font-size:23px}.home-activity small,.home-topic small{font-weight:400}
+    .home-counter{background:#f0f7ff;border-radius:10px;padding:12px}.home-counter strong,.home-counter small{display:block}
+    .social-home-layout .story-strip{gap:9px;padding:3px 1px 9px}
+    .social-home-layout .story-chip{min-width:120px;max-width:120px;min-height:185px;border:0;box-shadow:0 1px 4px #00000014}
+    .social-home-layout .post-composer{padding:14px}
+    .social-home-layout .post-composer textarea{background:#f0f2f5;border:0;border-radius:22px;min-height:48px}
+    .social-home-layout .post{padding:14px;margin-bottom:12px}
+    .social-home-layout .post-content{font-size:16px;line-height:1.65}
+    .social-home-layout .post-image,.social-home-layout .post-media{border-radius:0;max-height:650px}
+    .social-home-layout .feed-toolbar{padding:14px}
+    .social-home-layout .feed-toolbar-title{margin-bottom:10px}
+    body.theme-dark{background:#0b1220}
+    @media(max-width:1100px){.social-home-layout{grid-template-columns:190px minmax(0,1fr)}.social-home-layout .home-right{display:none}}
+    @media(max-width:760px){.lbp-brand-header{padding:9px 12px}.lbp-main-nav{justify-content:flex-start;padding:4px 6px;gap:2px}.lbp-main-nav .nav-btn{min-width:62px;padding:7px 5px;font-size:11px;flex-direction:column;gap:2px}.container{width:100%;margin:8px auto}.social-home-layout{display:flex;flex-direction:column;gap:9px}.social-home-layout .home-left{display:none}.social-home-layout .home-main{width:100%;order:0}.social-home-layout .home-right{display:grid;position:static;order:2;grid-template-columns:1fr 1fr;max-height:none}.social-home-layout .story-chip{min-width:104px;max-width:104px;min-height:150px}.social-home-layout .post{border-radius:10px}.social-home-layout .post-image,.social-home-layout .post-media{max-height:420px}}
+    @media(max-width:430px){.social-home-layout .home-right{grid-template-columns:1fr}.lbp-brand-copy h1{font-size:18px}.lbp-brand-mark{width:38px;height:38px}}
+
 </style>
 </head>
 
@@ -1403,13 +1447,23 @@
     <section id="page-home" class="page-section active">
       <div class="social-home-layout">
        <aside class="home-side home-left">
-        <div class="card"><h3 style="margin-bottom:8px">⚡ শর্টকাট</h3>
-         <button class="home-shortcut" onclick="showPage('profile')">👤 আমার প্রোফাইল</button>
-         <button class="home-shortcut" onclick="showPage('members')">👥 সদস্যরা</button>
-         <button class="home-shortcut" onclick="showPage('inbox')">💌 মেসেঞ্জার</button>
-         <button class="home-shortcut" onclick="showPage('social')">🤝 বন্ধু ও ফলো</button>
-         <button class="home-shortcut" onclick="showPage('gallery')">🖼️ গ্যালারি</button>
+        <div class="card home-nav-card"><h3 style="margin-bottom:8px">⚡ Menu</h3>
+         <button class="home-shortcut" onclick="showPage('home')">🏠 Home</button>
+         <button class="home-shortcut" onclick="showPage('profile')">👤 My Profile</button>
+         <button class="home-shortcut" onclick="showPage('members')">👥 Members</button>
+         <button class="home-shortcut" onclick="showPage('inbox')">💬 Messenger</button>
+         <button class="home-shortcut" onclick="showPage('social')">🤝 Friends & Follow</button>
+         <button class="home-shortcut" onclick="showPage('stories')">⭕ Stories</button>
+         <button class="home-shortcut" onclick="showPage('league')">🏏 Cricket League</button>
+         <button class="home-shortcut" onclick="showPage('league')">📊 Player Voting</button>
+         <button class="home-shortcut" onclick="showPage('complaints')">⚠️ Complaints</button>
+         <button class="home-shortcut" onclick="showPage('notifications')">🔔 Notifications</button>
+         <button class="home-shortcut" onclick="showPage('gallery')">🖼️ Gallery</button>
+         <button class="home-shortcut" onclick="showPage('profile')">⚙️ Account Settings</button>
+         <button class="home-shortcut" onclick="document.getElementById('logoutBtn').click()">🚪 Logout</button>
         </div>
+        <div class="card home-brand-card"><div class="home-emblem">⚔️</div><strong>LBP Fighters Fifteen</strong><small>Together We Are Stronger</small></div>
+        <div class="card home-news-card"><h3>📰 Latest News</h3><p>🏏 Cricket League<br><small>নতুন ম্যাচের আপডেট দেখুন</small></p><p>📣 Community Update<br><small>সবার সঙ্গে যুক্ত থাকুন</small></p><p>⭐ Member Stories<br><small>বন্ধুদের মুহূর্ত দেখুন</small></p></div>
        </aside>
        <div class="home-main">
       <div class="hero">
@@ -1499,7 +1553,13 @@
         <div class="loading"><div class="spinner"></div>Loading posts...</div>
       </div>
        </div>
-       <aside class="home-side home-right"><div class="card"><h3 style="margin-bottom:8px">👥 Community</h3><p class="muted" style="font-size:13px">সদস্য খুঁজুন, বন্ধু হন, গল্প ও পোস্ট শেয়ার করুন।</p><button class="btn btn-primary btn-full" style="margin-top:10px" onclick="showPage('members')">সদস্য খুঁজুন</button></div><div class="card"><h3 style="margin-bottom:8px">🏏 Sports</h3><p class="muted" style="font-size:13px">ক্রিকেট লীগ ও খেলাধুলার তথ্য।</p><button class="btn btn-secondary btn-full" style="margin-top:10px" onclick="showPage('league')">Cricket League</button></div></aside>
+       <aside class="home-side home-right">
+        <div class="card"><h3>👥 Suggested for you</h3><div class="suggested-banner">🏏<br><strong>LBP Fighters Cricket Team</strong><small>Community Members</small></div><button class="btn btn-primary btn-full" style="margin-top:10px" onclick="showPage('members')">Find Members</button></div>
+        <div class="card"><h3>🟢 Online Members</h3><div id="homeOnlineMembers" class="home-mini-list"><p class="muted">সদস্যদের তালিকা দেখতে Members খুলুন।</p><button class="btn btn-secondary btn-full" onclick="showPage('members')">See all members</button></div></div>
+        <div class="card"><h3>🕘 Recent Activity</h3><div class="home-activity"><span>👥</span><div><strong>Community updates</strong><small>সদস্যদের নতুন কার্যক্রম</small></div></div><div class="home-activity"><span>👍</span><div><strong>Posts & reactions</strong><small>ফিডে নতুন পোস্ট দেখুন</small></div></div><div class="home-activity"><span>💬</span><div><strong>Messages</strong><small>বন্ধুদের সঙ্গে যোগাযোগ</small></div></div></div>
+        <div class="card"><h3>🔥 Popular in LBP Fighters</h3><div class="home-topic">🏏 <div><strong>Cricket News</strong><small>খেলাধুলার আপডেট</small></div></div><div class="home-topic">📸 <div><strong>Member Stories</strong><small>সবার স্মৃতি ও গল্প</small></div></div><div class="home-topic">🤝 <div><strong>Community</strong><small>Connect • Share</small></div></div></div>
+        <div class="card"><h3>📈 Visitor Counter</h3><p class="home-counter">🌐 <span><small>Website community</small><strong>LBP Fighters Fifteen</strong></span></p><p class="muted" style="font-size:12px">Visitor Counter-এর বিদ্যমান ডেটা থাকলে সেটি সাইটের মূল কাউন্টারেই দেখানো হবে।</p></div>
+       </aside>
       </div>
     </section>
 
