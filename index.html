@@ -1070,6 +1070,32 @@
     #memberModal .profile-grid > div { border:1px solid var(--border); border-radius:12px; padding:12px; background:var(--bg); }
     @media(max-width:600px) { #page-profile .profile-cover{height:170px} #page-profile .profile-hero-body{flex-direction:row;align-items:flex-end;margin-top:-52px;padding:0 14px 16px;gap:12px} #page-profile #profileAvatar{width:100px;height:100px} }
 
+    /* FACEBOOK-INSPIRED PROFILE TABS */
+    #page-profile .profile-hero-card { background:var(--card); border:1px solid var(--border); }
+    #page-profile .profile-cover { width:100%; height:280px; border-radius:0; background:linear-gradient(120deg,#1d4ed8,#93c5fd); }
+    #page-profile .profile-hero-body { padding:0 24px 14px; margin-top:-62px; position:relative; display:flex; align-items:flex-end; gap:18px; }
+    #page-profile #profileAvatar { width:150px; height:150px; flex:0 0 auto; }
+    #page-profile .profile-header-actions { display:flex; flex-wrap:wrap; gap:8px; padding:0 24px 14px; }
+    #page-profile .profile-social-counts { display:flex; flex-wrap:wrap; gap:20px; padding:0 24px 18px; color:var(--muted); font-size:13px; }
+    #page-profile .profile-social-counts strong { color:var(--text); }
+    #page-profile .profile-tabbar { display:flex; gap:4px; overflow-x:auto; border-bottom:1px solid var(--border); margin:12px 0; padding:4px 6px; background:var(--card); border-radius:12px; }
+    #page-profile .profile-tab { flex:0 0 auto; border:0; background:transparent; color:var(--muted); border-radius:8px; padding:12px 16px; font-weight:750; cursor:pointer; }
+    #page-profile .profile-tab.active { color:var(--primary); background:var(--bg); box-shadow:inset 0 -3px 0 var(--primary); }
+    #page-profile .profile-tab-panel { margin-bottom:16px; }
+    #page-profile .profile-panel-heading { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; }
+    #page-profile .profile-photos-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+    #page-profile .profile-photos-grid img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:10px; }
+    #page-profile .profile-feed-item { border:1px solid var(--border); border-radius:12px; padding:14px; margin:10px 0; overflow-wrap:anywhere; }
+    #page-profile .profile-feed-item .muted { font-size:12px; }
+    @media(max-width:600px) {
+      #page-profile .profile-cover { height:190px; }
+      #page-profile .profile-hero-body { padding:0 14px 12px; margin-top:-48px; gap:12px; align-items:flex-end; }
+      #page-profile #profileAvatar { width:100px; height:100px; }
+      #page-profile .profile-header-actions,#page-profile .profile-social-counts { padding-left:14px; padding-right:14px; }
+      #page-profile .profile-tab { padding:10px 12px; font-size:12px; }
+      #page-profile .profile-photos-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+
     /* PROFILE UPGRADE */
     .profile-cover { width:100%; height:190px; object-fit:cover; border-radius:14px; background:linear-gradient(135deg,#1e3a8a,#60a5fa); display:block; }
     .profile-hero-card { overflow:hidden; }
@@ -1635,48 +1661,55 @@
           </div>
         </div>
 
-        <div class="profile-grid">
-
-          <div>
-            <strong>Batch</strong>
-            <div id="profileBatch" class="muted">-</div>
-          </div>
-
-          <div>
-            <strong>Blood Group</strong>
-            <div id="profileBlood" class="muted">-</div>
-          </div>
-
-          <div>
-            <strong>Phone</strong>
-            <div id="profilePhone" class="muted">-</div>
-          </div>
-
-          <div>
-            <strong>Bio</strong>
-            <div id="profileBio" class="muted">-</div>
-          </div>
-
+        <div class="profile-header-actions">
+          <button class="btn btn-primary" type="button" onclick="openProfileEdit()">✏️ Edit Profile</button>
+          <button class="btn btn-secondary" type="button" onclick="showProfileTab('photos')">📷 Photos</button>
         </div>
-
-        <div style="margin-top:18px">
-
-          <button
-            class="btn btn-primary"
-            onclick="openProfileEdit()"
-          >
-            ✏️ Edit Profile
-          </button>
-
+        <div class="profile-social-counts">
+          <span><strong id="profileFriendCount">0</strong> Friends</span>
+          <span><strong id="profileFollowerCount">0</strong> Followers</span>
+          <span><strong id="profileFollowingCount">0</strong> Following</span>
         </div>
-
       </div>
 
-      <div class="card">
-        <h3 style="margin-bottom:12px">📰 My Activity — Posts & Comments</h3>
-        <div id="profileActivity"><p class="muted">নিজের পোস্ট ও মন্তব্য দেখতে নিচের বাটনে চাপ দিন।</p></div>
-        <button type="button" class="btn btn-secondary" onclick="loadProfileActivity()">🔄 Activity দেখুন</button>
+      <div class="profile-tabbar" role="tablist" aria-label="Profile sections">
+        <button type="button" class="profile-tab active" data-profile-tab="posts" role="tab" aria-selected="true" onclick="showProfileTab('posts')">📰 Posts</button>
+        <button type="button" class="profile-tab" data-profile-tab="about" role="tab" aria-selected="false" onclick="showProfileTab('about')">ℹ️ About</button>
+        <button type="button" class="profile-tab" data-profile-tab="friends" role="tab" aria-selected="false" onclick="showProfileTab('friends')">👥 Friends</button>
+        <button type="button" class="profile-tab" data-profile-tab="photos" role="tab" aria-selected="false" onclick="showProfileTab('photos')">📷 Photos</button>
+        <button type="button" class="profile-tab" data-profile-tab="activity" role="tab" aria-selected="false" onclick="showProfileTab('activity')">⚡ Activity</button>
       </div>
+
+      <section class="profile-tab-panel active" data-profile-panel="posts" role="tabpanel">
+        <div class="card">
+          <div class="profile-panel-heading"><h3>📰 My Posts</h3><button type="button" class="btn btn-secondary" onclick="loadProfilePosts()">🔄 Refresh</button></div>
+          <div id="profilePosts"><p class="muted">আপনার পোস্ট লোড হচ্ছে...</p></div>
+        </div>
+      </section>
+
+      <section class="profile-tab-panel" data-profile-panel="about" role="tabpanel" hidden>
+        <div class="card"><h3 style="margin-bottom:12px">ℹ️ About Me</h3>
+          <div class="profile-grid">
+            <div><strong>Batch</strong><div id="profileBatch" class="muted">-</div></div>
+            <div><strong>Blood Group</strong><div id="profileBlood" class="muted">-</div></div>
+            <div><strong>Phone</strong><div id="profilePhone" class="muted">-</div></div>
+            <div><strong>Bio</strong><div id="profileBio" class="muted">-</div></div>
+            <div><strong>Birthday</strong><div id="profileBirthdayDisplay" class="muted">-</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="profile-tab-panel" data-profile-panel="friends" role="tabpanel" hidden>
+        <div class="card"><div class="profile-panel-heading"><h3>👥 Friends & Following</h3><button type="button" class="btn btn-secondary" onclick="showPage('social')">Manage</button></div><div id="profileFriendsList"><p class="muted">Friends লোড হচ্ছে...</p></div></div>
+      </section>
+
+      <section class="profile-tab-panel" data-profile-panel="photos" role="tabpanel" hidden>
+        <div class="card"><div class="profile-panel-heading"><h3>📷 My Photos</h3><button type="button" class="btn btn-secondary" onclick="showPage('gallery')">Open Gallery</button></div><div id="profilePhotosGrid" class="profile-photos-grid"><p class="muted">আপনার আপলোড করা ছবি লোড হচ্ছে...</p></div></div>
+      </section>
+
+      <section class="profile-tab-panel" data-profile-panel="activity" role="tabpanel" hidden>
+        <div class="card"><div class="profile-panel-heading"><h3>⚡ My Activity — Posts & Comments</h3><button type="button" class="btn btn-secondary" onclick="loadProfileActivity()">🔄 Refresh</button></div><div id="profileActivity"><p class="muted">নিজের পোস্ট ও মন্তব্য লোড হচ্ছে...</p></div></div>
+      </section>
 
       <div class="card" style="margin-top:18px">
         <button type="button" class="btn btn-secondary" style="width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center" aria-expanded="false" aria-controls="accountSettingsPanel" id="accountSettingsToggle" onclick="toggleAccountSettings()">
@@ -3106,6 +3139,7 @@ function showPage(page) {
   if (page === "stories") { loadLbpStories(); }
   if (page === "inbox") { loadLbpSocialProfiles().then(loadLbpInbox); }
   if (page === "social") { loadLbpSocialProfiles().then(loadLbpSocialLists); }
+  if (page === "profile") { showProfileTab("posts"); loadProfileSocialSummary(); }
 
 }
 
@@ -3394,6 +3428,8 @@ async function loadProfile() {
 
   $("profileBio").textContent =
     currentProfile.bio || "No bio";
+  if ($("profileBirthdayDisplay")) $("profileBirthdayDisplay").textContent = currentProfile.birthday || "Not set";
+  loadProfileSocialSummary();
 
 
   $("editFullName").value =
@@ -6210,14 +6246,121 @@ $("chatForm").addEventListener(
 
       button.disabled = false;
 
-      input.focus();
-
     }
 
   }
 );
 
 
+
+/* =========================================================
+   FACEBOOK-INSPIRED PROFILE TABS / TIMELINE
+========================================================= */
+function showProfileTab(tab) {
+  const allowed = new Set(["posts","about","friends","photos","activity"]);
+  if (!allowed.has(tab)) tab = "posts";
+  document.querySelectorAll("#page-profile [data-profile-tab]").forEach(btn => {
+    const active = btn.dataset.profileTab === tab;
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-selected", String(active));
+  });
+  document.querySelectorAll("#page-profile [data-profile-panel]").forEach(panel => {
+    const active = panel.dataset.profilePanel === tab;
+    panel.hidden = !active;
+    panel.classList.toggle("active", active);
+  });
+  if (tab === "posts") loadProfilePosts();
+  if (tab === "activity") loadProfileActivity();
+  if (tab === "friends") loadProfileFriends();
+  if (tab === "photos") loadProfilePhotos();
+}
+window.showProfileTab = showProfileTab;
+
+async function loadProfileSocialSummary() {
+  if (!currentUser?.id) return;
+  try {
+    const [{data: friendships, error: friendError}, {data: follows, error: followError}] = await Promise.all([
+      db.from("lbp_friendships").select("requester_id,addressee_id,status").or(`requester_id.eq.${currentUser.id},addressee_id.eq.${currentUser.id}`).eq("status","accepted"),
+      db.from("lbp_follows").select("follower_id,followed_id").or(`follower_id.eq.${currentUser.id},followed_id.eq.${currentUser.id}`)
+    ]);
+    if (friendError) throw friendError;
+    if (followError) throw followError;
+    const fs = friendships || [], fl = follows || [];
+    const friendCount = new Set(fs.map(x => x.requester_id === currentUser.id ? x.addressee_id : x.requester_id)).size;
+    const followerCount = fl.filter(x => x.followed_id === currentUser.id).length;
+    const followingCount = fl.filter(x => x.follower_id === currentUser.id).length;
+    if ($("profileFriendCount")) $("profileFriendCount").textContent = String(friendCount);
+    if ($("profileFollowerCount")) $("profileFollowerCount").textContent = String(followerCount);
+    if ($("profileFollowingCount")) $("profileFollowingCount").textContent = String(followingCount);
+  } catch (e) { console.warn("Profile social counts unavailable", e.message); }
+}
+
+async function loadProfilePosts() {
+  const el = $("profilePosts");
+  if (!el) return;
+  if (!currentUser?.id || guestMode) { el.innerHTML = '<p class="muted">নিজের পোস্ট দেখতে Login করুন।</p>'; return; }
+  el.innerHTML = '<p class="muted">পোস্ট লোড হচ্ছে...</p>';
+  try {
+    let {data, error} = await db.from("posts").select("id,user_id,content,image_path,created_at").eq("user_id", currentUser.id).order("created_at", {ascending:false}).limit(30);
+    if (error && /image_path|column .* does not exist/i.test(error.message || "")) {
+      const fallback = await db.from("posts").select("id,user_id,content,created_at").eq("user_id", currentUser.id).order("created_at", {ascending:false}).limit(30);
+      data = (fallback.data || []).map(p => ({...p,image_path:null})); error = fallback.error;
+    }
+    if (error) throw error;
+    const posts = data || [];
+    if (!posts.length) { el.innerHTML = '<p class="muted">এখনো কোনো পোস্ট নেই। Home থেকে নতুন পোস্ট করতে পারো।</p>'; return; }
+    const cards = await Promise.all(posts.map(async post => {
+      let image = "";
+      if (post.image_path) {
+        try {
+          const {data: publicData} = db.storage.from("community-gallery").getPublicUrl(post.image_path);
+          const mediaUrl = publicData?.publicUrl;
+          if (mediaUrl) {
+            const isVideo = /\.(mp4|webm|mov|m4v)(?:$|\?)/i.test(post.image_path);
+            image = isVideo ? `<video controls playsinline preload="metadata" src="${escapeHTML(mediaUrl)}" style="width:100%;max-height:360px;border-radius:10px;margin-top:8px"></video>` : `<img loading="lazy" src="${escapeHTML(mediaUrl)}" alt="Post photo" style="max-width:100%;max-height:360px;border-radius:10px;margin-top:8px">`;
+          }
+        } catch {}
+      }
+      return `<article class="profile-feed-item"><div><strong>${escapeHTML(currentProfile?.full_name || "My Post")}</strong><div class="muted">${formatDate(post.created_at)}</div></div><div style="white-space:pre-wrap;margin-top:10px">${escapeHTML(post.content || "")}</div>${image}</article>`;
+    }));
+    el.innerHTML = cards.join("");
+  } catch (e) { console.warn("Profile posts unavailable", e.message); el.innerHTML = '<p class="muted">পোস্ট লোড করা যায়নি। Database permission বা posts table পরীক্ষা করুন।</p>'; }
+}
+
+async function loadProfileFriends() {
+  const el = $("profileFriendsList");
+  if (!el) return;
+  if (!currentUser?.id || guestMode) { el.innerHTML = '<p class="muted">Friends দেখতে Login করুন।</p>'; return; }
+  el.innerHTML = '<p class="muted">Friends লোড হচ্ছে...</p>';
+  try {
+    const [{data: friendships, error: friendError}, {data: follows, error: followError}] = await Promise.all([
+      db.from("lbp_friendships").select("requester_id,addressee_id,status").or(`requester_id.eq.${currentUser.id},addressee_id.eq.${currentUser.id}`).eq("status","accepted"),
+      db.from("lbp_follows").select("follower_id,followed_id").or(`follower_id.eq.${currentUser.id},followed_id.eq.${currentUser.id}`)
+    ]);
+    if (friendError) throw friendError;
+    if (followError) throw followError;
+    const ids = [...new Set([...(friendships||[]).map(x=>x.requester_id===currentUser.id?x.addressee_id:x.requester_id), ...(follows||[]).map(x=>x.follower_id===currentUser.id?x.followed_id:x.follower_id)])];
+    if (!ids.length) { el.innerHTML = '<p class="muted">এখনো Friends বা Following তালিকা খালি। <a href="#social">সদস্য খুঁজুন</a></p>'; return; }
+    const {data:profiles,error:profileError} = await db.from("profiles").select("id,full_name,profile_photo").in("id",ids).eq("approved",true);
+    if (profileError) throw profileError;
+    const friendIds = new Set((friendships||[]).map(x=>x.requester_id===currentUser.id?x.addressee_id:x.requester_id));
+    const followingIds = new Set((follows||[]).filter(x=>x.follower_id===currentUser.id).map(x=>x.followed_id));
+    el.innerHTML = (profiles||[]).map(p=>`<div class="social-row"><div><strong>${escapeHTML(p.full_name||"Member")}</strong><br><small>${friendIds.has(p.id)?"👥 Friend":followingIds.has(p.id)?"➡️ Following":"👤 Follower"}</small></div><button class="btn btn-secondary" onclick="showPage('social')">View</button></div>`).join("") || '<p class="muted">কোনো সদস্য পাওয়া যায়নি।</p>';
+  } catch (e) { console.warn("Profile friends unavailable",e.message); el.innerHTML = '<p class="muted">Friends তালিকা লোড করা যায়নি। Social tables/RLS পরীক্ষা করুন।</p>'; }
+}
+
+async function loadProfilePhotos() {
+  const el = $("profilePhotosGrid");
+  if (!el) return;
+  if (!currentUser?.id || guestMode) { el.innerHTML = '<p class="muted">নিজের ছবি দেখতে Login করুন।</p>'; return; }
+  el.innerHTML = '<p class="muted">ছবি লোড হচ্ছে...</p>';
+  try {
+    const {data,error} = await db.from("gallery_photos").select("id,caption,storage_path,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(24);
+    if (error) throw error;
+    if (!data?.length) { el.innerHTML = '<p class="muted">এখনো কোনো ছবি আপলোড করেননি। Gallery থেকে ছবি যোগ করতে পারো।</p>'; return; }
+    el.innerHTML = data.map(photo=>{const {data:pub}=db.storage.from("community-gallery").getPublicUrl(photo.storage_path);return `<a href="${escapeHTML(pub.publicUrl)}" target="_blank" rel="noopener" title="${escapeHTML(photo.caption||"Photo")}"><img loading="lazy" src="${escapeHTML(pub.publicUrl)}" alt="${escapeHTML(photo.caption||"My photo")}"></a>`;}).join("");
+  } catch (e) { console.warn("Profile photos unavailable",e.message); el.innerHTML = '<p class="muted">ছবি লোড করা যায়নি। Gallery setup/permissions পরীক্ষা করুন।</p>'; }
+}
 
 /* =========================================================
    PROFILE UPGRADE: ACTIVITY, STATS, BADGES, PRIVACY, SECURITY
