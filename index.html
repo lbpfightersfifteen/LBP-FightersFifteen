@@ -1173,14 +1173,28 @@
       #page-admin .admin-grid { grid-template-columns:1fr !important; }
     }
 
+
+    /* Screenshot-inspired branded top navigation */
+    .lbp-brand-header{display:flex;align-items:center;justify-content:flex-start;gap:12px;text-align:left;padding:12px clamp(14px,3vw,30px);background:#fff;color:#15345d;border-bottom:1px solid #e5edf7;min-height:72px}
+    .lbp-brand-mark{width:48px;height:48px;display:grid;place-items:center;border-radius:14px;background:#eaf3ff;font-size:29px;flex:0 0 auto}
+    .lbp-brand-copy h1{font-size:clamp(18px,2.3vw,25px);line-height:1.15;margin:0;color:#1764c0;font-weight:800}
+    .lbp-brand-copy p{font-size:12px;color:#526783;opacity:1;margin-top:3px}
+    .lbp-main-nav{position:sticky;top:0;z-index:100;justify-content:center;gap:4px;padding:5px 10px;background:rgba(255,255,255,.97);border-bottom:1px solid #e4edf8;box-shadow:0 2px 10px #17365d0c;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:thin}
+    .lbp-main-nav .nav-btn{display:flex;align-items:center;justify-content:center;gap:7px;min-height:48px;padding:8px 13px;border-radius:10px;color:#334d70;font-weight:650;font-size:13px}
+    .lbp-main-nav .nav-btn.active{background:#e8f2ff;color:#0969da;box-shadow:inset 0 -3px #1877f2}
+    .lbp-main-nav .nav-icon{font-size:21px;line-height:1;min-width:22px;text-align:center}
+    .lbp-main-nav .nav-btn:hover{background:#eff6ff;color:#0969da}
+    body.theme-dark .lbp-brand-header,body.theme-dark .lbp-main-nav{background:#111c2e;color:#e5edf8;border-color:#29364b}
+    body.theme-dark .lbp-brand-copy p{color:#a8bad3}
+    @media(max-width:650px){.lbp-brand-header{min-height:62px;padding:9px 12px}.lbp-brand-mark{width:40px;height:40px;font-size:24px}.lbp-main-nav{justify-content:flex-start}.lbp-main-nav .nav-btn{flex-direction:column;gap:3px;min-width:68px;padding:7px 9px;font-size:11px}.lbp-main-nav .nav-icon{font-size:20px}}
 </style>
 </head>
 
 <body>
 
-<header>
-  <h1>⚔️ LBP Fighters Fifteen</h1>
-  <p>Connect • Share • Stay Together</p>
+<header class="lbp-brand-header">
+  <div class="lbp-brand-mark" aria-hidden="true">⚔️</div>
+  <div class="lbp-brand-copy"><h1>LBP Fighters Fifteen</h1><p>Connect • Share • Stay Together</p></div>
 </header>
 
 <!-- AUTH AREA -->
@@ -1348,52 +1362,20 @@
 
   <!-- NAV -->
 
-  <nav>
-
-    <button class="nav-btn active" data-page="home">
-      🏠 Home
-    </button>
-
+  <nav class="lbp-main-nav">
+    <button class="nav-btn active" data-page="home"><span class="nav-icon">⌂</span><span>Home</span></button>
+    <button class="nav-btn" data-page="profile"><span class="nav-icon">♙</span><span>My Profile</span></button>
+    <button class="nav-btn" data-page="members"><span class="nav-icon">♧</span><span>Members</span></button>
+    <button class="nav-btn" data-page="inbox"><span class="nav-icon">☏</span><span>Messenger</span></button>
+    <button class="nav-btn" data-page="notifications"><span class="nav-icon">♧</span><span>Notifications</span><span id="notificationBadge" class="notification-badge hidden">0</span></button>
     <button class="nav-btn" data-page="stories">⭕ Stories</button>
-    <button class="nav-btn" data-page="inbox">💌 Messenger / Inbox</button>
-    <button class="nav-btn" data-page="social">🤝 Follow & Friends</button>
-
-    <button class="nav-btn" data-page="profile">
-      👤 Profile
-    </button>
-
-    <button class="nav-btn" data-page="members">
-      👥 Members
-    </button>
-
+    <button class="nav-btn" data-page="social">🤝 Friends</button>
     <button class="nav-btn" data-page="gallery">🖼️ Gallery</button>
-
-    <button class="nav-btn" data-page="notifications">
-      🔔 Notifications
-      <span id="notificationBadge" class="notification-badge hidden">0</span>
-    </button>
-
-    <button class="nav-btn hidden" data-page="complaints" id="complaintsNavBtn">📝 অভিযোগ বক্স</button>
-
-    <button class="nav-btn" id="chatNavBtn">
-      💬 Live Chat
-    </button>
-
+    <button class="nav-btn hidden" data-page="complaints" id="complaintsNavBtn">📝 Complaints</button>
+    <button class="nav-btn" id="chatNavBtn">💬 Live Chat</button>
     <button class="nav-btn hidden" data-page="league" id="leagueNavBtn">🏏 Cricket League</button>
-
-    <button
-      class="nav-btn hidden"
-      id="adminNavBtn"
-      data-page="admin"
-    >
-      🛡️ Admin
-    </button>
-
-
-    <button class="nav-btn" id="logoutBtn">
-      🚪 Logout
-    </button>
-
+    <button class="nav-btn hidden" id="adminNavBtn" data-page="admin">🛡️ Admin</button>
+    <button class="nav-btn" id="logoutBtn">🚪 Logout</button>
   </nav>
 
 
