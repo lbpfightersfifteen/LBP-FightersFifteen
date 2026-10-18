@@ -1432,7 +1432,7 @@
         </div>
         <textarea id="postContent" placeholder="আপনার মনে যা আছে লিখুন..." aria-label="Post text"></textarea>
         <div class="form-group" style="margin-top:10px">
-          <label for="postImageFile">ছবি বা ভিডিও যোগ করুন (ঐচ্ছিক; ছবি 5MB, ভিডিও 20MB পর্যন্ত)</label>
+          <label for="postImageFile">ছবি বা ভিডিও যোগ করুন (ঐচ্ছিক; ছবি 5MB, ভিডিও 200MB পর্যন্ত)</label>
           <input id="postImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime">
         </div>
         <div style="display:flex;justify-content:flex-end;margin-top:10px">
@@ -4237,7 +4237,7 @@ $("createPostBtn").addEventListener("click", async () => {
   const isImage = !!file && /^image\/(jpeg|png|webp|gif)$/.test(file.type);
   const isVideo = !!file && /^video\/(mp4|webm|quicktime)$/.test(file.type);
   if (file && !isImage && !isVideo) { toast("JPG, PNG, WebP, GIF অথবা MP4/WebM/MOV ভিডিও দিন", "error"); return; }
-  if (file && file.size > (isVideo ? 20 : 5) * 1024 * 1024) { toast(isVideo ? "ভিডিওর সর্বোচ্চ সাইজ 20MB" : "ছবির সর্বোচ্চ সাইজ 5MB", "error"); return; }
+  if (file && file.size > (isVideo ? 200 : 5) * 1024 * 1024) { toast(isVideo ? "ভিডিওর সর্বোচ্চ সাইজ 200MB" : "ছবির সর্বোচ্চ সাইজ 5MB", "error"); return; }
   const button = $("createPostBtn"); button.disabled = true;
   let uploadedPath = null;
   try {
