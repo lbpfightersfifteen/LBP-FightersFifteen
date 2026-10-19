@@ -3499,6 +3499,11 @@ function coverPositionStorageKey() {
   return `lbp-cover-position-${currentUser?.id || "guest"}`;
 }
 function readCoverPosition() {
+  // Supabase is the cross-device source of truth; localStorage is a fallback for older schemas/guest preview.
+  const remote = currentProfile && currentProfile.cover_position;
+  if (remote && typeof remote === "object") {
+    return { x: Math.max(0, Math.min(100, Number(remote.x ?? 50))), y: Math.max(0, Math.min(100, Number(remote.y ?? 50))) };
+  }
   try { return JSON.parse(localStorage.getItem(coverPositionStorageKey()) || '{"x":50,"y":50}'); }
   catch (_) { return {x:50,y:50}; }
 }
@@ -3685,7 +3690,11 @@ $("profileForm").addEventListener(
           bio: bio,
           birthday: birthday,
           profile_photo: profilePhoto,
-          cover_photo: coverPhoto
+          cover_photo: coverPhoto,
+          cover_position: {
+            x: Number($("coverPositionX")?.value ?? 50),
+            y: Number($("coverPositionY")?.value ?? 50)
+          }
 
         })
         .eq(
@@ -3703,11 +3712,13 @@ $("profileForm").addEventListener(
 
       currentProfile = data;
 
-
+      const savedCoverPosition = {
+        x: Number(data.cover_position?.x ?? $("coverPositionX")?.value ?? 50),
+        y: Number(data.cover_position?.y ?? $("coverPositionY")?.value ?? 50)
+      };
+      try { localStorage.setItem(coverPositionStorageKey(), JSON.stringify(savedCoverPosition)); } catch (_) {}
       await loadProfile();
-
-      try { localStorage.setItem(coverPositionStorageKey(), JSON.stringify({x:Number($("coverPositionX")?.value ?? 50), y:Number($("coverPositionY")?.value ?? 50)})); } catch (_) {}
-      const savedCoverPosition = readCoverPosition(); applyCoverPosition(savedCoverPosition.x, savedCoverPosition.y);
+      applyCoverPosition(savedCoverPosition.x, savedCoverPosition.y);
       closeProfileEdit();
 
       toast(
