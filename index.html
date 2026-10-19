@@ -1311,6 +1311,17 @@ body.theme-dark #page-profile .profile-hero-body{background:linear-gradient(to b
 #page-profile .profile-grid>div{border-radius:10px!important}
 @media(max-width:600px){#page-profile{padding:0 8px 16px!important}#page-profile .profile-cover{height:230px!important}#page-profile .profile-hero-body{margin-top:-88px!important;padding:0 10px 8px!important}#page-profile #profileAvatar{width:158px!important;height:158px!important}#page-profile .profile-header-actions{grid-template-columns:1fr 1fr!important;padding:6px 12px 14px!important}#page-profile .profile-header-actions .btn{min-height:44px!important;font-size:13px!important;padding:8px 5px!important}#page-profile .profile-social-counts{gap:13px!important;font-size:13px!important;flex-wrap:wrap}#page-profile .profile-tab{padding:11px 12px!important;font-size:13px!important}#page-profile .profile-photos-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 
+
+    /* Cover photo upload preview and focal-position controls */
+    #page-profile .profile-cover { object-fit:cover!important; object-position:var(--lbp-cover-x,50%) var(--lbp-cover-y,50%)!important; min-height:180px; }
+    .cover-adjust-help{font-size:12px;color:var(--muted);margin:7px 0}
+    .cover-adjust-panel{margin-top:10px;padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--bg)}
+    .cover-adjust-preview-wrap{height:150px;overflow:hidden;border-radius:9px;background:#dbeafe;margin-bottom:10px;touch-action:pan-y}
+    .cover-adjust-preview-wrap img{width:100%;height:100%;display:block;object-fit:cover;object-position:var(--preview-x,50%) var(--preview-y,50%)}
+    .cover-adjust-panel input[type=range]{width:100%;margin:5px 0 10px;accent-color:var(--primary)}
+    .cover-adjust-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted)}
+    .cover-adjust-actions .btn{padding:7px 10px}
+    @media(max-width:600px){.cover-adjust-preview-wrap{height:125px}#page-profile .profile-cover{min-height:180px}}
 </style>
 </head>
 
@@ -2262,9 +2273,18 @@ body.theme-dark #page-profile .profile-hero-body{background:linear-gradient(to b
         <input id="editBirthday" type="date" max="2099-12-31">
       </div>
 
-      <div class="form-group">
-        <label>Cover Photo (সর্বোচ্চ 5MB)</label>
+      <div class="form-group cover-adjust-group">
+        <label for="editCoverPhoto">Cover Photo (সর্বোচ্চ 5MB)</label>
         <input id="editCoverPhoto" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+        <p class="cover-adjust-help">ছবি আপলোড করার পর নিচের Preview-তে ছবিটি টেনে/স্লাইডার দিয়ে ঠিক করুন—কোন অংশটি Cover-এ দেখা যাবে।</p>
+        <div id="coverAdjustPanel" class="cover-adjust-panel" hidden>
+          <div class="cover-adjust-preview-wrap"><img id="coverAdjustPreview" alt="Cover photo adjustment preview"></div>
+          <label for="coverPositionX">বাম ↔ ডান</label>
+          <input id="coverPositionX" type="range" min="0" max="100" value="50">
+          <label for="coverPositionY">উপর ↕ নিচ</label>
+          <input id="coverPositionY" type="range" min="0" max="100" value="50">
+          <div class="cover-adjust-actions"><button id="coverPositionReset" type="button" class="btn btn-secondary">মাঝখানে রাখুন</button><span id="coverPositionLabel">50% 50%</span></div>
+        </div>
       </div>
 
       <div class="form-group">
@@ -3422,6 +3442,9 @@ async function loadProfile() {
   $("profileAvatar").src = avatar;
   const cover = await getProfilePhotoUrl(currentProfile.cover_photo || "");
   $("profileCover").src = currentProfile.cover_photo ? cover : "data:image/svg+xml;charset=UTF-8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300"><defs><linearGradient id="g"><stop stop-color="#1e3a8a"/><stop offset="1" stop-color="#60a5fa"/></linearGradient></defs><rect width="100%" height="100%" fill="url(#g)"/><text x="50%" y="55%" font-size="38" text-anchor="middle" fill="white" font-family="Arial">LBP Fighters Fifteen</text></svg>');
+  const coverPosition = readCoverPosition();
+  applyCoverPosition(coverPosition.x, coverPosition.y);
+  $("profileCover").onerror = function(){ this.onerror = null; this.src = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300"><rect width="100%" height="100%" fill="#1e3a8a"/><text x="50%" y="55%" font-size="36" text-anchor="middle" fill="white" font-family="Arial">LBP Fighters Fifteen</text></svg>'); };
   $("editBirthday").value = currentProfile.birthday || "";
   renderProfileBadges();
 
@@ -3472,11 +3495,54 @@ async function loadProfile() {
 }
 
 
+function coverPositionStorageKey() {
+  return `lbp-cover-position-${currentUser?.id || "guest"}`;
+}
+function readCoverPosition() {
+  try { return JSON.parse(localStorage.getItem(coverPositionStorageKey()) || '{"x":50,"y":50}'); }
+  catch (_) { return {x:50,y:50}; }
+}
+function applyCoverPosition(x, y) {
+  const safeX = Math.max(0, Math.min(100, Number(x) || 0));
+  const safeY = Math.max(0, Math.min(100, Number(y) || 0));
+  const cover = $("profileCover");
+  if (cover) { cover.style.setProperty("--lbp-cover-x", `${safeX}%`); cover.style.setProperty("--lbp-cover-y", `${safeY}%`); }
+  const preview = $("coverAdjustPreview");
+  if (preview) { preview.style.setProperty("--preview-x", `${safeX}%`); preview.style.setProperty("--preview-y", `${safeY}%`); }
+  const xInput = $("coverPositionX"), yInput = $("coverPositionY"), label = $("coverPositionLabel");
+  if (xInput) xInput.value = safeX;
+  if (yInput) yInput.value = safeY;
+  if (label) label.textContent = `${safeX}% ${safeY}%`;
+}
+function setupCoverPositionControls() {
+  const fileInput = $("editCoverPhoto");
+  const panel = $("coverAdjustPanel");
+  const preview = $("coverAdjustPreview");
+  if (!fileInput || fileInput.dataset.positionSetup) return;
+  fileInput.dataset.positionSetup = "1";
+  const pos = readCoverPosition();
+  applyCoverPosition(pos.x, pos.y);
+  $("coverPositionX")?.addEventListener("input", e => applyCoverPosition(e.target.value, $("coverPositionY").value));
+  $("coverPositionY")?.addEventListener("input", e => applyCoverPosition($("coverPositionX").value, e.target.value));
+  $("coverPositionReset")?.addEventListener("click", () => applyCoverPosition(50, 50));
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files && fileInput.files[0];
+    if (!file) { if (panel) panel.hidden = true; return; }
+    if (!file.type.startsWith("image/")) { alert("Cover Photo হিসেবে শুধু image upload করা যাবে।"); fileInput.value = ""; return; }
+    if (file.size > 5 * 1024 * 1024) { alert("Cover Photo সর্বোচ্চ 5MB হতে পারবে।"); fileInput.value = ""; return; }
+    if (profileCoverPreviewUrl) URL.revokeObjectURL(profileCoverPreviewUrl);
+    profileCoverPreviewUrl = URL.createObjectURL(file);
+    preview.src = profileCoverPreviewUrl;
+    if (panel) panel.hidden = false;
+    const p = readCoverPosition(); applyCoverPosition(p.x, p.y);
+  });
+}
+setupCoverPositionControls();
+
 function openProfileEdit() {
-
-  $("profileModal")
-    .classList.add("show");
-
+  $("profileModal").classList.add("show");
+  setupCoverPositionControls();
+  const pos = readCoverPosition(); applyCoverPosition(pos.x, pos.y);
 }
 
 
@@ -3640,6 +3706,8 @@ $("profileForm").addEventListener(
 
       await loadProfile();
 
+      try { localStorage.setItem(coverPositionStorageKey(), JSON.stringify({x:Number($("coverPositionX")?.value ?? 50), y:Number($("coverPositionY")?.value ?? 50)})); } catch (_) {}
+      const savedCoverPosition = readCoverPosition(); applyCoverPosition(savedCoverPosition.x, savedCoverPosition.y);
       closeProfileEdit();
 
       toast(
