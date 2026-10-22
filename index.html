@@ -1281,6 +1281,11 @@
     .lbp-pop-menu button{border:0;background:transparent;text-align:left;padding:12px;border-radius:8px;font:inherit;color:inherit;cursor:pointer}
     .lbp-pop-menu button:hover{background:#f0f2f5}
     .home-left.lbp-menu-collapsed{display:none!important}
+    /* Desktop: sidebar starts hidden; main content expands into its space. */
+    @media(min-width:761px){
+      .social-home-layout.lbp-menu-hidden{grid-template-columns:minmax(0,1fr)!important;justify-content:stretch!important}
+      .social-home-layout.lbp-menu-hidden .home-main{width:100%;max-width:none}
+    }
     #themeToggle{position:static!important;display:none!important}
     body.theme-dark .lbp-pop-menu{background:#111827;color:#e5e7eb;border-color:#334155}
     body.theme-dark .lbp-pop-menu button:hover{background:#263449}
@@ -7041,19 +7046,47 @@ async function respondLbpFriend(id,status){if(!lbpNeedMember())return;const {err
 async function startLbpDM(peer){const select=$("dmMemberSelect");if(select)select.value=peer;showPage("inbox");await openLbpConversation();}
 window.createLbpStory=createLbpStory;window.deleteLbpStory=deleteLbpStory;window.openLbpConversation=openLbpConversation;window.sendLbpMessage=sendLbpMessage;window.selectLbpConversation=selectLbpConversation;window.toggleLbpFollow=toggleLbpFollow;window.sendLbpFriendRequest=sendLbpFriendRequest;window.respondLbpFriend=respondLbpFriend;window.startLbpDM=startLbpDM;window.renderSocialMembers=renderSocialMembers;
 
+function setLbpDesktopMenuState(open){
+  const menu=document.querySelector('.home-left');
+  const layout=document.querySelector('.social-home-layout');
+  if(!menu)return;
+  menu.classList.toggle('lbp-menu-open',!!open);
+  menu.classList.toggle('lbp-menu-collapsed',!open);
+  if(layout)layout.classList.toggle('lbp-menu-hidden',!open);
+  const toggle=document.getElementById('lbpMenuToggle');
+  if(toggle)toggle.setAttribute('aria-expanded',open?'true':'false');
+}
 function toggleLbpSideMenu(){
   const menu=document.querySelector('.home-left'); if(!menu)return;
   const mobile=window.matchMedia('(max-width:760px)').matches;
-  if(mobile){menu.classList.toggle('lbp-menu-open');return;}
-  if(menu.classList.contains('lbp-menu-collapsed') || menu.classList.contains('lbp-menu-open')){
-    if(menu.classList.contains('lbp-menu-open')){menu.classList.remove('lbp-menu-open');menu.classList.add('lbp-menu-collapsed');}
-    else{menu.classList.remove('lbp-menu-collapsed');menu.classList.add('lbp-menu-open');}
-  }else{
-    const hidden=getComputedStyle(menu).display==='none';
-    if(hidden){menu.classList.add('lbp-menu-open');}else{menu.classList.add('lbp-menu-collapsed');}
+  if(mobile){
+    menu.classList.toggle('lbp-menu-open');
+    const toggle=document.getElementById('lbpMenuToggle');
+    if(toggle)toggle.setAttribute('aria-expanded',menu.classList.contains('lbp-menu-open')?'true':'false');
+    return;
+  }
+  const isOpen=menu.classList.contains('lbp-menu-open') && !menu.classList.contains('lbp-menu-collapsed');
+  setLbpDesktopMenuState(!isOpen);
+}
+function initLbpDesktopMenu(){
+  if(window.matchMedia('(min-width:761px)').matches)setLbpDesktopMenuState(false);
+  else {
+    const layout=document.querySelector('.social-home-layout');
+    if(layout)layout.classList.remove('lbp-menu-hidden');
   }
 }
 window.toggleLbpSideMenu=toggleLbpSideMenu;
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initLbpDesktopMenu,{once:true});
+else initLbpDesktopMenu();
+window.addEventListener('resize',()=>{
+  if(window.matchMedia('(min-width:761px)').matches){
+    const menu=document.querySelector('.home-left');
+    if(menu && !menu.classList.contains('lbp-menu-open'))setLbpDesktopMenuState(false);
+  }else{
+    const layout=document.querySelector('.social-home-layout');
+    if(layout)layout.classList.remove('lbp-menu-hidden');
+  }
+});
 function lbpNavButtons(){return Array.from(document.querySelectorAll('.lbp-main-nav .nav-btn')).filter(b=>b.id!=='chatNavBtn');}
 function lbpNavKey(b){return b.dataset.page || b.id;}
 function renderLbpNavOrder(){const box=document.getElementById('lbpNavOrderList');if(!box)return;const buttons=lbpNavButtons();let order=[],visibility={};try{order=JSON.parse(localStorage.getItem('lbpHomeNavOrder')||'[]')}catch(_){};try{visibility=JSON.parse(localStorage.getItem('lbpNavVisibility')||'{}')}catch(_){};const byId=new Map(buttons.map(b=>[lbpNavKey(b),b]));const ids=[...order.filter(id=>byId.has(id)),...buttons.map(lbpNavKey).filter(id=>!order.includes(id))];box.innerHTML=ids.map((id,i)=>{const b=byId.get(id);const title=b?.innerText?.replace(/\s+/g,' ').trim()||id;const visible=visibility[id]!==false;const fixed=['home','profile','members','inbox','admin','logoutBtn'].includes(id);return `<div class="lbp-nav-order-row" data-page="${id}"><label><input type="checkbox" class="lbp-nav-visible" ${visible?'checked':''} ${fixed?'disabled':''} onchange="toggleLbpNavVisibility('${id}',this.checked)"> ${title}</label><button type="button" onclick="moveLbpNavItem('${id}',-1)" ${i===0?'disabled':''}>↑</button><button type="button" onclick="moveLbpNavItem('${id}',1)" ${i===ids.length-1?'disabled':''}>↓</button></div>`}).join('');}
