@@ -1929,6 +1929,16 @@ body.theme-dark #page-profile .profile-hero-body{background:linear-gradient(to b
 
       <div class="admin-grid">
 
+        <!-- AUTO APPROVE SETTINGS -->
+        <div class="card" id="adminAutoApproveCard">
+          <h3 style="margin-bottom:12px">⚙️ Batch ২০১৫ Auto Approve</h3>
+          <div class="auto-approve-row">
+            <div><strong id="autoApproveStatusLabel">Auto Approve: OFF</strong><p class="muted" style="font-size:12px;margin-top:5px">ON করলে Batch ২০১৫ / 2015 সদস্যদের অটো-অ্যাপ্রুভ হবে। OFF করলে Admin নিজে Approve করবেন।</p></div>
+            <label class="toggle-switch" for="autoApproveToggle" aria-label="Batch 2015 Auto Approve চালু বা বন্ধ"><input type="checkbox" id="autoApproveToggle" onchange="saveAutoApproveSetting(this.checked)"><span class="toggle-track"></span><span id="autoApproveToggleText">OFF</span></label>
+          </div>
+          <p class="muted" id="autoApproveSaveStatus" style="font-size:12px;margin-top:10px">সেটিংস লোড হচ্ছে...</p>
+        </div>
+
         <!-- MEMBERS -->
 
         <div class="card">
@@ -2348,6 +2358,7 @@ body.theme-dark #page-profile .profile-hero-body{background:linear-gradient(to b
 
     </div>
 
+    <div class="member-popup-actions"><button id="memberFullViewButton" class="btn btn-primary" type="button" onclick="viewFullMemberProfile(window.lbpCurrentMemberId)" title="সম্পূর্ণ প্রোফাইল দেখুন">↗ View Profile</button></div>
     <div id="memberModalContent"></div>
 
   </div>
@@ -3952,6 +3963,7 @@ function populateMemberFilters() {
 ========================================================= */
 
 async function viewMember(id) {
+  window.lbpCurrentMemberId = id;
   if (guestMode || !currentUser) {
     toast("অন্য সদস্যের Profile দেখতে আগে Member হিসেবে Log in করুন", "error");
     const modal = $("memberModal");
@@ -4056,11 +4068,80 @@ async function viewMember(id) {
 }
 
 
+async function viewFullMemberProfile(id) {
+  if (!id) return;
+  if (guestMode || !currentUser) {
+    toast("সম্পূর্ণ প্রোফাইল দেখতে আগে লগইন করুন", "error");
+    return;
+  }
+  try {
+    let member = membersCache.find(m => String(m.id) === String(id));
+    const { data, error } = await db.from("profiles")
+      .select("id,full_name,profile_photo,cover_photo,batch,blood_group,phone,bio,birthday,is_admin,approved,approval_status")
+      .eq("id", id).maybeSingle();
+    if (error) throw error;
+    if (data) member = { ...(member || {}), ...data };
+    if (!member) throw new Error("সদস্যের প্রোফাইল পাওয়া যায়নি");
+    if (member.approved === false && !member.is_admin && String(id) !== String(currentUser.id)) {
+      toast("এই সদস্যের প্রোফাইল এখন দেখা যাচ্ছে না", "error"); return;
+    }
+    const photo = await getProfilePhotoUrl(member.profile_photo);
+    const cover = member.cover_photo ? await getProfilePhotoUrl(member.cover_photo) : "";
+    const content = $("memberModalContent");
+    const actionRow = document.querySelector(".member-popup-actions");
+    if (actionRow) actionRow.innerHTML = `<button class="btn btn-secondary" type="button" onclick="viewMember('${String(id).replace(/'/g,"\\'")}')">← সংক্ষিপ্ত View</button>`;
+    content.innerHTML = `
+      <div class="member-profile-full">
+        <div class="member-profile-cover">${cover ? `<img src="${cover}" alt="Cover photo">` : ""}</div>
+        <div class="member-profile-identity">
+          <img class="member-profile-avatar" src="${photo}" alt="Profile photo">
+          <h2 style="margin:8px 0">${escapeHTML(member.full_name || "Unnamed")}${member.approved ? ' <span class="verified-badge" title="Verified member">✓</span>' : ""}</h2>
+          ${member.is_admin ? '<p style="color:var(--muted);margin:5px">🛡️ Administrator</p>' : ""}
+          <p class="muted">${escapeHTML(member.bio || "")}</p>
+          <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px">
+            ${member.approved ? '<span class="profile-badge">✅ Verified Member</span>' : '<span class="profile-badge">⏳ Pending</span>'}
+            ${member.is_admin ? '<span class="profile-badge">🛡️ Admin</span>' : ""}
+          </div>
+        </div>
+        <div class="member-profile-tabs"><button class="active" type="button" onclick="showMemberProfileTab('about',this)">ℹ️ About</button><button type="button" onclick="showMemberProfileTab('posts',this)">📰 Posts</button><button type="button" onclick="showMemberProfileTab('friends',this)">👥 Friends</button><button type="button" onclick="showMemberProfileTab('photos',this)">📷 Photos</button></div>
+        <div id="memberProfileTabBody" class="member-profile-body"><div class="profile-grid"><div><strong>Batch</strong><p class="muted">${escapeHTML(member.batch || "তথ্য দেওয়া নেই")}</p></div><div><strong>Blood Group</strong><p class="muted">${escapeHTML(member.blood_group || "তথ্য দেওয়া নেই")}</p></div><div><strong>Phone</strong><p class="muted">${escapeHTML(member.phone || "তথ্য দেওয়া নেই")}</p></div><div><strong>Birthday</strong><p class="muted">${escapeHTML(member.birthday ? String(member.birthday).slice(0,10) : "তথ্য দেওয়া নেই")}</p></div></div></div>
+      </div>`;
+    window.lbpFullProfileMember = member;
+    $("memberModal").classList.add("show");
+  } catch (error) {
+    console.error("Full member profile failed:", error);
+    toast(error?.message || "সম্পূর্ণ প্রোফাইল খোলা যায়নি", "error");
+  }
+}
+
+async function showMemberProfileTab(tab, button) {
+  document.querySelectorAll(".member-profile-tabs button").forEach(b => b.classList.toggle("active", b === button));
+  const body = $("memberProfileTabBody");
+  const member = window.lbpFullProfileMember;
+  if (!body || !member) return;
+  if (tab === "about") {
+    body.innerHTML = `<div class="profile-grid"><div><strong>Batch</strong><p class="muted">${escapeHTML(member.batch || "তথ্য দেওয়া নেই")}</p></div><div><strong>Blood Group</strong><p class="muted">${escapeHTML(member.blood_group || "তথ্য দেওয়া নেই")}</p></div><div><strong>Phone</strong><p class="muted">${escapeHTML(member.phone || "তথ্য দেওয়া নেই")}</p></div><div><strong>Birthday</strong><p class="muted">${escapeHTML(member.birthday ? String(member.birthday).slice(0,10) : "তথ্য দেওয়া নেই")}</p></div><div style="grid-column:1/-1"><strong>Bio</strong><p class="muted">${escapeHTML(member.bio || "তথ্য দেওয়া নেই")}</p></div></div>`;
+  } else if (tab === "posts") {
+    body.innerHTML = '<p class="muted">পোস্ট লোড হচ্ছে...</p>';
+    try {
+      const { data, error } = await db.from("posts").select("id,content,created_at").eq("user_id", member.id).order("created_at", { ascending:false }).limit(20);
+      if (error) throw error;
+      body.innerHTML = (data || []).map(post => `<article class="member-profile-post">${escapeHTML(post.content || "")}${post.created_at ? `<p class="muted" style="font-size:12px;margin-top:8px">${escapeHTML(formatDate(post.created_at))}</p>` : ""}</article>`).join("") || '<p class="muted">এই সদস্যের কোনো পোস্ট পাওয়া যায়নি।</p>';
+    } catch (error) { body.innerHTML = '<p class="muted">পোস্ট দেখানো যায়নি। আপনার Posts টেবিলের schema/RLS পরীক্ষা করুন।</p>'; }
+  } else if (tab === "friends") {
+    body.innerHTML = '<p class="muted">Friends তালিকা দেখতে Friends & Follow সেকশন ব্যবহার করুন।</p>';
+  } else {
+    body.innerHTML = '<p class="muted">এই সদস্যের Photos/Gallery দেখতে Gallery সেকশন ব্যবহার করুন।</p>';
+  }
+}
+
+window.viewFullMemberProfile = viewFullMemberProfile;
+window.showMemberProfileTab = showMemberProfileTab;
+
 function closeMemberModal() {
-
-  $("memberModal")
-    .classList.remove("show");
-
+  $("memberModal").classList.remove("show");
+  const actionRow = document.querySelector(".member-popup-actions");
+  if (actionRow) actionRow.innerHTML = `<button id="memberFullViewButton" class="btn btn-primary" type="button" onclick="viewFullMemberProfile(window.lbpCurrentMemberId)" title="সম্পূর্ণ প্রোফাইল দেখুন">↗ View Profile</button>`;
 }
 
 
@@ -5551,6 +5632,84 @@ $("notificationForm").addEventListener(
    ADMIN DASHBOARD
 ========================================================= */
 
+let autoApproveEnabledCache = false;
+async function loadAutoApproveSetting() {
+  if (!currentProfile?.is_admin) return;
+  const toggle = $("autoApproveToggle");
+  const status = $("autoApproveStatusLabel");
+  const help = $("autoApproveSaveStatus");
+  try {
+    const { data, error } = await db.from("auto_approval_settings").select("id,enabled").eq("id", 1).maybeSingle();
+    if (error) throw error;
+    autoApproveEnabledCache = !!data?.enabled;
+    if (toggle) toggle.checked = autoApproveEnabledCache;
+    if (status) status.textContent = `Auto Approve: ${autoApproveEnabledCache ? "ON" : "OFF"}`;
+    if ($("autoApproveToggleText")) $("autoApproveToggleText").textContent = autoApproveEnabledCache ? "ON" : "OFF";
+    if (help) help.textContent = "সেটিংস Supabase থেকে লোড হয়েছে।";
+  } catch (error) {
+    if (toggle) toggle.checked = false;
+    if (status) status.textContent = "Auto Approve: OFF (সেটিংস পাওয়া যায়নি)";
+    if (help) help.textContent = "প্রথমে নিচের SQL migration চালান; সেটিংস টেবিল ছাড়া ON/OFF সংরক্ষণ হবে না।";
+    console.warn("Auto approval settings load:", error);
+  }
+}
+async function saveAutoApproveSetting(enabled) {
+  if (!currentProfile?.is_admin) { toast("শুধু Admin এই সেটিংস পরিবর্তন করতে পারবেন", "error"); if ($("autoApproveToggle")) $("autoApproveToggle").checked = autoApproveEnabledCache; return; }
+  const help = $("autoApproveSaveStatus");
+  if (help) help.textContent = "সংরক্ষণ হচ্ছে...";
+  try {
+    const { error } = await db.from("auto_approval_settings").upsert({id:1,enabled:!!enabled,updated_at:new Date().toISOString(),updated_by:currentUser.id},{onConflict:"id"});
+    if (error) throw error;
+    autoApproveEnabledCache = !!enabled;
+    if ($("autoApproveStatusLabel")) $("autoApproveStatusLabel").textContent = `Auto Approve: ${enabled ? "ON" : "OFF"}`;
+    if ($("autoApproveToggleText")) $("autoApproveToggleText").textContent = enabled ? "ON" : "OFF";
+    if (help) help.textContent = "সেটিংস সংরক্ষিত হয়েছে।";
+    toast(`Batch ২০১৫ Auto Approve ${enabled ? "ON" : "OFF"}`, "success");
+  } catch (error) {
+    if ($("autoApproveToggle")) $("autoApproveToggle").checked = autoApproveEnabledCache;
+    if ($("autoApproveStatusLabel")) $("autoApproveStatusLabel").textContent = `Auto Approve: ${autoApproveEnabledCache ? "ON" : "OFF"}`;
+    if (help) help.textContent = "সংরক্ষণ হয়নি। Supabase SQL migration ও RLS policy পরীক্ষা করুন।";
+    toast(error?.message || "Auto Approve সেটিংস সংরক্ষণ হয়নি", "error");
+  }
+}
+window.saveAutoApproveSetting = saveAutoApproveSetting;
+
+function initializeAdminBoxMenu() {
+  const page = $("page-admin");
+  if (!page || page.dataset.boxMenuReady === "1") return;
+  const mainGrid = page.querySelector(":scope > .admin-grid");
+  if (!mainGrid) return;
+  const cards = Array.from(mainGrid.children).filter(el => el.classList.contains("card"));
+  const analytics = $("page-analytics");
+  if (!cards.length) return;
+  page.dataset.boxMenuReady = "1";
+  const menu = document.createElement("div"); menu.className = "admin-box-menu"; menu.id = "adminBoxMenu";
+  const panel = document.createElement("div"); panel.id = "adminBoxSelectedPanel"; panel.className = "hidden";
+  const back = document.createElement("button"); back.type = "button"; back.className = "btn btn-secondary admin-box-back"; back.textContent = "← সব Admin অপশন";
+  back.addEventListener("click", () => { panel.classList.add("hidden"); menu.classList.remove("hidden"); cards.forEach(c => c.classList.add("hidden")); if (analytics) analytics.classList.add("hidden"); });
+  panel.appendChild(back);
+  const iconFor = title => title.includes("Member") ? "👥" : title.includes("News") ? "📢" : title.includes("Notification") ? "🔔" : title.includes("Cricket") ? "🏏" : title.includes("Statistics") ? "📊" : title.includes("Auto Approve") ? "⚙️" : "🛠️";
+  cards.forEach((card, index) => {
+    const heading = card.querySelector("h3");
+    const title = (heading?.textContent || `Admin Option ${index+1}`).trim();
+    const btn = document.createElement("button"); btn.type = "button"; btn.className = "admin-box-button";
+    btn.innerHTML = `<span class="admin-box-icon">${iconFor(title)}</span><span>${escapeHTML(title)}</span>`;
+    btn.addEventListener("click", () => {
+      menu.classList.add("hidden"); panel.classList.remove("hidden");
+      cards.forEach(c => { c.classList.add("hidden"); });
+      if (analytics) analytics.classList.add("hidden");
+      card.classList.remove("hidden"); panel.appendChild(card);
+    });
+    menu.appendChild(btn); card.classList.add("hidden");
+  });
+  if (analytics) {
+    const btn = document.createElement("button"); btn.type="button"; btn.className="admin-box-button"; btn.innerHTML='<span class="admin-box-icon">📈</span><span>Admin Analytics</span>';
+    btn.addEventListener("click",()=>{menu.classList.add("hidden");panel.classList.remove("hidden");cards.forEach(c=>c.classList.add("hidden"));analytics.classList.remove("hidden");panel.appendChild(analytics);}); menu.appendChild(btn); analytics.classList.add("hidden");
+  }
+  mainGrid.classList.add("hidden");
+  page.insertBefore(menu, mainGrid); page.insertBefore(panel, mainGrid);
+}
+
 async function loadAdminDashboard() {
 
   if (!currentProfile?.is_admin) {
@@ -5559,6 +5718,8 @@ async function loadAdminDashboard() {
 
 
   await loadAdminMembers(true);
+  await loadAutoApproveSetting();
+  initializeAdminBoxMenu();
 
   await loadAnnouncements();
 
