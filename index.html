@@ -7282,33 +7282,108 @@ window.addEventListener("DOMContentLoaded",()=>{placeAnalyticsInsideAdmin();});
 <script>
 /* Full profile view opened from Member popup; keeps the current user's own profile untouched. */
 window.openMemberFullProfile = async function(memberId){
+  const content = document.getElementById("memberModalContent");
+  const normalizeId = value => String(value ?? "").trim();
+  const showMessage = message => {
+    if (!content) return;
+    let note = document.getElementById("lbpFullProfileMessage");
+    if (!note) {
+      note = document.createElement("p");
+      note.id = "lbpFullProfileMessage";
+      note.className = "muted";
+      note.style.cssText = "margin-top:12px;padding:10px;border-radius:8px;background:var(--bg)";
+      content.appendChild(note);
+    }
+    note.textContent = message;
+  };
+
   try {
-    const memberList = (typeof membersCache !== "undefined" && Array.isArray(membersCache)) ? membersCache : (Array.isArray(window.membersCache) ? window.membersCache : []);
-    const member = memberList.find(m => String(m.id) === String(memberId));
-    if (!member) {
-      const content=document.getElementById("memberModalContent");
-      if(content) content.insertAdjacentHTML("beforeend",'<p class="muted">প্রোফাইলের বিস্তারিত আবার লোড করুন।</p>');
+    const wantedId = normalizeId(memberId);
+    if (!wantedId) {
+      showMessage("সদস্যের ID পাওয়া যায়নি। Member List থেকে আবার চেষ্টা করুন।");
       return;
     }
-    const esc = s => String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-    const existing=document.getElementById("lbpFullMemberProfile");
-    existing?.remove();
-    const panel=document.createElement("div");
-    panel.id="lbpFullMemberProfile";
-    panel.className="card";
-    panel.style.cssText="margin-top:16px;padding:16px;text-align:left";
-    panel.innerHTML=`<h3 style="margin-bottom:12px">👤 ${esc(member.full_name||"Member")} — Full Profile</h3>
+
+    // First use the directory cache. Compare IDs as strings to avoid UUID type mismatches.
+    let member = Array.isArray(membersCache)
+      ? membersCache.find(m => normalizeId(m?.id) === wantedId)
+      : null;
+
+    // If the popup's member is no longer in cache, refresh the public directory once.
+    if (!member && typeof db !== "undefined" && db?.rpc) {
+      const { data, error } = await db.rpc("get_public_member_directory");
+      if (error) throw error;
+      if (Array.isArray(data)) {
+        membersCache = data;
+        profileMap = {};
+        data.forEach(m => { if (m?.id != null) profileMap[m.id] = m; });
+        member = data.find(m => normalizeId(m?.id) === wantedId) || null;
+      }
+    }
+
+    // Last fallback: request this profile through normal Supabase RLS policies.
+    if (!member && typeof db !== "undefined" && db?.from) {
+      const { data, error } = await db.from("profiles")
+        .select("id,full_name,batch,blood_group,phone,bio,birthday,profile_photo,cover_photo,approved,is_admin")
+        .eq("id", wantedId)
+        .maybeSingle();
+      if (error) throw error;
+      if (data) member = data;
+    }
+
+    if (!member) {
+      showMessage("এই সদস্যের প্রোফাইল পাওয়া যায়নি। Member List রিফ্রেশ করে আবার চেষ্টা করুন।");
+      return;
+    }
+
+    document.getElementById("lbpFullProfileMessage")?.remove();
+    document.getElementById("lbpFullMemberProfile")?.remove();
+
+    const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({
+      "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+    }[c]));
+
+    const panel = document.createElement("div");
+    panel.id = "lbpFullMemberProfile";
+    panel.className = "card";
+    panel.style.cssText = "margin-top:16px;padding:16px;text-align:left";
+
+    let photoUrl = "";
+    let coverUrl = "";
+    try {
+      if (member.profile_photo && typeof getProfilePhotoUrl === "function") {
+        photoUrl = await getProfilePhotoUrl(member.profile_photo);
+      }
+      if (member.cover_photo && typeof getProfilePhotoUrl === "function") {
+        coverUrl = await getProfilePhotoUrl(member.cover_photo);
+      }
+    } catch (photoError) {
+      console.warn("Could not load member profile images", photoError);
+    }
+
+    panel.innerHTML = `
+      ${coverUrl ? `<img class="profile-cover" style="height:150px;margin-bottom:12px;border-radius:10px" src="${esc(coverUrl)}" alt="Cover photo">` : ""}
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+        ${photoUrl ? `<img class="avatar" style="width:76px;height:76px" src="${esc(photoUrl)}" alt="Profile photo">` : ""}
+        <div>
+          <h3 style="margin-bottom:5px">👤 ${esc(member.full_name || "Member")} ${member.approved !== false ? '<span class="verified-badge" aria-label="Approved member">✓</span>' : ""}</h3>
+          ${member.is_admin ? '<div class="success">🛡️ Administrator</div>' : ""}
+        </div>
+      </div>
       <div class="profile-grid">
-        <div><strong>নাম</strong><div>${esc(member.full_name||"Not set")}</div></div>
-        <div><strong>Batch</strong><div>${esc(member.batch||"Not set")}</div></div>
-        <div><strong>Blood Group</strong><div>${esc(member.blood_group||"Not set")}</div></div>
-        <div><strong>Phone</strong><div>${esc(member.phone||"তথ্য নেই")}</div></div>
-        <div style="grid-column:1/-1"><strong>Bio</strong><div>${esc(member.bio||"No bio")}</div></div>
-        <div><strong>Birthday</strong><div>${esc((member.birthday||"").toString().slice(0,10)||"Not set")}</div></div>
+        <div><strong>নাম</strong><div>${esc(member.full_name || "তথ্য নেই")}</div></div>
+        <div><strong>Batch</strong><div>${esc(member.batch || "Not set")}</div></div>
+        <div><strong>Blood Group</strong><div>${esc(member.blood_group || "Not set")}</div></div>
+        <div><strong>Phone</strong><div>${esc(member.phone || "তথ্য নেই")}</div></div>
+        <div style="grid-column:1/-1"><strong>Bio</strong><div>${esc(member.bio || "No bio")}</div></div>
+        <div><strong>Birthday</strong><div>${esc(String(member.birthday || "").slice(0,10) || "Not set")}</div></div>
       </div>`;
-    document.getElementById("memberModalContent")?.appendChild(panel);
-    panel.scrollIntoView({behavior:"smooth",block:"nearest"});
-  } catch(err) { console.error("Full member profile failed",err); }
+    content?.appendChild(panel);
+    panel.scrollIntoView({ behavior:"smooth", block:"nearest" });
+  } catch (err) {
+    console.error("Full member profile failed", err);
+    showMessage("প্রোফাইল লোড করা যায়নি। Supabase/RLS error থাকলে Browser Console পরীক্ষা করুন।");
+  }
 };
 </script>
 
