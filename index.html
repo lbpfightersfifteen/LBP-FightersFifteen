@@ -1337,6 +1337,29 @@ body.theme-dark #page-profile .profile-hero-body{background:linear-gradient(to b
     .cover-adjust-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted)}
     .cover-adjust-actions .btn{padding:7px 10px}
     @media(max-width:600px){.cover-adjust-preview-wrap{height:125px}#page-profile .profile-cover{min-height:180px}}
+
+/* LBP Admin Dashboard cards: additive styles */
+#page-admin .lbp-admin-home { margin:16px 0 18px; }
+#page-admin .lbp-admin-overview { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0; }
+#page-admin .lbp-admin-stat { display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--border);border-radius:15px;background:var(--card);box-shadow:0 5px 18px rgba(15,23,42,.05);min-width:0; }
+#page-admin .lbp-admin-stat-icon { width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:22px;flex-shrink:0; }
+#page-admin .lbp-admin-stat strong { display:block;font-size:20px;line-height:1.2; }
+#page-admin .lbp-admin-stat small { color:var(--muted);font-size:12px; }
+#page-admin .lbp-admin-shortcuts { display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px; }
+#page-admin .lbp-admin-tile { display:flex;align-items:flex-start;gap:12px;text-align:left;padding:15px 13px;border:1px solid var(--border);border-radius:15px;background:var(--card);color:var(--text);cursor:pointer;min-height:112px;transition:transform .15s,box-shadow .15s,border-color .15s;box-shadow:0 5px 18px rgba(15,23,42,.045);font:inherit; }
+#page-admin .lbp-admin-tile:hover,#page-admin .lbp-admin-tile:focus-visible { transform:translateY(-2px);box-shadow:0 9px 24px rgba(37,99,235,.12);border-color:#93c5fd;outline:none; }
+#page-admin .lbp-admin-tile-icon { width:44px;height:44px;display:grid;place-items:center;border-radius:12px;color:white;font-size:23px;flex-shrink:0; }
+#page-admin .lbp-admin-tile strong { display:block;font-size:14px;margin:2px 0 5px;line-height:1.3; }
+#page-admin .lbp-admin-tile small { display:block;color:var(--muted);font-size:12px;line-height:1.45; }
+#page-admin .lbp-admin-tile .lbp-arrow { margin-left:auto;color:var(--primary);font-size:20px;align-self:center; }
+#page-admin .lbp-admin-section-head { display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0; }
+#page-admin .lbp-admin-section-head h3 { margin:0; }
+#page-admin .lbp-admin-back { border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);padding:9px 12px;cursor:pointer;font:inherit; }
+#page-admin .lbp-admin-tile[hidden],#page-admin .admin-grid > .card.lbp-admin-hidden { display:none!important; }
+@media(max-width:850px){#page-admin .lbp-admin-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr));}#page-admin .lbp-admin-overview{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media(max-width:520px){#page-admin .lbp-admin-shortcuts{grid-template-columns:1fr;}#page-admin .lbp-admin-overview{grid-template-columns:1fr;}#page-admin .lbp-admin-tile{min-height:unset;padding:13px;}}
+body.theme-dark #page-admin .lbp-admin-tile,body.theme-dark #page-admin .lbp-admin-stat,body.theme-dark #page-admin .lbp-admin-back{background:var(--card);color:var(--text);border-color:var(--border);}
+
 </style>
 </head>
 
@@ -1925,19 +1948,34 @@ body.theme-dark #page-profile .profile-hero-body{background:linear-gradient(to b
       </div>
 
 
+
+      <div class="lbp-admin-home" id="lbpAdminHome">
+        <div class="lbp-admin-overview">
+          <div class="lbp-admin-stat"><span class="lbp-admin-stat-icon" style="background:#dbeafe;color:#1d4ed8">👥</span><div><strong id="lbpAdminMemberCount">—</strong><small>সদস্য পরিচালনা</small></div></div>
+          <div class="lbp-admin-stat"><span class="lbp-admin-stat-icon" style="background:#ffedd5;color:#c2410c">⏳</span><div><strong id="lbpAdminPendingCount">—</strong><small>অনুমোদনের অপেক্ষায়</small></div></div>
+          <div class="lbp-admin-stat"><span class="lbp-admin-stat-icon" style="background:#ede9fe;color:#6d28d9">📝</span><div><strong id="lbpAdminPostCount">—</strong><small>পোস্ট</small></div></div>
+        </div>
+        <div class="lbp-admin-shortcuts" id="lbpAdminShortcuts">
+          <button type="button" class="lbp-admin-tile" data-lbp-admin-target="members"><span class="lbp-admin-tile-icon" style="background:#2563eb">👥</span><span><strong>Member Management</strong><small>সদস্য অনুমোদন, বাতিল ও তালিকা</small></span><span class="lbp-arrow">›</span></button>
+          <button type="button" class="lbp-admin-tile" data-lbp-admin-target="auto"><span class="lbp-admin-tile-icon" style="background:#16a34a">🛡️</span><span><strong>Auto Approve</strong><small>Batch 2015 অটো-অ্যাপ্রুভ সেটিং</small></span><span class="lbp-arrow">›</span></button>
+          <button type="button" class="lbp-admin-tile" data-lbp-admin-target="posts"><span class="lbp-admin-tile-icon" style="background:#7c3aed">📝</span><span><strong>Post Management</strong><small>পোস্ট ও কনটেন্ট পরিচালনা</small></span><span class="lbp-arrow">›</span></button>
+          <button type="button" class="lbp-admin-tile" data-lbp-admin-target="notifications"><span class="lbp-admin-tile-icon" style="background:#dc2626">🔔</span><span><strong>Notifications</strong><small>নোটিফিকেশন পাঠানো</small></span><span class="lbp-arrow">›</span></button>
+          <button type="button" class="lbp-admin-tile" data-lbp-admin-target="league"><span class="lbp-admin-tile-icon" style="background:#ea580c">🏏</span><span><strong>Cricket League</strong><small>লীগ ও ভোটের সেটিংস</small></span><span class="lbp-arrow">›</span></button>
+          <button type="button" class="lbp-admin-tile" data-lbp-admin-target="complaints"><span class="lbp-admin-tile-icon" style="background:#0891b2">⚠️</span><span><strong>Complaints</strong><small>সদস্যদের অভিযোগ পরিচালনা</small></span><span class="lbp-arrow">›</span></button>
+          <button type="button" class="lbp-admin-tile" data-lbp-admin-target="chat"><span class="lbp-admin-tile-icon" style="background:#4f46e5">💬</span><span><strong>Messages & Chat</strong><small>চ্যাট ও মেসেজ-সংক্রান্ত সেটিং</small></span><span class="lbp-arrow">›</span></button>
+          <button type="button" class="lbp-admin-tile" data-lbp-admin-target="stories"><span class="lbp-admin-tile-icon" style="background:#db2777">📸</span><span><strong>Stories & Gallery</strong><small>স্টোরি/গ্যালারি-সংক্রান্ত বিভাগ</small></span><span class="lbp-arrow">›</span></button>
+          <button type="button" class="lbp-admin-tile" data-lbp-admin-target="analytics"><span class="lbp-admin-tile-icon" style="background:#9333ea">📊</span><span><strong>Analytics</strong><small>সাইটের পরিসংখ্যান</small></span><span class="lbp-arrow">›</span></button>
+          <button type="button" class="lbp-admin-tile" data-lbp-admin-target="settings"><span class="lbp-admin-tile-icon" style="background:#475569">⚙️</span><span><strong>Admin Settings</strong><small>মেনু ও সাধারণ সেটিংস</small></span><span class="lbp-arrow">›</span></button>
+        </div>
+      </div>
+      <div class="lbp-admin-section-head" id="lbpAdminSectionHead" hidden>
+        <button type="button" class="lbp-admin-back" id="lbpAdminBack">← Dashboard</button>
+        <h3 id="lbpAdminSectionTitle">Admin Section</h3>
+      </div>
+
       <div class="card lbp-nav-manager" style="margin:14px 0"><h3>🧭 হোমের উপরের বাটন সাজান</h3><p class="muted" style="margin:6px 0 12px">যে বাটনগুলো আগে দেখাতে চান সেগুলো নির্বাচন করে উপরে/নিচে সাজান। প্রথম ৫টি উপরের নেভিগেশনে দেখা যাবে। সেটিং এই ব্রাউজারে সংরক্ষিত হবে।</p><div id="lbpNavOrderList"></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button type="button" class="btn btn-primary" onclick="saveLbpNavOrder()">সাজানো সংরক্ষণ</button><button type="button" class="btn btn-secondary" onclick="resetLbpNavOrder()">আগের ক্রম</button></div></div>
 
       <div class="admin-grid">
-
-        <!-- AUTO APPROVE SETTINGS -->
-        <div class="card" id="adminAutoApproveCard">
-          <h3 style="margin-bottom:12px">⚙️ Batch ২০১৫ Auto Approve</h3>
-          <div class="auto-approve-row">
-            <div><strong id="autoApproveStatusLabel">Auto Approve: OFF</strong><p class="muted" style="font-size:12px;margin-top:5px">ON করলে Batch ২০১৫ / 2015 সদস্যদের অটো-অ্যাপ্রুভ হবে। OFF করলে Admin নিজে Approve করবেন।</p></div>
-            <label class="toggle-switch" for="autoApproveToggle" aria-label="Batch 2015 Auto Approve চালু বা বন্ধ"><input type="checkbox" id="autoApproveToggle" onchange="saveAutoApproveSetting(this.checked)"><span class="toggle-track"></span><span id="autoApproveToggleText">OFF</span></label>
-          </div>
-          <p class="muted" id="autoApproveSaveStatus" style="font-size:12px;margin-top:10px">সেটিংস লোড হচ্ছে...</p>
-        </div>
 
         <!-- MEMBERS -->
 
@@ -2358,7 +2396,6 @@ body.theme-dark #page-profile .profile-hero-body{background:linear-gradient(to b
 
     </div>
 
-    <div class="member-popup-actions"><button id="memberFullViewButton" class="btn btn-primary" type="button" onclick="viewFullMemberProfile(window.lbpCurrentMemberId)" title="সম্পূর্ণ প্রোফাইল দেখুন">↗ View Profile</button></div>
     <div id="memberModalContent"></div>
 
   </div>
@@ -3963,7 +4000,6 @@ function populateMemberFilters() {
 ========================================================= */
 
 async function viewMember(id) {
-  window.lbpCurrentMemberId = id;
   if (guestMode || !currentUser) {
     toast("অন্য সদস্যের Profile দেখতে আগে Member হিসেবে Log in করুন", "error");
     const modal = $("memberModal");
@@ -3989,7 +4025,8 @@ async function viewMember(id) {
 
   $("memberModalContent").innerHTML = `
 
-    <div style="text-align:center">
+    <div style="text-align:center;position:relative">
+      <button type="button" class="btn btn-primary" style="position:absolute;right:0;top:0;padding:7px 10px;font-size:12px" onclick="openMemberFullProfile('${member.id}')">↗ View Profile</button>
       ${cover ? `<img class="profile-cover" style="height:130px;margin-bottom:-25px" src="${cover}" alt="Cover Photo">` : ""}
       <img
         class="avatar"
@@ -4068,80 +4105,11 @@ async function viewMember(id) {
 }
 
 
-async function viewFullMemberProfile(id) {
-  if (!id) return;
-  if (guestMode || !currentUser) {
-    toast("সম্পূর্ণ প্রোফাইল দেখতে আগে লগইন করুন", "error");
-    return;
-  }
-  try {
-    let member = membersCache.find(m => String(m.id) === String(id));
-    const { data, error } = await db.from("profiles")
-      .select("id,full_name,profile_photo,cover_photo,batch,blood_group,phone,bio,birthday,is_admin,approved,approval_status")
-      .eq("id", id).maybeSingle();
-    if (error) throw error;
-    if (data) member = { ...(member || {}), ...data };
-    if (!member) throw new Error("সদস্যের প্রোফাইল পাওয়া যায়নি");
-    if (member.approved === false && !member.is_admin && String(id) !== String(currentUser.id)) {
-      toast("এই সদস্যের প্রোফাইল এখন দেখা যাচ্ছে না", "error"); return;
-    }
-    const photo = await getProfilePhotoUrl(member.profile_photo);
-    const cover = member.cover_photo ? await getProfilePhotoUrl(member.cover_photo) : "";
-    const content = $("memberModalContent");
-    const actionRow = document.querySelector(".member-popup-actions");
-    if (actionRow) actionRow.innerHTML = `<button class="btn btn-secondary" type="button" onclick="viewMember('${String(id).replace(/'/g,"\\'")}')">← সংক্ষিপ্ত View</button>`;
-    content.innerHTML = `
-      <div class="member-profile-full">
-        <div class="member-profile-cover">${cover ? `<img src="${cover}" alt="Cover photo">` : ""}</div>
-        <div class="member-profile-identity">
-          <img class="member-profile-avatar" src="${photo}" alt="Profile photo">
-          <h2 style="margin:8px 0">${escapeHTML(member.full_name || "Unnamed")}${member.approved ? ' <span class="verified-badge" title="Verified member">✓</span>' : ""}</h2>
-          ${member.is_admin ? '<p style="color:var(--muted);margin:5px">🛡️ Administrator</p>' : ""}
-          <p class="muted">${escapeHTML(member.bio || "")}</p>
-          <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px">
-            ${member.approved ? '<span class="profile-badge">✅ Verified Member</span>' : '<span class="profile-badge">⏳ Pending</span>'}
-            ${member.is_admin ? '<span class="profile-badge">🛡️ Admin</span>' : ""}
-          </div>
-        </div>
-        <div class="member-profile-tabs"><button class="active" type="button" onclick="showMemberProfileTab('about',this)">ℹ️ About</button><button type="button" onclick="showMemberProfileTab('posts',this)">📰 Posts</button><button type="button" onclick="showMemberProfileTab('friends',this)">👥 Friends</button><button type="button" onclick="showMemberProfileTab('photos',this)">📷 Photos</button></div>
-        <div id="memberProfileTabBody" class="member-profile-body"><div class="profile-grid"><div><strong>Batch</strong><p class="muted">${escapeHTML(member.batch || "তথ্য দেওয়া নেই")}</p></div><div><strong>Blood Group</strong><p class="muted">${escapeHTML(member.blood_group || "তথ্য দেওয়া নেই")}</p></div><div><strong>Phone</strong><p class="muted">${escapeHTML(member.phone || "তথ্য দেওয়া নেই")}</p></div><div><strong>Birthday</strong><p class="muted">${escapeHTML(member.birthday ? String(member.birthday).slice(0,10) : "তথ্য দেওয়া নেই")}</p></div></div></div>
-      </div>`;
-    window.lbpFullProfileMember = member;
-    $("memberModal").classList.add("show");
-  } catch (error) {
-    console.error("Full member profile failed:", error);
-    toast(error?.message || "সম্পূর্ণ প্রোফাইল খোলা যায়নি", "error");
-  }
-}
-
-async function showMemberProfileTab(tab, button) {
-  document.querySelectorAll(".member-profile-tabs button").forEach(b => b.classList.toggle("active", b === button));
-  const body = $("memberProfileTabBody");
-  const member = window.lbpFullProfileMember;
-  if (!body || !member) return;
-  if (tab === "about") {
-    body.innerHTML = `<div class="profile-grid"><div><strong>Batch</strong><p class="muted">${escapeHTML(member.batch || "তথ্য দেওয়া নেই")}</p></div><div><strong>Blood Group</strong><p class="muted">${escapeHTML(member.blood_group || "তথ্য দেওয়া নেই")}</p></div><div><strong>Phone</strong><p class="muted">${escapeHTML(member.phone || "তথ্য দেওয়া নেই")}</p></div><div><strong>Birthday</strong><p class="muted">${escapeHTML(member.birthday ? String(member.birthday).slice(0,10) : "তথ্য দেওয়া নেই")}</p></div><div style="grid-column:1/-1"><strong>Bio</strong><p class="muted">${escapeHTML(member.bio || "তথ্য দেওয়া নেই")}</p></div></div>`;
-  } else if (tab === "posts") {
-    body.innerHTML = '<p class="muted">পোস্ট লোড হচ্ছে...</p>';
-    try {
-      const { data, error } = await db.from("posts").select("id,content,created_at").eq("user_id", member.id).order("created_at", { ascending:false }).limit(20);
-      if (error) throw error;
-      body.innerHTML = (data || []).map(post => `<article class="member-profile-post">${escapeHTML(post.content || "")}${post.created_at ? `<p class="muted" style="font-size:12px;margin-top:8px">${escapeHTML(formatDate(post.created_at))}</p>` : ""}</article>`).join("") || '<p class="muted">এই সদস্যের কোনো পোস্ট পাওয়া যায়নি।</p>';
-    } catch (error) { body.innerHTML = '<p class="muted">পোস্ট দেখানো যায়নি। আপনার Posts টেবিলের schema/RLS পরীক্ষা করুন।</p>'; }
-  } else if (tab === "friends") {
-    body.innerHTML = '<p class="muted">Friends তালিকা দেখতে Friends & Follow সেকশন ব্যবহার করুন।</p>';
-  } else {
-    body.innerHTML = '<p class="muted">এই সদস্যের Photos/Gallery দেখতে Gallery সেকশন ব্যবহার করুন।</p>';
-  }
-}
-
-window.viewFullMemberProfile = viewFullMemberProfile;
-window.showMemberProfileTab = showMemberProfileTab;
-
 function closeMemberModal() {
-  $("memberModal").classList.remove("show");
-  const actionRow = document.querySelector(".member-popup-actions");
-  if (actionRow) actionRow.innerHTML = `<button id="memberFullViewButton" class="btn btn-primary" type="button" onclick="viewFullMemberProfile(window.lbpCurrentMemberId)" title="সম্পূর্ণ প্রোফাইল দেখুন">↗ View Profile</button>`;
+
+  $("memberModal")
+    .classList.remove("show");
+
 }
 
 
@@ -5632,84 +5600,6 @@ $("notificationForm").addEventListener(
    ADMIN DASHBOARD
 ========================================================= */
 
-let autoApproveEnabledCache = false;
-async function loadAutoApproveSetting() {
-  if (!currentProfile?.is_admin) return;
-  const toggle = $("autoApproveToggle");
-  const status = $("autoApproveStatusLabel");
-  const help = $("autoApproveSaveStatus");
-  try {
-    const { data, error } = await db.from("auto_approval_settings").select("id,enabled").eq("id", 1).maybeSingle();
-    if (error) throw error;
-    autoApproveEnabledCache = !!data?.enabled;
-    if (toggle) toggle.checked = autoApproveEnabledCache;
-    if (status) status.textContent = `Auto Approve: ${autoApproveEnabledCache ? "ON" : "OFF"}`;
-    if ($("autoApproveToggleText")) $("autoApproveToggleText").textContent = autoApproveEnabledCache ? "ON" : "OFF";
-    if (help) help.textContent = "সেটিংস Supabase থেকে লোড হয়েছে।";
-  } catch (error) {
-    if (toggle) toggle.checked = false;
-    if (status) status.textContent = "Auto Approve: OFF (সেটিংস পাওয়া যায়নি)";
-    if (help) help.textContent = "প্রথমে নিচের SQL migration চালান; সেটিংস টেবিল ছাড়া ON/OFF সংরক্ষণ হবে না।";
-    console.warn("Auto approval settings load:", error);
-  }
-}
-async function saveAutoApproveSetting(enabled) {
-  if (!currentProfile?.is_admin) { toast("শুধু Admin এই সেটিংস পরিবর্তন করতে পারবেন", "error"); if ($("autoApproveToggle")) $("autoApproveToggle").checked = autoApproveEnabledCache; return; }
-  const help = $("autoApproveSaveStatus");
-  if (help) help.textContent = "সংরক্ষণ হচ্ছে...";
-  try {
-    const { error } = await db.from("auto_approval_settings").upsert({id:1,enabled:!!enabled,updated_at:new Date().toISOString(),updated_by:currentUser.id},{onConflict:"id"});
-    if (error) throw error;
-    autoApproveEnabledCache = !!enabled;
-    if ($("autoApproveStatusLabel")) $("autoApproveStatusLabel").textContent = `Auto Approve: ${enabled ? "ON" : "OFF"}`;
-    if ($("autoApproveToggleText")) $("autoApproveToggleText").textContent = enabled ? "ON" : "OFF";
-    if (help) help.textContent = "সেটিংস সংরক্ষিত হয়েছে।";
-    toast(`Batch ২০১৫ Auto Approve ${enabled ? "ON" : "OFF"}`, "success");
-  } catch (error) {
-    if ($("autoApproveToggle")) $("autoApproveToggle").checked = autoApproveEnabledCache;
-    if ($("autoApproveStatusLabel")) $("autoApproveStatusLabel").textContent = `Auto Approve: ${autoApproveEnabledCache ? "ON" : "OFF"}`;
-    if (help) help.textContent = "সংরক্ষণ হয়নি। Supabase SQL migration ও RLS policy পরীক্ষা করুন।";
-    toast(error?.message || "Auto Approve সেটিংস সংরক্ষণ হয়নি", "error");
-  }
-}
-window.saveAutoApproveSetting = saveAutoApproveSetting;
-
-function initializeAdminBoxMenu() {
-  const page = $("page-admin");
-  if (!page || page.dataset.boxMenuReady === "1") return;
-  const mainGrid = page.querySelector(":scope > .admin-grid");
-  if (!mainGrid) return;
-  const cards = Array.from(mainGrid.children).filter(el => el.classList.contains("card"));
-  const analytics = $("page-analytics");
-  if (!cards.length) return;
-  page.dataset.boxMenuReady = "1";
-  const menu = document.createElement("div"); menu.className = "admin-box-menu"; menu.id = "adminBoxMenu";
-  const panel = document.createElement("div"); panel.id = "adminBoxSelectedPanel"; panel.className = "hidden";
-  const back = document.createElement("button"); back.type = "button"; back.className = "btn btn-secondary admin-box-back"; back.textContent = "← সব Admin অপশন";
-  back.addEventListener("click", () => { panel.classList.add("hidden"); menu.classList.remove("hidden"); cards.forEach(c => c.classList.add("hidden")); if (analytics) analytics.classList.add("hidden"); });
-  panel.appendChild(back);
-  const iconFor = title => title.includes("Member") ? "👥" : title.includes("News") ? "📢" : title.includes("Notification") ? "🔔" : title.includes("Cricket") ? "🏏" : title.includes("Statistics") ? "📊" : title.includes("Auto Approve") ? "⚙️" : "🛠️";
-  cards.forEach((card, index) => {
-    const heading = card.querySelector("h3");
-    const title = (heading?.textContent || `Admin Option ${index+1}`).trim();
-    const btn = document.createElement("button"); btn.type = "button"; btn.className = "admin-box-button";
-    btn.innerHTML = `<span class="admin-box-icon">${iconFor(title)}</span><span>${escapeHTML(title)}</span>`;
-    btn.addEventListener("click", () => {
-      menu.classList.add("hidden"); panel.classList.remove("hidden");
-      cards.forEach(c => { c.classList.add("hidden"); });
-      if (analytics) analytics.classList.add("hidden");
-      card.classList.remove("hidden"); panel.appendChild(card);
-    });
-    menu.appendChild(btn); card.classList.add("hidden");
-  });
-  if (analytics) {
-    const btn = document.createElement("button"); btn.type="button"; btn.className="admin-box-button"; btn.innerHTML='<span class="admin-box-icon">📈</span><span>Admin Analytics</span>';
-    btn.addEventListener("click",()=>{menu.classList.add("hidden");panel.classList.remove("hidden");cards.forEach(c=>c.classList.add("hidden"));analytics.classList.remove("hidden");panel.appendChild(analytics);}); menu.appendChild(btn); analytics.classList.add("hidden");
-  }
-  mainGrid.classList.add("hidden");
-  page.insertBefore(menu, mainGrid); page.insertBefore(panel, mainGrid);
-}
-
 async function loadAdminDashboard() {
 
   if (!currentProfile?.is_admin) {
@@ -5718,8 +5608,6 @@ async function loadAdminDashboard() {
 
 
   await loadAdminMembers(true);
-  await loadAutoApproveSetting();
-  initializeAdminBoxMenu();
 
   await loadAnnouncements();
 
@@ -7296,5 +7184,132 @@ window.addEventListener("DOMContentLoaded",()=>{placeAnalyticsInsideAdmin();});
 </script>
 
 <div id="lbpStoryViewer" class="lbp-story-viewer" role="dialog" aria-modal="true" aria-label="Story viewer" onclick="if(event.target===this)closeLbpStoryViewer()"><div class="lbp-story-viewer-inner"><button class="lbp-story-close" type="button" aria-label="বন্ধ করুন" onclick="closeLbpStoryViewer()">×</button><div id="lbpStoryViewerMedia"></div><h3 id="lbpStoryViewerName" style="margin-top:10px"></h3><p id="lbpStoryViewerCaption" style="margin-top:5px"></p><small id="lbpStoryViewerViews"></small></div></div>
+<script>
+
+/* LBP Admin Dashboard card navigation (additive; original forms and handlers remain in DOM) */
+(function initLbpAdminDashboardCards(){
+  const $id = id => document.getElementById(id);
+  function setup(){
+    const admin = $id("page-admin");
+    const grid = admin?.querySelector(".admin-grid");
+    const home = $id("lbpAdminHome");
+    if(!admin || !grid || !home || home.dataset.ready) return;
+    home.dataset.ready = "1";
+    const cards = [...grid.querySelectorAll(":scope > .card")];
+    const navManager = admin.querySelector(".lbp-nav-manager");
+    const analytics = $id("page-analytics");
+    const norm = s => (s || "").toLowerCase();
+    const rules = {
+      members: ["member approval","member management","members"],
+      posts: ["post","posts","announcement","breaking news","news","content"],
+      notifications: ["send notification","notification"],
+      league: ["cricket league","league settings","player"],
+      complaints: ["complaint","অভিযোগ"],
+      chat: ["chat","message","messenger"],
+      stories: ["story","stories","gallery"],
+      analytics: ["site statistics","analytics","statistics"],
+      settings: ["menu","setting","সাজান","সেটিং"]
+    };
+    function titleOf(card){ return norm(card.querySelector("h2,h3,h4")?.textContent || ""); }
+    function classify(card){
+      const title = titleOf(card);
+      for(const [key, terms] of Object.entries(rules)){
+        if(terms.some(t => title.includes(norm(t)))) return key;
+      }
+      return "settings";
+    }
+    const groups = {};
+    cards.forEach(card => {
+      const key = classify(card);
+      (groups[key] ||= []).push(card);
+    });
+    if(navManager) (groups.settings ||= []).unshift(navManager);
+    if(analytics) (groups.analytics ||= []).push(analytics);
+    // Count from existing visible stat sources when available.
+    const copyStat = (from,to) => { const a=$id(from), b=$id(to); if(a&&b) b.textContent=(a.textContent||"—").trim(); };
+    const refreshCounts = () => {
+      copyStat("adminStatMembers","lbpAdminMemberCount");
+      copyStat("adminStatPosts","lbpAdminPostCount");
+      const pending = admin.querySelectorAll("#adminMembersList .admin-member");
+      const pendingText = admin.querySelector("#adminMembersList")?.innerText || "";
+      const pendingCount = [...pending].filter(el => /pending|অপেক্ষা|approve/i.test(el.innerText)).length;
+      $id("lbpAdminPendingCount").textContent = pending.length ? String(pendingCount) : (pendingText.includes("Loading") ? "—" : "0");
+    };
+    const titles = {members:"Member Management",auto:"Auto Approve (Batch 2015)",posts:"Post Management",notifications:"Notifications",league:"Cricket League",complaints:"Complaints",chat:"Messages & Chat",stories:"Stories & Gallery",analytics:"Analytics",settings:"Admin Settings"};
+    function showSection(key){
+      home.hidden = true;
+      $id("lbpAdminSectionHead").hidden = false;
+      $id("lbpAdminSectionTitle").textContent = titles[key] || "Admin Settings";
+      cards.forEach(card => card.classList.toggle("lbp-admin-hidden", !(groups[key]||[]).includes(card)));
+      if(navManager) navManager.classList.toggle("hidden", !(groups[key]||[]).includes(navManager));
+      if(analytics) analytics.classList.toggle("hidden", !(groups[key]||[]).includes(analytics));
+      if(key === "auto"){
+        // No auto-approval setting is fabricated here; only show existing relevant settings if present.
+        cards.forEach(card => card.classList.toggle("lbp-admin-hidden", !/auto.?approv|batch.?2015/i.test(card.innerText||"")));
+        if(!cards.some(card => /auto.?approv|batch.?2015/i.test(card.innerText||""))){
+          let notice=$id("lbpAutoApproveNotice");
+          if(!notice){notice=document.createElement("div");notice.id="lbpAutoApproveNotice";notice.className="card";notice.innerHTML="<h3>🛡️ Auto Approve (Batch 2015)</h3><p>এই সেটিংটি বর্তমান HTML-এ সংযুক্ত আছে কি না যাচাই করা প্রয়োজন। ডেটাবেস ও অনুমোদন-প্রক্রিয়া যাচাই ছাড়া এখানে ON/OFF চালু দেখানো হচ্ছে না।</p>";admin.appendChild(notice);}
+          notice.classList.remove("hidden");
+        }
+      } else {
+        $id("lbpAutoApproveNotice")?.classList.add("hidden");
+      }
+      refreshCounts();
+    }
+    function showHome(){
+      home.hidden=false;
+      $id("lbpAdminSectionHead").hidden=true;
+      cards.forEach(card=>card.classList.remove("lbp-admin-hidden"));
+      navManager?.classList.remove("hidden");
+      analytics?.classList.remove("hidden");
+      $id("lbpAutoApproveNotice")?.classList.add("hidden");
+      refreshCounts();
+    }
+    home.querySelectorAll("[data-lbp-admin-target]").forEach(btn=>btn.addEventListener("click",()=>showSection(btn.dataset.lbpAdminTarget)));
+    $id("lbpAdminBack")?.addEventListener("click",showHome);
+    // Keep the dashboard visible as the initial landing page.
+    showHome();
+    const observer = new MutationObserver(refreshCounts);
+    const list=$id("adminMembersList"); if(list) observer.observe(list,{childList:true,subtree:true,characterData:true});
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",setup,{once:true}); else setup();
+  // Admin page may be rendered after login; initialize on first Admin navigation as well.
+  document.addEventListener("click",e=>{ if(e.target.closest('#adminNavBtn,[data-page="admin"]')) setTimeout(setup,0); });
+})();
+
+</script>
+
+<script>
+/* Full profile view opened from Member popup; keeps the current user's own profile untouched. */
+window.openMemberFullProfile = async function(memberId){
+  try {
+    const member = (window.membersCache || []).find(m => String(m.id) === String(memberId));
+    if (!member) {
+      const content=document.getElementById("memberModalContent");
+      if(content) content.insertAdjacentHTML("beforeend",'<p class="muted">প্রোফাইলের বিস্তারিত আবার লোড করুন।</p>');
+      return;
+    }
+    const esc = s => String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    const existing=document.getElementById("lbpFullMemberProfile");
+    existing?.remove();
+    const panel=document.createElement("div");
+    panel.id="lbpFullMemberProfile";
+    panel.className="card";
+    panel.style.cssText="margin-top:16px;padding:16px;text-align:left";
+    panel.innerHTML=`<h3 style="margin-bottom:12px">👤 ${esc(member.full_name||"Member")} — Full Profile</h3>
+      <div class="profile-grid">
+        <div><strong>নাম</strong><div>${esc(member.full_name||"Not set")}</div></div>
+        <div><strong>Batch</strong><div>${esc(member.batch||"Not set")}</div></div>
+        <div><strong>Blood Group</strong><div>${esc(member.blood_group||"Not set")}</div></div>
+        <div><strong>Phone</strong><div>${esc(member.phone||"তথ্য নেই")}</div></div>
+        <div style="grid-column:1/-1"><strong>Bio</strong><div>${esc(member.bio||"No bio")}</div></div>
+        <div><strong>Birthday</strong><div>${esc((member.birthday||"").toString().slice(0,10)||"Not set")}</div></div>
+      </div>`;
+    document.getElementById("memberModalContent")?.appendChild(panel);
+    panel.scrollIntoView({behavior:"smooth",block:"nearest"});
+  } catch(err) { console.error("Full member profile failed",err); }
+};
+</script>
+
 </body>
 </html>
