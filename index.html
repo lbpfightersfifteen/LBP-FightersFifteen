@@ -1965,7 +1965,8 @@ body.theme-dark #page-admin .lbp-admin-tile,body.theme-dark #page-admin .lbp-adm
           <button type="button" class="lbp-admin-tile" data-lbp-admin-target="chat"><span class="lbp-admin-tile-icon" style="background:#4f46e5">💬</span><span><strong>Messages & Chat</strong><small>চ্যাট ও মেসেজ-সংক্রান্ত সেটিং</small></span><span class="lbp-arrow">›</span></button>
           <button type="button" class="lbp-admin-tile" data-lbp-admin-target="stories"><span class="lbp-admin-tile-icon" style="background:#db2777">📸</span><span><strong>Stories & Gallery</strong><small>স্টোরি/গ্যালারি-সংক্রান্ত বিভাগ</small></span><span class="lbp-arrow">›</span></button>
           <button type="button" class="lbp-admin-tile" data-lbp-admin-target="analytics"><span class="lbp-admin-tile-icon" style="background:#9333ea">📊</span><span><strong>Analytics</strong><small>সাইটের পরিসংখ্যান</small></span><span class="lbp-arrow">›</span></button>
-          <button type="button" class="lbp-admin-tile" data-lbp-admin-target="settings"><span class="lbp-admin-tile-icon" style="background:#475569">⚙️</span><span><strong>Admin Settings</strong><small>মেনু ও সাধারণ সেটিংস</small></span><span class="lbp-arrow">›</span></button>
+          <button type="button" class="lbp-admin-tile" data-lbp-admin-target="settings"><span class="lbp-admin-tile-icon" style="background:#475569">⚙️</span><span><strong>Admin Settings</strong><small>সাধারণ অ্যাডমিন সেটিংস</small></span><span class="lbp-arrow">›</span></button>
+          <button type="button" class="lbp-admin-tile" data-lbp-admin-target="settings"><span class="lbp-admin-tile-icon" style="background:#0f766e">🏠</span><span><strong>হোমের বাটন সাজান</strong><small>হোম মেনুর বাটন ও ক্রম পরিবর্তন</small></span><span class="lbp-arrow">›</span></button>
         </div>
       </div>
       <div class="lbp-admin-section-head" id="lbpAdminSectionHead" hidden>
@@ -7236,6 +7237,39 @@ window.addEventListener("DOMContentLoaded",()=>{placeAnalyticsInsideAdmin();});
       $id("lbpAdminPendingCount").textContent = pending.length ? String(pendingCount) : (pendingText.includes("Loading") ? "—" : "0");
     };
     const titles = {members:"Member Management",auto:"Auto Approve (Batch 2015)",posts:"Post Management",notifications:"Notifications",league:"Cricket League",complaints:"Complaints",chat:"Messages & Chat",stories:"Stories & Gallery",analytics:"Analytics",settings:"Admin Settings"};
+    async function renderLbpAutoApprovalCard(admin){
+      let card=$id("lbpAutoApproveNotice");
+      if(!card){
+        card=document.createElement("section");
+        card.id="lbpAutoApproveNotice";
+        card.className="card";
+        card.style.cssText="max-width:760px;margin:14px 0;padding:20px;border-radius:16px";
+        card.innerHTML=`<h3 style="margin-top:0">🛡️ Auto Approve — Batch 2015</h3>
+          <p>চালু থাকলে নতুন প্রোফাইলে Batch 2015 থাকলে স্বয়ংক্রিয় অনুমোদন হবে। বন্ধ থাকলে স্বাভাবিক Admin approval চলবে।</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px;border:1px solid var(--border);border-radius:12px">
+            <div><strong id="lbpAutoApproveState">সেটিং লোড হচ্ছে…</strong><div id="lbpAutoApproveHint" class="muted" style="font-size:13px;margin-top:5px">Supabase থেকে বর্তমান অবস্থা পড়া হচ্ছে</div></div>
+            <button type="button" class="btn btn-primary" id="lbpAutoApproveToggle" disabled>লোড হচ্ছে…</button>
+          </div>
+          <p id="lbpAutoApproveMessage" role="status" style="margin-bottom:0"></p>`;
+        admin.appendChild(card);
+      }
+      card.classList.remove("hidden");
+      const state=$id("lbpAutoApproveState"), hint=$id("lbpAutoApproveHint"), toggle=$id("lbpAutoApproveToggle"), message=$id("lbpAutoApproveMessage");
+      if(!currentProfile?.is_admin){state.textContent="Admin অনুমতি প্রয়োজন";hint.textContent="শুধু Admin এই সেটিং পরিবর্তন করতে পারবেন।";toggle.disabled=true;return;}
+      toggle.disabled=true; toggle.textContent="লোড হচ্ছে…"; message.textContent="";
+      const {data,error}=await db.from("auto_approval_settings").select("id,enabled").eq("id",1).maybeSingle();
+      if(error || !data){state.textContent="সেটিং পড়া যায়নি";hint.textContent="টেবিল/RLS policy যাচাই করুন।";toggle.textContent="আবার চেষ্টা করুন";toggle.disabled=false;toggle.onclick=()=>renderLbpAutoApprovalCard(admin);message.textContent=error?.message || "id = 1 রেকর্ড পাওয়া যায়নি।";return;}
+      let enabled=!!data.enabled;
+      const paint=()=>{state.textContent=enabled?"🟢 Auto Approve চালু":"⚪ Auto Approve বন্ধ";hint.textContent=enabled?"Batch 2015 নতুন সদস্য স্বয়ংক্রিয়ভাবে approve হবে।":"নতুন সদস্যের জন্য Admin approval প্রয়োজন।";toggle.textContent=enabled?"OFF করুন":"ON করুন";toggle.className=enabled?"btn btn-danger":"btn btn-primary";toggle.disabled=false;};
+      paint();
+      toggle.onclick=async()=>{
+        if(!currentProfile?.is_admin){message.textContent="শুধু Admin এই পরিবর্তন করতে পারবেন।";return;}
+        const next=!enabled; toggle.disabled=true; message.textContent="সেটিং সংরক্ষণ হচ্ছে…";
+        const {data:updated,error:updateError}=await db.from("auto_approval_settings").update({enabled:next,updated_at:new Date().toISOString(),updated_by:currentUser?.id||null}).eq("id",1).select("id,enabled").maybeSingle();
+        if(updateError || !updated){message.textContent="সংরক্ষণ হয়নি: "+(updateError?.message||"কোনো row update হয়নি। Supabase RLS policy যাচাই করুন।");toggle.disabled=false;return;}
+        enabled=!!updated.enabled;paint();message.textContent="সেটিং সফলভাবে সংরক্ষিত হয়েছে।";
+      };
+    }
     function showSection(key){
       home.hidden = true;
       $id("lbpAdminSectionHead").hidden = false;
@@ -7244,24 +7278,23 @@ window.addEventListener("DOMContentLoaded",()=>{placeAnalyticsInsideAdmin();});
       if(navManager) navManager.classList.toggle("hidden", !(groups[key]||[]).includes(navManager));
       if(analytics) analytics.classList.toggle("hidden", !(groups[key]||[]).includes(analytics));
       if(key === "auto"){
-        // No auto-approval setting is fabricated here; only show existing relevant settings if present.
-        cards.forEach(card => card.classList.toggle("lbp-admin-hidden", !/auto.?approv|batch.?2015/i.test(card.innerText||"")));
-        if(!cards.some(card => /auto.?approv|batch.?2015/i.test(card.innerText||""))){
-          let notice=$id("lbpAutoApproveNotice");
-          if(!notice){notice=document.createElement("div");notice.id="lbpAutoApproveNotice";notice.className="card";notice.innerHTML="<h3>🛡️ Auto Approve (Batch 2015)</h3><p>এই সেটিংটি বর্তমান HTML-এ সংযুক্ত আছে কি না যাচাই করা প্রয়োজন। ডেটাবেস ও অনুমোদন-প্রক্রিয়া যাচাই ছাড়া এখানে ON/OFF চালু দেখানো হচ্ছে না।</p>";admin.appendChild(notice);}
-          notice.classList.remove("hidden");
-        }
+        cards.forEach(card => card.classList.add("lbp-admin-hidden"));
+        if(navManager) navManager.classList.add("hidden");
+        if(analytics) analytics.classList.add("hidden");
+        renderLbpAutoApprovalCard(admin);
       } else {
         $id("lbpAutoApproveNotice")?.classList.add("hidden");
       }
       refreshCounts();
     }
     function showHome(){
+      // Dashboard landing page shows only the clickable tiles.
+      // Admin sections must remain hidden until their tile is selected.
       home.hidden=false;
       $id("lbpAdminSectionHead").hidden=true;
-      cards.forEach(card=>card.classList.remove("lbp-admin-hidden"));
-      navManager?.classList.remove("hidden");
-      analytics?.classList.remove("hidden");
+      cards.forEach(card=>card.classList.add("lbp-admin-hidden"));
+      navManager?.classList.add("hidden");
+      analytics?.classList.add("hidden");
       $id("lbpAutoApproveNotice")?.classList.add("hidden");
       refreshCounts();
     }
